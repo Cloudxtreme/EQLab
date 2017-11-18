@@ -1,0 +1,53 @@
+{
+  "name": "eqlab",
+  "version": "0.0.1",
+  "description": "EQLab",
+  "main": "server.js",
+  "scripts": {
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
+    "server": "nodemon server.js",
+    "client": "node start-client.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DrakzEQ/EQLab.git"
+  },
+  "keywords": [],
+  "author": "Drakzon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DrakzEQ/EQLab/issues"
+  },
+  "homepage": "https://github.com/DrakzEQ/EQLab#readme",
+  "dependencies": {
+    "body-parser": "^1.18.0",
+    "connect-flash": "^0.1.1",
+    "connect-session-sequelize": "^4.1.0",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.3",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.5",
+    "fecha": "^2.3.1",
+    "http-errors": "^1.6.2",
+    "jsonwebtoken": "^8.0.1",
+    "knex": "^0.13.0",
+    "morgan": "^1.8.2",
+    "mysql-events": "0.0.11",
+    "mysql2": "^1.4.2",
+    "nodemailer": "^4.1.1",
+    "passport": "^0.4.0",
+    "passport-jwt": "^3.0.0",
+    "passport-jwt-cookiecombo": "^1.0.5",
+    "passport-local-sequelize": "^0.8.0",
+    "sequelize": "^4.11.0",
+    "socket.io": "^2.0.3",
+    "treeize": "^2.1.0",
+    "validator": "^8.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.0",
+    "debug": "^3.0.1",
+    "supports-color": "^4.4.0"
+  }
+}

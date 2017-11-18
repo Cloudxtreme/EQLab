@@ -1,0 +1,25 @@
+{
+  "development": {
+    "username": "eqlab",
+    "password": "supersecret",
+    "database": "testpeq",
+    "host": "192.168.1.59",
+    "dialect": "mysql"
+  },
+
+  "test": {
+    "username": "eqlab",
+    "password": "supersecret",
+    "database": "testpeq",
+    "host": "192.168.1.59",
+    "dialect": "mysql"
+  },
+
+  "production": {
+    "username": "eqlab",
+    "password": "supersecret",
+    "database": "testpeq",
+    "host": "192.168.0.199",
+    "dialect": "mysql"
+  }
+}

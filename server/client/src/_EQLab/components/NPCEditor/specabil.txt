@@ -1,0 +1,47 @@
+-----------------------------------PARAMS
+01 Summon
+02 Enrage
+03 Rampage
+04 AE Rampage
+05 Flurry
+11 Ranged Attack
+29 Tunnel Vision
+32 Leashed (Full Heal & Memwipe)
+33 Leashed
+37 Flee Percentage
+40 Chase Distance
+41 Allow NPC Tank
+43 Casting Resist Difference
+44 Counter Avoid Damage
+
+-----------------------------------BOOLEAN
+06 Triple Attack
+07 Quad Attack
+08 Dual Wield
+09 Bane Attack
+10 Magic Attack
+12 Unslowable
+13 Unmezable
+14 Uncharmable
+15 Unstunable
+16 Unsnareable
+17 Unfearable
+18 Immune to Dispell
+19 Immune to Melee
+20 Immune to Magic
+21 Immune to Fleeing
+22 Immune to Non-Bane Damage
+23 Immune to Non-Magical Damage
+24 Never Aggro
+25 Immune Target
+26 Immune to Casting from Range
+27 Immune to Feign Death
+28 Immune to Taunt
+30 Doesn't Assist Allies
+31 Immune to Pacify
+34 Destructible Object
+35 Immune to Players
+36 Always Flee
+38 Allow Beneficial
+39 Disable Melee
+42 Ignore Root Aggro
