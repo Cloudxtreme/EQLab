@@ -25,9 +25,9 @@ const requests = {
 
 const auth = {
   logIn: (username, password) =>
-    requests.post('/login', { user: { username, password } }),
+    requests.post('/auth/login', { user: { username, password } }),
   register: (username, email, password) =>
-    requests.post('/register', { user: { username, email, password } })
+    requests.post('/auth/register', { user: { username, email, password } })
 };
 
 const zone = {

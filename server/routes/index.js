@@ -1,7 +1,7 @@
 'use strict';
 
-const express = require('express');
-const api_router = express.Router();
+const express    = require('express'),
+      api_router = express.Router();
 
 
 api_router.use('/zone', require('./zone_router'));

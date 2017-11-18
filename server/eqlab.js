@@ -9,7 +9,11 @@ const app     = require('./app'),
 const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
 
-server.listen(PORT, function () {
+if (process.env.USE_PROXY === 'true') {
+  app.enable('trust proxy');
+}
+
+server.listen(PORT, '127.0.0.1', function () {
   console.log("EQLab: Launching Server, listening on PORT " + PORT);
 });
 server.on('error', onError);

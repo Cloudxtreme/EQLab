@@ -2,23 +2,23 @@
   "name": "eqlab",
   "version": "0.0.1",
   "description": "EQLab",
-  "main": "server.js",
+  "main": "eqlab.js",
   "scripts": {
     "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
-    "server": "nodemon server.js",
+    "server": "nodemon eqlab.js",
     "client": "node start-client.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DrakzEQ/EQLab.git"
+    "url": "git+https://github.com/ptk88/EQLab.git"
   },
   "keywords": [],
   "author": "Drakzon",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DrakzEQ/EQLab/issues"
+    "url": "https://github.com/ptk88/EQLab/issues"
   },
-  "homepage": "https://github.com/DrakzEQ/EQLab#readme",
+  "homepage": "https://github.com/ptk88/EQLab#readme",
   "dependencies": {
     "body-parser": "^1.18.0",
     "connect-flash": "^0.1.1",
