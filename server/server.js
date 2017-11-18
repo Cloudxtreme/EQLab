@@ -2,11 +2,9 @@
 
 const app     = require('./app'),
       server  = require('http').Server(app),
-      debug   = require('debug')('eqlab');
+      debug   = require('debug')('eqlab'),
+      io      = require('./io').initialize(server);
 
-if (process.env.USE_WEBSOCKETS === 'TRUE') {
-  const io = require('./io').initialize(server)
-}
 
 const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
