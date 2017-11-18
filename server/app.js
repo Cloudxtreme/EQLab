@@ -25,11 +25,15 @@ if (process.env.NODE_ENV === 'production') {
   app.use(logger('dev'));
 }
 
+// API Routes
+app.use('/api', apiRoutes);
+
 // View Engine for Development
+app.engine('hbs', exphbs({extname: '.hbs', defaultLayout: 'main'}));
+app.set('view engine', 'hbs');
+app.set('view cache', false);
+
 if (process.env.NODE_ENV === 'development') {
-  app.engine('hbs', exphbs({extname: '.hbs', defaultLayout: 'main'}));
-  app.set('view engine', 'hbs');
-  app.set('view cache', false);
   app.get('/', (req, res, next) => {
     res.render('eqlab', {title: 'EQLab API Server'});
   });
@@ -37,14 +41,12 @@ if (process.env.NODE_ENV === 'development') {
 
 // Serve React Client in Production
 if (process.env.NODE_ENV === 'production') {
+  const reactRoute = (req, res, next) => {
+    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+  }
   app.use(express.static(path.join(__dirname, '/client/build')));
-  app.get('/', (req, res, next) => {
-    res.sendFile(path.join(__dirname + '/../client/build/index.html'));
-  }); 
+  app.use('/*', reactRoute);
 }
-
-// API Routes
-app.use('/api', apiRoutes);
 
 // Authentication
 if (process.env.USE_AUTH === 'TRUE') {
