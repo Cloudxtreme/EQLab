@@ -33,6 +33,14 @@ app.set('view cache', false);
 // Authentication
 if (process.env.USE_AUTH === 'TRUE') {
   console.log('EQLab: Using Authentication')
+  
+  // Sync Authentication Database
+  auth_db.sync().then(() => { 
+    console.log("EQLab: Authentication Database Connection Successful");
+  }).catch(err => {
+    console.error(err, "EQLab: Authentication Database Connection Failed");
+  });
+
   // Passport Middleware
   app.use(passport.initialize());
   app.use(passport.session());
@@ -54,13 +62,6 @@ if (process.env.USE_AUTH === 'TRUE') {
     });
   }));
 
-  // Sync Authentication Database
-  auth_db.sync().then(() => { 
-    console.log("EQLab: Authentication Database Connection Successful");
-  }).catch(err => {
-    console.error(err, "EQLab: Authentication Database Connection Failed");
-  });
-  
   // Flash Messages
   app.use(flash());
 
