@@ -10,7 +10,7 @@ const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
 
 // For nginx/Apache Reverse Proxy
-if (process.env.USE_PROXY === 'TRUE') {
+if (process.env.USE_REVERSE_PROXY === 'TRUE') {
   app.enable('trust proxy');
 }
 

@@ -33,7 +33,7 @@ app.set('view cache', false);
 // Authentication
 if (process.env.USE_AUTH === 'TRUE') {
   console.log('EQLab: Using Authentication')
-  
+
   // Sync Authentication Database
   auth_db.sync().then(() => { 
     console.log("EQLab: Authentication Database Connection Successful");
@@ -79,13 +79,14 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// Serve React Client in Production
-if (process.env.NODE_ENV === 'production') {
+// Serve React Client in Production if Not Using Reverse Proxy from nginx/Apache
+if (process.env.NODE_ENV === 'production' && process.env.USE_REVERSE_PROXY === 'FALSE') {
   app.use(express.static(path.join(__dirname + '/client/build')));
   app.get('/*', (req, res, next) => {
     res.sendFile(path.join(__dirname + '/client/build/index.html'));
   });
 }
+
 
 // Catch 404 Errors
 app.use((req, res, next) => {
