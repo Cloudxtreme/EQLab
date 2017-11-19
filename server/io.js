@@ -4,8 +4,9 @@ const sio      = require('socket.io'),
       dbName   = process.env.DB_DATABASE;
 
 exports.initialize = server => {
-  const io = sio(server);
-  io.serveClient(false);
+  const io = sio(server, {
+    serveClient: false
+  });
 
   // App
   io.on('connection', socket => {

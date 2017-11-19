@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import store from './store'
 // import registerServiceWorker from './registerServiceWorker'
-import { unregister } from './registerServiceWorker';
-import { BrowserRouter } from 'react-router-dom'
+import { unregister } from './registerServiceWorker'
+import { HashRouter } from 'react-router-dom'
 import { SocketProvider } from 'socket.io-react'
 import io from 'socket.io-client'
 // import 'bootstrap/dist/css/bootstrap.min.css' // Standard Bootstrap 3
@@ -17,15 +17,15 @@ import 'react-select/dist/react-select.css'
 import 'font-awesome/css/font-awesome.min.css'
 import EQLab from './_EQLab/EQLab.jsx'
 
-const socket = io.connect(process.env.SOCKET_URL);
+const socket = io.connect();
 
 ReactDOM.render((
   <Provider store={store}>
-    <BrowserRouter>
+    <HashRouter>
       <SocketProvider socket={socket}>
         <EQLab />
       </SocketProvider>
-    </BrowserRouter>
+    </HashRouter>
   </Provider>
 ), document.getElementById('index'));
 

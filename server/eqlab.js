@@ -9,7 +9,8 @@ const app     = require('./app'),
 const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
 
-if (process.env.USE_PROXY === 'true') {
+// For nginx/Apache Reverse Proxy
+if (process.env.USE_PROXY === 'TRUE') {
   app.enable('trust proxy');
 }
 
