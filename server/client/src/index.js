@@ -2,9 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import store from './store'
-// import registerServiceWorker from './registerServiceWorker'
-import { unregister } from './registerServiceWorker'
-import { HashRouter } from 'react-router-dom'
+import registerServiceWorker from './registerServiceWorker'
+// import { unregister } from './registerServiceWorker'
+import { BrowserRouter } from 'react-router-dom'
 import { SocketProvider } from 'socket.io-react'
 import io from 'socket.io-client'
 // import 'bootstrap/dist/css/bootstrap.min.css' // Standard Bootstrap 3
@@ -21,13 +21,13 @@ const socket = io.connect();
 
 ReactDOM.render((
   <Provider store={store}>
-    <HashRouter>
+    <BrowserRouter>
       <SocketProvider socket={socket}>
         <EQLab />
       </SocketProvider>
-    </HashRouter>
+    </BrowserRouter>
   </Provider>
 ), document.getElementById('index'));
 
-// registerServiceWorker();
-unregister();
+registerServiceWorker();
+// unregister();

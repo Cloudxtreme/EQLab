@@ -22,9 +22,9 @@ const store = createStore(
   compose(
     applyMiddleware(sagaMiddleware),
     applyMiddleware(promiseMiddleware),
-    applyMiddleware(localStorageMiddleware),
+    applyMiddleware(localStorageMiddleware)
     // applyMiddleware(logger),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    // window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
 
