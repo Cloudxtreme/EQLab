@@ -7,11 +7,13 @@ const knex = require('knex')({
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
-  }
+  },
+  pool: {min: 0, max: 1}
 });
 
 // MySQL Event Watcher
 const sqlEvent = require('mysql-events')({
+  connectionLimit : 1,
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD

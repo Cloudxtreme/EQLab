@@ -4,9 +4,20 @@ const sio      = require('socket.io'),
       dbName   = process.env.DB_DATABASE;
 
 
+// Socket.io
 exports.initialize = server => {
   const io = sio(server, {
     serveClient: false
+  });
+
+  // MySQL Event Triggers
+  const onNewSpawn2 = sqlEvent.add(`${dbName}.spawn2`, async (oldRow, newRow, event) => {
+    if (oldRow === null) { 
+      let spawn2 = await zone.getSingleSpawn2Tree(newRow.fields.id);
+      if (io.sockets.adapter.rooms['ZoneApp'].length) {
+        io.to('ZoneApp').emit('spawn2insert', spawn2);
+      }
+    }
   });
 
   // App
@@ -15,21 +26,11 @@ exports.initialize = server => {
     
     // ZoneApp
     socket.on('ZoneApp Loaded', () => {
-      const room = 'ZoneApp';
-      socket.join(room);
+      socket.join('ZoneApp');
       console.log('socket.io: User Loaded ZoneApp');
 
-      if (io.sockets.adapter.rooms[room].length) {
-        const onNewSpawn2 = sqlEvent.add(`${dbName}.spawn2`, async (oldRow, newRow, event) => {
-          if (oldRow === null) { 
-            let spawn2 = await zone.getSingleSpawn2Tree(newRow.fields.id)
-            io.to(room).emit('spawn2insert', spawn2);
-          }
-        });  
-      }
-
       socket.on('ZoneApp Unloaded', () => {
-        socket.leave(room);
+        socket.leave('ZoneApp');
         console.log('socket.io: User Unloaded ZoneApp');  
       });
     });
