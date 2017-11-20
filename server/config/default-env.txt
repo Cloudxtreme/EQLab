@@ -1,0 +1,16 @@
+# Environment
+NODE_ENV=production
+PORT=3000
+USE_REVERSE_PROXY=FALSE
+
+# MySQL
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=password
+DB_DATABASE=peq
+DB_AUTH_DATABASE=eqlab
+
+# Authentication
+USE_AUTHENTICATION=FALSE
+JWT_SECRET=ChooseASecret
+JWT_ISSUER=eqlab
