@@ -11,7 +11,6 @@ import {
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_POST_SPAWN2
 } from '../../constants/actionTypes'
-
 import Spawns from './Spawns/Spawns.jsx'
 // import Loot from './Loot/Loot.jsx'
 

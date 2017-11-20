@@ -3,6 +3,7 @@ const sio      = require('socket.io'),
       zone     = require("./models/zone.js"),
       dbName   = process.env.DB_DATABASE;
 
+
 exports.initialize = server => {
   const io = sio(server, {
     serveClient: false
@@ -20,7 +21,7 @@ exports.initialize = server => {
 
       if (io.sockets.adapter.rooms[room].length) {
         const onNewSpawn2 = sqlEvent.add(`${dbName}.spawn2`, async (oldRow, newRow, event) => {
-          console.log('MySQL Event Worked')
+          console.log(event.timestamp);
           if (oldRow === null) { 
             let spawn2 = await zone.getSingleSpawn2Tree(newRow.fields.id)
             io.to(room).emit('spawn2insert', spawn2);
