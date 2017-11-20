@@ -6,18 +6,10 @@ const express     = require('express'),
       app         = express(),
       exphbs      = require('express-handlebars'),
       logger      = require('morgan'),
-      Sequelize   = require('sequelize'),
-      auth_db     = require('./auth/auth.js').auth_db,
-      User        = require('./auth/auth.js').User,
-      passport    = require('passport'),
-      JwtStrategy = require('passport-jwt').Strategy,
-      ExtractJwt  = require('passport-jwt').ExtractJwt,
-      jwt         = require('jsonwebtoken'),
-      flash       = require('connect-flash'),
       path        = require('path'),
-      apiRoutes   = require('./routes'),
-      authRoutes  = require('./auth/auth_router').auth_router;
-   
+      apiRoutes   = require('./routes');
+
+
 // Logger
 if (process.env.NODE_ENV === 'production') {
   app.use(logger('short'));
@@ -31,8 +23,17 @@ app.set('view engine', 'hbs');
 app.set('view cache', false);
 
 // Authentication
-if (process.env.USE_AUTH === 'TRUE') {
-  console.log('EQLab: Using Authentication')
+if (process.env.USE_AUTHENTICATION === 'TRUE') {
+  const auth_db     = require('./auth/auth.js').auth_db,
+        User        = require('./auth/auth.js').User,
+        passport    = require('passport'),
+        JwtStrategy = require('passport-jwt').Strategy,
+        ExtractJwt  = require('passport-jwt').ExtractJwt,
+        jwt         = require('jsonwebtoken'),
+        flash       = require('connect-flash'),
+        authRoutes  = require('./auth/auth_router').auth_router;
+
+  console.log('EQLab: Using Authentication');
 
   // Sync Authentication Database
   auth_db.sync().then(() => { 
@@ -41,9 +42,8 @@ if (process.env.USE_AUTH === 'TRUE') {
     console.error(err, "EQLab: Authentication Database Connection Failed");
   });
 
-  // Passport Middleware
+  // Passport Middleware (JSON Web Tokens)
   app.use(passport.initialize());
-  app.use(passport.session());
   passport.use(User.createStrategy());
   passport.use(new JwtStrategy({
     secretOrKey: process.env.JWT_SECRET,
@@ -86,7 +86,6 @@ if (process.env.NODE_ENV === 'production' && process.env.USE_REVERSE_PROXY === '
     res.sendFile(path.join(__dirname + '/client/build/index.html'));
   });
 }
-
 
 // Catch 404 Errors
 app.use((req, res, next) => {

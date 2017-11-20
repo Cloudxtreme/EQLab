@@ -1,9 +1,13 @@
 'use strict';
 
-const app     = require('./app'),
-      server  = require('http').Server(app),
-      debug   = require('debug')('eqlab'),
-      io      = require('./io').initialize(server);
+const app         = require('./app'),
+      server      = require('http').Server(app),
+      debug       = require('debug')('eqlab'),
+      io          = require('./io').initialize(server),
+      nodeCleanup = require('node-cleanup'),
+      knex        = require('./db/db.js').knex,
+      sqlEvent    = require('./db/db.js').sqlEvent,
+      auth_db     = require('./auth/auth.js').auth_db;
 
 
 const PORT = normalizePort(process.env.PORT || '3000');
@@ -14,16 +18,30 @@ if (process.env.USE_REVERSE_PROXY === 'TRUE') {
   app.enable('trust proxy');
 }
 
-server.listen(PORT, '127.0.0.1', function () {
+// Start Express Server
+server.listen(PORT, 'localhost', () => {
   console.log("EQLab: Launching Server, listening on PORT " + PORT);
+
+  // Cleanup on Process Exit
+  nodeCleanup((exitCode, signal) => {
+    if (signal) {
+      console.log('EQLab: Cleaning Up Before Process Exit')
+      knex.destroy(() => {
+        sqlEvent.stop();
+        if (process.env.USE_AUTHENTICATION === 'TRUE') {
+          auth_db.close();
+        }
+        process.kill(process.pid, signal); // Calling process.exit() won't inform parent process of signal
+      });
+      nodeCleanup.uninstall(); // Don't Call Cleanup Handler Again 
+      return false;
+    }
+  });
 });
 server.on('error', onError);
 server.on('listening', onListening);
 
-/**
- * Normalize a port into a number, string, or false.
- */
-
+// Normalize a port into a number, string, or false
 function normalizePort(val) {
   var port = parseInt(val, 10);
 
@@ -40,10 +58,8 @@ function normalizePort(val) {
   return false;
 }
 
-/**
- * Event listener for HTTP server "error" event.
- */
 
+// Event listener for HTTP server "error" event
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
@@ -68,10 +84,7 @@ function onError(error) {
   }
 }
 
-/**
- * Event listener for HTTP server "listening" event.
- */
-
+// Event listener for HTTP server "listening" event.
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'

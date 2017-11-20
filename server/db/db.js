@@ -8,9 +8,9 @@ const knex = require('knex')({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE
   }
-  // pool: { min: 0, max: 7 }
 });
 
+// MySQL Event Watcher
 const sqlEvent = require('mysql-events')({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -89,6 +89,7 @@ const db = {
 }
   
 module.exports = { 
+  knex,
   db, 
   sqlEvent 
 };
