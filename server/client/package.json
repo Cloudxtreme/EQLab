@@ -2,6 +2,7 @@
   "name": "eqlab-client",
   "version": "0.0.1",
   "private": true,
+  "homepage": "http://ptklemm.com/eqlab",
   "proxy": {
     "/api": {
       "target": "http://localhost:3000"
