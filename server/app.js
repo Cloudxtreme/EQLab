@@ -37,7 +37,7 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
         ExtractJwt  = require('passport-jwt').ExtractJwt,
         jwt         = require('jsonwebtoken'),
         flash       = require('connect-flash'),
-        authRoutes  = require('./auth/auth_router').auth_router;
+        auth_router = require('./auth/auth_router').auth_router;
 
   console.log('EQLab: Using Authentication');
 
@@ -72,7 +72,7 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
   app.use(flash());
 
   // Authentication Routes
-  app.use('/eqlab/api/auth', authRoutes);
+  app.use('/eqlab/api/auth', auth_router);
 }
 
 // API Routes

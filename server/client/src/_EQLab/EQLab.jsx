@@ -4,6 +4,7 @@ import { Grid, Row, Col, Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import Home from './Home/Home.jsx';
 import ZoneApp from './ZoneApp/ZoneApp.jsx';
+import NoMatch from './Errors/NoMatch.jsx';
 
 
 class EQLab extends React.Component {
@@ -30,8 +31,9 @@ class EQLab extends React.Component {
           <Row>
             <Col md={24}>
               <Switch>
-                <Route exact path='/eqlab' component={Home}/>
-                <Route path='/zone' component={ZoneApp}/>
+                <Route exact path='/' component={Home}/>
+                <Route exact path='/zone' component={ZoneApp}/>
+                <Route component={NoMatch}/>
               </Switch>
             </Col>
           </Row>
