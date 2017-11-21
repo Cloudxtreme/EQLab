@@ -21,7 +21,7 @@ const socket = io.connect();
 
 ReactDOM.render((
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter basename="/eqlab">
       <SocketProvider socket={socket}>
         <EQLab />
       </SocketProvider>

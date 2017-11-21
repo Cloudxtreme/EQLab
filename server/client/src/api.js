@@ -1,7 +1,7 @@
 import superagent from 'superagent'
 
 
-const API_ROOT = '/api';
+const API_ROOT = '/eqlab/api';
 
 const responseBody = res => res.body;
 

@@ -91,6 +91,7 @@ class ZoneApp extends React.Component {
               <Col md={8}>
               <div className="form-group">
               <Select
+                  id="zone-select"
                   name="selectzone"
                   className="input-sm"
                   placeholder="Select a Zone"

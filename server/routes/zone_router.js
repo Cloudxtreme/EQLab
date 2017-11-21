@@ -1,8 +1,6 @@
 'use strict';
 
 const zone_router = require("express").Router(),
-      bodyParser  = require('body-parser'),
-      jsonParser  = bodyParser.json(),
       zone        = require("../models/zone.js"),
       npc         = require("../models/npc.js");
 
@@ -13,19 +11,19 @@ zone_router.delete("/spawn/spawngroup/spawnentry/:spawngroupID/:npcID", (req, re
   });
 });
 
-// zone_router.put("/spawn/spawngroup/spawnentries", jsonParser, (req, res, next) => {
+// zone_router.put("/spawn/spawngroup/spawnentries", (req, res, next) => {
 //   zone.updateSpawnentries(req.params.spawngroupID, req.params.npcID).then(data => {
 //     res.status(200).type('json').json(data);
 //   });
 // });
 
-zone_router.put("/spawn/spawngroup/spawnentry/:spawngroupID/:npcID", jsonParser, (req, res, next) => {
+zone_router.put("/spawn/spawngroup/spawnentry/:spawngroupID/:npcID", (req, res, next) => {
   zone.updateSpawnentry(req.params.spawngroupID, req.params.npcID).then(data => {
     res.status(200).type('json').json(data);
   });
 });
 
-zone_router.post("/spawn/spawngroup/spawnentry/:spawngroupID/:npcID", jsonParser, (req, res, next) => {
+zone_router.post("/spawn/spawngroup/spawnentry/:spawngroupID/:npcID", (req, res, next) => {
   zone.insertSpawnentry(req.params.spawngroupID, req.params.npcID).then(data => {
     res.status(200).type('json').json(data);
   });
@@ -43,7 +41,7 @@ zone_router.delete("/spawn/spawngroup/:id", (req, res, next) => {
   });
 });
 
-zone_router.put("/spawn/spawngroup/:id", jsonParser, async (req, res, next) => {
+zone_router.put("/spawn/spawngroup/:id", async (req, res, next) => {
   const responses = [];
   if (req.body.spawngroup) {
     responses[0] = await zone.updateSpawngroup(req.params.id, req.body.spawngroup);
@@ -59,7 +57,7 @@ zone_router.put("/spawn/spawngroup/:id", jsonParser, async (req, res, next) => {
   res.status(200).type('json').json(responses);
 });
 
-zone_router.post("/spawn/spawngroup/:spawn2ID", jsonParser, (req, res, next) => {
+zone_router.post("/spawn/spawngroup/:spawn2ID", (req, res, next) => {
   zone.insertSpawngroup(req.params.spawn2ID, req.body.zone).then(data => {
     res.status(200).type('json').json(data);
   }).catch(error => {
@@ -87,7 +85,7 @@ zone_router.delete("/spawn/spawn2/:id", (req, res, next) => {
   });
 });
 
-zone_router.put("/spawn/spawn2/:id", jsonParser, (req, res, next) => {
+zone_router.put("/spawn/spawn2/:id", (req, res, next) => {
   zone.updateSpawn2(req.params.id, req.body).then(data => {
     res.status(200).type('json').json(data);
   }).catch(error => {
@@ -95,7 +93,7 @@ zone_router.put("/spawn/spawn2/:id", jsonParser, (req, res, next) => {
   });
 });
 
-zone_router.post("/spawn/spawn2/:zoneName", jsonParser, (req, res, next) => {
+zone_router.post("/spawn/spawn2/:zoneName", (req, res, next) => {
   zone.insertSpawn2(req.params.zoneName).then(data => {
     res.status(200).type('json').json(data);
   });

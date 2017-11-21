@@ -4,10 +4,12 @@ require('dotenv').config();
 
 const express     = require('express'),
       app         = express(),
+      bodyParser  = require('body-parser'),
+      sanitizer   = require('express-sanitize-escape'),
       exphbs      = require('express-handlebars'),
       logger      = require('morgan'),
       path        = require('path'),
-      apiRoutes   = require('./routes');
+      api_router  = require('./routes');
 
 
 // Logger
@@ -21,6 +23,10 @@ if (process.env.NODE_ENV === 'production') {
 app.engine('hbs', exphbs({extname: '.hbs', defaultLayout: 'main'}));
 app.set('view engine', 'hbs');
 app.set('view cache', false);
+
+// Body Parser and Sanitizer
+app.use(bodyParser.json());
+app.use(sanitizer.middleware());
 
 // Authentication
 if (process.env.USE_AUTHENTICATION === 'TRUE') {
@@ -66,11 +72,11 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
   app.use(flash());
 
   // Authentication Routes
-  app.use('/api/auth', authRoutes);
+  app.use('/eqlab/api/auth', authRoutes);
 }
 
 // API Routes
-app.use('/api', apiRoutes);
+app.use('/eqlab/api', api_router);
 
 // Serve API Homepage in Development
 if (process.env.NODE_ENV === 'development') {

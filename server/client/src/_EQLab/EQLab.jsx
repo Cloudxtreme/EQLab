@@ -30,7 +30,7 @@ class EQLab extends React.Component {
           <Row>
             <Col md={24}>
               <Switch>
-                <Route exact path='/' component={Home}/>
+                <Route exact path='/eqlab' component={Home}/>
                 <Route path='/zone' component={ZoneApp}/>
               </Switch>
             </Col>

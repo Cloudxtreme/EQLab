@@ -4,7 +4,7 @@ class Home extends React.PureComponent {
   render() {
     return (
       <div>
-        <h4>Welcome to EQLab</h4>
+        <h4>Welcome to the EQLab Alpha!</h4>
       </div>
     );
   }
