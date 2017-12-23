@@ -40,11 +40,11 @@ npc_router.get("/:npcID/tints", (req, res, next) => {
   })
 });
 
-npc_router.get("/:npcID/passives", (req, res, next) => {
-  npc.getPassives(req.params.npcID).then(data => {
+npc_router.get("/:npcID/effects", (req, res, next) => {
+  npc.getEffects(req.params.npcID).then(data => {
     res.status(200).type('json').json(data)
   })
-});     
+});    
 
 npc_router.get("/:npcID/spells", (req, res, next) => {
   npc.getSpells(req.params.npcID).then(data => {

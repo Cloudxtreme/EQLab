@@ -8,7 +8,7 @@ const express     = require('express'),
       sanitizer   = require('express-sanitize-escape'),
       exphbs      = require('express-handlebars'),
       logger      = require('morgan'),
-      path        = require('path'),
+      // path        = require('path'),
       api_router  = require('./routes');
 
 
@@ -87,9 +87,9 @@ if (process.env.NODE_ENV === 'development') {
 
 // Serve React Client in Production if Not Using Reverse Proxy from nginx/Apache
 if (process.env.NODE_ENV === 'production' && process.env.USE_REVERSE_PROXY === 'FALSE') {
-  app.use(express.static(path.join(__dirname + '/client/build')));
+  app.use(express.static('../client/build'));
   app.get('/*', (req, res, next) => {
-    res.sendFile(path.join(__dirname + '/client/build/index.html'));
+    res.sendFile('../client/build/index.html');
   });
 }
 

@@ -1,17 +1,22 @@
-import React from 'react'
-import { Row, Col, PanelGroup, Panel, FormGroup } from 'react-bootstrap'
-// import api from '../../../api.js'
-import { debounce } from 'lodash'
-// import Select from 'react-select'
-import ReactTable from 'react-table'
-import 'react-table/react-table.css'
-// import { NPC_SPELL_TYPES } from '../form/constants/constants.js'
+import React from 'react';
+import { Row, Col, PanelGroup, Panel, FormGroup } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import api from '../../../../api.js';
+import { debounce } from 'lodash';
+import Select from 'react-select';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
+// import { NPC_SPELL_TYPES } from '../form/constants/constants.js';
+
+const mapStateToProps = state => ({
+  spells: state.global.npc.spells
+});
 
 class NPCSpells extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      spellsetID: this.props.type.npc_spells_id.input.value || null
+      spellsetID: this.props.spells.id
     }
 
     this.searchSpellSets = debounce((input, callback) => {
@@ -47,18 +52,7 @@ class NPCSpells extends React.Component {
   render() {
 
     const { spells } = this.props;
-    console.log(spells ? spells.entries : 'no spells')
     const parent_list = spells && spells.parent_list;
-
-    // "id": 18550,
-    // "spell_id": 13,
-    // "type": 2,
-    // "minlevel": 1,
-    // "maxlevel": 255,
-    // "recast_delay": 30,
-    // "priority": 0,
-    // "resist_adjust": 0,
-    // "name": "Complete Healing"
 
     const columns = [{
       Header: "spell",
@@ -89,7 +83,7 @@ class NPCSpells extends React.Component {
         <Row>
           <Col md={8}>
             <FormGroup> 
-              {/* <Select.Async
+              <Select.Async
                 name="selectspellset"
                 ref="selectspellset"
                 valueKey="id"
@@ -107,7 +101,7 @@ class NPCSpells extends React.Component {
                 loadOptions={this.searchSpellSets}
                 onChange={this.selectSpellSet}
                 className="input-sm"
-              /> */}
+              />
             </FormGroup>
           </Col>
           <Col md={8}>
@@ -118,7 +112,7 @@ class NPCSpells extends React.Component {
         <Row>
           {
             !spells
-              ? <h5>No Spells</h5>
+              ? null
               : <PanelGroup>
                   <Panel collapsible defaultExpanded={true} eventKey="spellset"
                     header={
@@ -145,21 +139,20 @@ class NPCSpells extends React.Component {
                         </Row>
                       </div>
                   }>
-                    <Row>
-                      <Col md={24}>
-                        <ReactTable
-                          data={spells.entries}
-                          columns={columns}
-                          filterable={false}
-                          className="-striped -highlight"
-                          showPagination={false}
-                          pageSize={spells.entries.length}
-                        />
-                      </Col>
-                    </Row>
+                    {
+                      !spells.entries.length
+                        ? <center><span>No Spell Entries Found</span></center>
+                        : <ReactTable
+                            data={spells.entries}
+                            columns={columns}
+                            filterable={false}
+                            className="-striped -highlight"
+                            showPagination={false}
+                            pageSize={spells.entries.length}
+                          />
+                    }
                   </Panel>
                 
-              
               {
                 !parent_list
                   ? null
@@ -174,5 +167,7 @@ class NPCSpells extends React.Component {
     );
   }
 }
+
+NPCSpells = connect(mapStateToProps)(NPCSpells);
 
 export default NPCSpells;

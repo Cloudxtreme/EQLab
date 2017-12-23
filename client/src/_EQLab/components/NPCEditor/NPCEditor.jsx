@@ -1,17 +1,17 @@
-import React from 'react'
-import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap'
-import { connect } from 'react-redux'
-import { reduxForm, FormSection, Field, Fields } from 'redux-form'
-import api from '../../../api.js'
+import React from 'react';
+import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { reduxForm, FormSection, Field, Fields } from 'redux-form';
+import api from '../../../api.js';
 import {
   GLOBAL_LOAD_NPC,
   GLOBAL_UNLOAD_NPC
-} from '../../../constants/actionTypes'
-import NPCEditorHeader from './NPCEditorHeader.jsx'
-import NPCType from './NPCType.jsx'
-import NPCSpecialAbilities from './NPCSpecialAbilities.jsx'
-import NPCSpells from './NPCSpells.jsx'
-// import NPCLoot from './NPCLoot.jsx'
+} from '../../../constants/actionTypes';
+import NPCEditorHeader from './NPCEditorHeader.jsx';
+import NPCType from './NPCType.jsx';
+import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
+import NPCSpells from './NPCSpells/NPCSpells.jsx';
+// import NPCLoot from './NPCLoot.jsx';
 
 
 const mapStateToProps = state => ({
@@ -127,7 +127,6 @@ class NPCEditor extends React.Component {
                       <Fields
                         component={NPCSpells} 
                         names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
-                        spells={this.props.initialValues.spells || null}
                       />
                     </Tab.Pane>
                     <Tab.Pane eventKey="npceffects">
@@ -150,8 +149,8 @@ class NPCEditor extends React.Component {
   }
 }
 
-NPCEditor = reduxForm(NPCEditorOptions)(NPCEditor)
+NPCEditor = reduxForm(NPCEditorOptions)(NPCEditor);
 
-NPCEditor = connect(mapStateToProps, mapDispatchToProps)(NPCEditor)
+NPCEditor = connect(mapStateToProps, mapDispatchToProps)(NPCEditor);
 
 export default NPCEditor;

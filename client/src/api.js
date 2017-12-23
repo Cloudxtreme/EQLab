@@ -71,6 +71,8 @@ const npc = {
     requests.get(`/npc/${npcID}`),
   searchNPCs: searchTerm =>
     requests.get(`/npc/search/${searchTerm}`),
+  searchSpellSets: searchTerm =>
+    requests.get(`/zone/spawn/spawngroup/search/${searchTerm}`),
   getSpellList: () =>
     requests.get(`/npc/spelllist`),
   getPassiveList: () =>
