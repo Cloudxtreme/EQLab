@@ -69,10 +69,12 @@ const zone = {
 const npc = { 
   getNPCData: npcID =>
     requests.get(`/npc/${npcID}`),
+  putNPC: (npcID, values) => 
+    requests.put(`/npc/${npcID}`, values),
   searchNPCs: searchTerm =>
     requests.get(`/npc/search/${searchTerm}`),
   searchSpellSets: searchTerm =>
-    requests.get(`/zone/spawn/spawngroup/search/${searchTerm}`),
+    requests.get(`/npc/spellset/search/${searchTerm}`),
   getSpellList: () =>
     requests.get(`/npc/spelllist`),
   getPassiveList: () =>

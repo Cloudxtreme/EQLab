@@ -21,8 +21,7 @@ class Spawn2Footer extends React.Component {
       } else if (this.state.spawngroupID !== 0 && input === '') {
         options = [{ id: this.props.input.value, label: `${this.props.spawngroupName} (${this.props.input.value})` }];
         callback(null, { options })
-      }
-      else if (input.length > 2 || input === '') {
+      } else if (input.length > 2 || input === '') {
         api.zone.searchSpawngroups(input ? input : this.state.spawngroupID)
           .then(results => {
             options = results.map(spawngroup => {

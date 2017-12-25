@@ -10,6 +10,12 @@ module.exports = {
     return (await db.select('npc_types', columnsArr, whereObj))[0];
   },
 
+  update: async (id, values) => {
+    if (id) {
+      return await db.update('npc_types', values, { id });
+    }
+  },
+
   getFactions: async (npcID) => {
     let queryStr = `
     SELECT npc_types.npc_faction_id AS 'id', npc_faction.name, npc_faction.primaryfaction AS 'primaryfaction_id', 

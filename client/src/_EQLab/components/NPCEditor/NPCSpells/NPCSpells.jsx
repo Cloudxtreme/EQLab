@@ -1,6 +1,7 @@
 import React from 'react';
-import { Row, Col, PanelGroup, Panel, FormGroup } from 'react-bootstrap';
-import { connect } from 'react-redux';
+import { Row, Col, PanelGroup, Panel, FormGroup, Button } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
+// import { connect } from 'react-redux';
 import api from '../../../../api.js';
 import { debounce } from 'lodash';
 import Select from 'react-select';
@@ -8,46 +9,56 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 // import { NPC_SPELL_TYPES } from '../form/constants/constants.js';
 
-const mapStateToProps = state => ({
-  spells: state.global.npc.spells
-});
+// const mapStateToProps = state => ({
+//   spells: state.global.npc.spells
+// });
 
 class NPCSpells extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      spellsetID: this.props.spells.id
+      spellsetID: this.props.spells ? this.props.spells.id : 0
     }
 
     this.searchSpellSets = debounce((input, callback) => {
       let options;
-      if (this.state.spellsetID === 0 && input === '') {
+      if (this.props.spells.id === 0 && input === '') {
         options = [];
         callback(null, { options })
-      } else if (this.state.spellsetID !== 0 && input === '') {
-        options = [{ id: this.props.spells.id, label: `${this.props.spells.name} (${this.props.spells.id})` }];
-        callback(null, { options })
-      }
-      else if (input.length > 2 || input === '') {
-        // api.zone.searchSpawngroups(input ? input : this.state.spawngroupID)
-        //   .then(results => {
-        //     options = results.map(spawngroup => {
-        //       return {
-        //         id: spawngroup.id,
-        //         label: `${spawngroup.name} (${spawngroup.id})`
-        //       }
-        //     });
-        //     callback(null, { options })
-        //   })
-        //   .catch(error => callback(error, null));
+      } else if (input.length > 2 || input === '') {
+        api.npc.searchSpellSets(input ? input : this.props.spells.id)
+          .then(results => {
+            options = results.map(spellset => {
+              return {
+                id: spellset.id,
+                label: `${spellset.name} (${spellset.id})`
+              }
+            });
+            callback(null, { options })
+          })
+          .catch(error => callback(error, null));
       } else {
         options = [];
         callback(null, { options })
       }
     }, 400);
+
+    this.selectSpellSet = spellset => {
+      if (spellset) {
+        this.props.changeSpellSet(spellset.id);
+        this.setState({ spellsetID: spellset.id });
+      } else {
+        this.setState({ spellsetID: this.props.spells.id})
+      }
+    }
   }
 
-  
+  componentDidUpdate() {
+    console.log(this.props);
+  }
+  // componentDidMount() {
+  //   console.log(this.props.type.npc_spells_id)
+  // }
 
   render() {
 
@@ -56,33 +67,40 @@ class NPCSpells extends React.Component {
 
     const columns = [{
       Header: "spell",
-      accessor: "name"
+      accessor: "name",
+      width: 120
     }, {
       Header: "type",
-      accessor: "type"
+      accessor: "type",
+      width: 40
     }, {
       Header: "minlevel",
-      accessor: "minlevel"
+      accessor: "minlevel",
+      width: 70
     }, {
       Header: "maxlevel",
-      accessor: "maxlevel"
+      accessor: "maxlevel",
+      width: 70
     }, {
       Header: "recast_delay",
-      accessor: "recast_delay"
+      accessor: "recast_delay",
+      width: 80
     }, {
       Header: "priority",
-      accessor: "priority"
+      accessor: "priority",
+      width: 60
     }, {
       Header: "resist_adjust",
-      accessor: "resist_adjust"
+      accessor: "resist_adjust",
+      width: 70
     }
   ]
 
     return (
       <div id="NPCSpells">
         <Row>
-          <Col md={8}>
-            <FormGroup> 
+          <Col md={12}>
+            <FormGroup>
               <Select.Async
                 name="selectspellset"
                 ref="selectspellset"
@@ -90,23 +108,31 @@ class NPCSpells extends React.Component {
                 placeholder="Search Spellsets"
                 searchPromptText="Minimum of 3 characters to search"
                 clearable={false}
+                onSelectResetsInput={false}
                 onBlurResetsInput={false}
                 onCloseResetsInput={false}
                 backspaceRemoves={false}
                 deleteRemoves={false}
                 cache={false}
                 autoload={true}
-                value={this.state.spellsetID}
-                resetValue={this.state.spellsetID}
+                value={this.props.spells.id}
+                resetValue={this.props.spells.id}
                 loadOptions={this.searchSpellSets}
                 onChange={this.selectSpellSet}
                 className="input-sm"
               />
             </FormGroup>
           </Col>
-          <Col md={8}>
+          <Col md={6}>
+            { 
+              !this.props.type.npc_spells_id
+                ? null
+                : <Button bsStyle="danger" bsSize="xs"   style={{ marginTop: 20 }} onClick={this.props.clearSpellSet}>
+                    <FontAwesome name="chain-broken"/>&nbsp;Clear
+                  </Button>
+            }
           </Col>
-          <Col md={8}>
+          <Col md={6}>
           </Col>
         </Row>
         <Row>
@@ -149,6 +175,12 @@ class NPCSpells extends React.Component {
                             className="-striped -highlight"
                             showPagination={false}
                             pageSize={spells.entries.length}
+                            defaultSorted={[
+                              {
+                                id: "minlevel",
+                                desc: false
+                              }
+                            ]}
                           />
                     }
                   </Panel>
@@ -168,6 +200,6 @@ class NPCSpells extends React.Component {
   }
 }
 
-NPCSpells = connect(mapStateToProps)(NPCSpells);
+// NPCSpells = connect(mapStateToProps)(NPCSpells);
 
 export default NPCSpells;

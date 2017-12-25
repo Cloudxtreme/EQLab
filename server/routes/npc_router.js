@@ -4,7 +4,8 @@ const express    = require("express"),
       npc_router = express.Router(),
       npc        = require("../models/npc.js");
 
-npc_router.get("/spellsets/search/:searchTerm", (req, res, next) => {
+
+npc_router.get("/spellset/search/:searchTerm", (req, res, next) => {
   npc.searchNPCSpells(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
   });
@@ -106,6 +107,12 @@ npc_router.get("/:npcID", async (req, res, next) => {
     "emotes": await npc.getEmotes(req.params.npcID),
     "tintset": await npc.getTints(req.params.npcID)
   })
+});
+
+npc_router.put("/:npcID", (req, res, next) => {
+  npc.update(req.params.npcID, req.body).then(data => {
+    res.status(200).type('json').json(data)
+  });
 });
 
 module.exports = npc_router;

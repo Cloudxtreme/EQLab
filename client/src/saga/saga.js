@@ -13,6 +13,8 @@ import {
   GLOBAL_DELETE_SPAWNGROUP,
   GLOBAL_POST_SPAWNENTRY,
   GLOBAL_DELETE_SPAWNENTRY,
+  GLOBAL_LOAD_NPC,
+  GLOBAL_UPDATE_NPC,
   ZONEAPP_RESET,
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SET_ZONE,
@@ -34,6 +36,7 @@ export default function* rootSaga() {
     takeLatest(GLOBAL_DELETE_SPAWNGROUP, deleteSpawngroup),
     takeLatest(GLOBAL_POST_SPAWNENTRY, postSpawnentry),
     takeLatest(GLOBAL_DELETE_SPAWNENTRY, deleteSpawnentry),
+    takeLatest(GLOBAL_UPDATE_NPC, updateNPC),
     takeLatest(ZONEAPP_SELECT_ZONE, selectZone),
     takeLatest(ZONEAPP_POST_SPAWN2, postSpawn2)
   ]);
@@ -70,6 +73,11 @@ function* refreshSingleSpawnTree(spawn2ID) {
 function* refreshSpawnData(spawn2ID) {
   const spawn = yield call(api.zone.getSpawnData, spawn2ID);
   yield put({ type: GLOBAL_LOAD_SPAWN, payload: spawn });
+}
+
+function* refreshNPCData(npcID) {
+  const npc = yield call(api.npc.getNPCData, npcID);
+  yield put({ type: GLOBAL_LOAD_NPC, payload: npc });
 }
 
 /*
@@ -148,4 +156,13 @@ function* deleteSpawnentry(action) {
     call(refreshSpawnData, action.spawn2ID),
     action.zone && call(refreshSingleSpawnTree, action.spawn2ID)
   ]);
+}
+
+/*
+*  --------------------NPC_TYPE
+*/
+
+function* updateNPC(action) {
+  yield call(api.npc.putNPC, action.npcID, action.values);
+  yield call(refreshNPCData, action.npcID);
 }

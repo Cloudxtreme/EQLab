@@ -5,7 +5,8 @@ import { reduxForm, FormSection, Field, Fields } from 'redux-form';
 import api from '../../../api.js';
 import {
   GLOBAL_LOAD_NPC,
-  GLOBAL_UNLOAD_NPC
+  GLOBAL_UNLOAD_NPC,
+  GLOBAL_UPDATE_NPC
 } from '../../../constants/actionTypes';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
@@ -15,14 +16,17 @@ import NPCSpells from './NPCSpells/NPCSpells.jsx';
 
 
 const mapStateToProps = state => ({
-  initialValues: state.global.npc
+  initialValues: state.global.npc,
+  spells: state.global.npc.spells
 });
 
 const mapDispatchToProps = dispatch => ({
-  onLoad: payload =>
+  load: payload =>
     dispatch({ type: GLOBAL_LOAD_NPC, payload }),
-  onUnload: payload =>
+  unload: payload =>
     dispatch({ type: GLOBAL_UNLOAD_NPC }),
+  updateNPC: (npcID, values) => 
+    dispatch({ type: GLOBAL_UPDATE_NPC, npcID, values})
 });
 
 const NPCEditorOptions = {
@@ -37,20 +41,24 @@ class NPCEditor extends React.Component {
     this.deleteNPC = () => {
       console.log('NPC Deleted');
     }
+
+    this.changeSpellSet = (spellsetID) => {
+      this.props.updateNPC(this.props.npcID, {npc_spells_id: spellsetID});
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.npcID !== this.props.npcID) {
-      this.props.onLoad(api.npc.getNPCData(nextProps.npcID))
+      this.props.load(api.npc.getNPCData(nextProps.npcID))
     }
   }
 
   componentDidMount() {
-    this.props.onLoad(api.npc.getNPCData(this.props.npcID))
+    this.props.load(api.npc.getNPCData(this.props.npcID))
   }
 
   componentWillUnmount() {
-    this.props.onUnload();
+    this.props.unload();
   }
 
   render() {
@@ -127,6 +135,8 @@ class NPCEditor extends React.Component {
                       <Fields
                         component={NPCSpells} 
                         names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
+                        spells={this.props.spells}
+                        changeSpellSet={this.changeSpellSet}
                       />
                     </Tab.Pane>
                     <Tab.Pane eventKey="npceffects">
