@@ -1,36 +1,70 @@
 import React from 'react';
 import { Row, Col, PanelGroup, Panel, FormGroup, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import api from '../../../../api.js';
 import { debounce } from 'lodash';
 import Select from 'react-select';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
+// import { NPC_SPELL_TYPES } from '../form/constants/constants.js';
 
-
-const mapStateToProps = state => ({
-  spells: state.global.npc.spells
-});
+// const mapStateToProps = state => ({
+//   spells: state.global.npc.spells
+// });
 
 class NPCSpells extends React.Component {
   constructor(props) {
     super(props);
-  }
+    this.state = {
+      spellsetID: this.props.spells ? this.props.spells.id : 0
+    }
 
-  componentWillReceiveProps() {
-    console.log(this.props);
+    this.searchSpellSets = debounce((input, callback) => {
+      let options;
+      if (this.props.spells.id === 0 && input === '') {
+        options = [];
+        callback(null, { options })
+      } else if (input.length > 2 || input === '') {
+        api.npc.searchSpellSets(input ? input : this.props.spells.id)
+          .then(results => {
+            options = results.map(spellset => {
+              return {
+                id: spellset.id,
+                label: `${spellset.name} (${spellset.id})`
+              }
+            });
+            callback(null, { options })
+          })
+          .catch(error => callback(error, null));
+      } else {
+        options = [];
+        callback(null, { options })
+      }
+    }, 400);
+
+    this.selectSpellSet = spellset => {
+      if (spellset) {
+        this.props.changeSpellSet(spellset.id);
+        this.setState({ spellsetID: spellset.id });
+      } else {
+        this.setState({ spellsetID: this.props.spells.id})
+      }
+    }
   }
 
   componentDidUpdate() {
     console.log(this.props);
   }
-
   // componentDidMount() {
-  //   console.log(this.props);
+  //   console.log(this.props.type.npc_spells_id)
   // }
 
   render() {
+
+    const { spells } = this.props;
+    const parent_list = spells && spells.parent_list;
+
     const columns = [{
       Header: "spell",
       accessor: "name",
@@ -67,7 +101,7 @@ class NPCSpells extends React.Component {
         <Row>
           <Col md={12}>
             <FormGroup>
-              {/* <Select.Async
+              <Select.Async
                 name="selectspellset"
                 ref="selectspellset"
                 valueKey="id"
@@ -86,24 +120,24 @@ class NPCSpells extends React.Component {
                 loadOptions={this.searchSpellSets}
                 onChange={this.selectSpellSet}
                 className="input-sm"
-              /> */}
+              />
             </FormGroup>
           </Col>
           <Col md={6}>
-            {/* { 
+            { 
               !this.props.type.npc_spells_id
                 ? null
                 : <Button bsStyle="danger" bsSize="xs"   style={{ marginTop: 20 }} onClick={this.props.clearSpellSet}>
                     <FontAwesome name="chain-broken"/>&nbsp;Clear
                   </Button>
-            } */}
+            }
           </Col>
           <Col md={6}>
           </Col>
         </Row>
         <Row>
           {
-            !this.props.spells
+            !spells
               ? null
               : <PanelGroup>
                   <Panel collapsible defaultExpanded={true} eventKey="spellset"
@@ -111,36 +145,36 @@ class NPCSpells extends React.Component {
                       <div>
                         <Row>
                           <Col md={24}>
-                            <span>{`${this.props.spells.id}: ${this.props.spells.name}`}</span>
+                            <span>{`${spells.id}: ${spells.name}`}</span>
                           </Col>
                         </Row>
                         <Row>
                           <Col md={24}>
-                            <span>{`Attack Proc: ${this.props.spells.proc_name} Chance: ${this.props.spells.proc_chance}`}</span>
+                            <span>{`Attack Proc: ${spells.proc_name} Chance: ${spells.proc_chance}`}</span>
                           </Col>
                         </Row>
                         <Row>
                           <Col md={24}>
-                            <span>{`Range Proc: ${this.props.spells.rproc_name} Chance: ${this.props.spells.rproc_chance}`}</span>
+                            <span>{`Range Proc: ${spells.rproc_name} Chance: ${spells.rproc_chance}`}</span>
                           </Col>
                         </Row>
                         <Row>
                           <Col md={24}>
-                            <span>{`Defensive Proc: ${this.props.spells.dproc_name} Chance: ${this.props.spells.dproc_chance}`}</span>
+                            <span>{`Defensive Proc: ${spells.dproc_name} Chance: ${spells.dproc_chance}`}</span>
                           </Col>
                         </Row>
                       </div>
                   }>
                     {
-                      !this.props.spells.entries.length
+                      !spells.entries.length
                         ? <center><span>No Spell Entries Found</span></center>
                         : <ReactTable
-                            data={this.props.spells.entries}
+                            data={spells.entries}
                             columns={columns}
                             filterable={false}
                             className="-striped -highlight"
                             showPagination={false}
-                            pageSize={this.props.spells.entries.length}
+                            pageSize={spells.entries.length}
                             defaultSorted={[
                               {
                                 id: "minlevel",
@@ -150,6 +184,14 @@ class NPCSpells extends React.Component {
                           />
                     }
                   </Panel>
+                
+              {
+                !parent_list
+                  ? null
+                  : <Panel collapsible header="Parent List" eventKey="spellsparentlist">
+                      Parent List
+                    </Panel>
+              }
             </PanelGroup>
           }
         </Row>
@@ -158,6 +200,6 @@ class NPCSpells extends React.Component {
   }
 }
 
-NPCSpells = connect(mapStateToProps)(NPCSpells);
+// NPCSpells = connect(mapStateToProps)(NPCSpells);
 
 export default NPCSpells;

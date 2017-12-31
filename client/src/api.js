@@ -69,8 +69,8 @@ const zone = {
 const npc = { 
   getNPCData: npcID =>
     requests.get(`/npc/${npcID}`),
-  putNPC: (npcID, values) => 
-    requests.put(`/npc/${npcID}`, values),
+  putNPC: (npcID, body) => 
+    requests.put(`/npc/${npcID}`, body),
   searchNPCs: searchTerm =>
     requests.get(`/npc/search/${searchTerm}`),
   searchSpellSets: searchTerm =>
