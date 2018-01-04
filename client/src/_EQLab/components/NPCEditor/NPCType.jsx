@@ -397,7 +397,7 @@ class NPCType extends React.PureComponent {
                     bsSize="sm"/>
                 </Col>
                 <Col md={4}>
-                  <Field component={Input} type="text" name="adventure_template_id" label="adventure_template_id"  
+                  <Field component={Input} type="text" name="adventure_template_id" label="adventure_template"  
                     bsSize="sm"/>
                 </Col>
               </Row>

@@ -79,8 +79,8 @@ class NPCEditor extends React.Component {
           <Row>
             <Col md={14}>
               <Row>
-                <Panel>
-                  <Col md={24} className="scroll-col"  style={{ height: 350 }}>
+                <Panel style={{ maxHeight: 450, overflowY: "scroll"}}>
+                  <Col md={24}>
                     <FormSection name="type">
                       <NPCType />
                     </FormSection>
@@ -122,14 +122,16 @@ class NPCEditor extends React.Component {
             </Col>
             <Col md={10}>
               <Tab.Container id="npc-panel" defaultActiveKey="npcspells">
-                <Panel header={
-                  <Nav bsStyle="tabs">
-                    <NavItem eventKey="npcspells">Spells</NavItem>
-                    <NavItem eventKey="npceffects">Passives</NavItem>
-                    <NavItem eventKey="npcloot">Loot</NavItem>
-                    <NavItem eventKey="npcmerchant">Merchant</NavItem>
-                  </Nav> 
-                }>
+                <Panel style={{ height: 900, overflowY: "scroll"}} 
+                  header={
+                    <Nav bsStyle="tabs">
+                      <NavItem eventKey="npcspells">Spells</NavItem>
+                      <NavItem eventKey="npceffects">Passives</NavItem>
+                      <NavItem eventKey="npcloot">Loot</NavItem>
+                      <NavItem eventKey="npcmerchant">Merchant</NavItem>
+                    </Nav> 
+                  }
+                >
                   <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
                     <Tab.Pane eventKey="npcspells">
                       <Fields
