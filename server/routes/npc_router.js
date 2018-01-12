@@ -101,7 +101,7 @@ npc_router.get("/:npcID", async (req, res, next) => {
     "type": await npc.select([], { id: req.params.npcID }),
     "spells": await npc.getSpells(req.params.npcID),
     "effects": await npc.getEffects(req.params.npcID),
-    "loot": await npc.getLootTableTree(req.params.npcID),
+    "loot": await npc.getLoot(req.params.npcID),
     "merchant": await npc.getMerchantTable(req.params.npcID),
     "faction": await npc.getFactions(req.params.npcID),
     "emotes": await npc.getEmotes(req.params.npcID),

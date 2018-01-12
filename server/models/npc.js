@@ -170,7 +170,7 @@ module.exports = {
     return effects[0];
   },
   
-  getLootTableTree: async (npcID) => {
+  getLoot: async (npcID) => {
     let queryStr = `
     SELECT npc_types.loottable_id AS 'id', loottable.name AS 'name', loottable_entries.lootdrop_id AS 'lootdrops:id',
     lootdrop.name AS 'lootdrops:name', lootdrop_entries.item_id AS 'lootdrops:items:id', items.Name AS 'lootdrops:items:name'

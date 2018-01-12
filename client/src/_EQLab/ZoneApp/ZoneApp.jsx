@@ -1,18 +1,19 @@
-import React from 'react'
-import { Row, Col, Panel, Tab, Nav, NavItem } from 'react-bootstrap'
-import Select from 'react-select'
-// import { Redirect, Route, Switch } from 'react-router-dom'
-// import { LinkContainer } from 'react-router-bootstrap'
-import api from '../../api.js'
-import { socketConnect } from 'socket.io-react'
-import { connect } from 'react-redux'
+import React from 'react';
+import { Row, Col, Panel, Tab, Nav, NavItem } from 'react-bootstrap';
+import Select from 'react-select';
+// import { Redirect, Route, Switch } from 'react-router-dom';
+// import { LinkContainer } from 'react-router-bootstrap';
+import api from '../../api.js';
+import { socketConnect } from 'socket.io-react';
+import { connect } from 'react-redux';
 import {
   SUBAPP_UNLOAD,
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_POST_SPAWN2
-} from '../../constants/actionTypes'
-import Spawns from './Spawns/Spawns.jsx'
-// import Loot from './Loot/Loot.jsx'
+} from '../../constants/actionTypes';
+import Spawns from './Spawns/Spawns.jsx';
+// import Loot from './Loot/Loot.jsx';
+
 
 const mapStateToProps = state => ({
   zone: state.zoneApp.zone

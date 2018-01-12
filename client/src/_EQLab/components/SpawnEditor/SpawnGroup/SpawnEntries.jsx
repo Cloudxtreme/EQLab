@@ -1,8 +1,8 @@
-import React from 'react'
-import { Row, Col, Button, Well, Table } from 'react-bootstrap'
-import FontAwesome from 'react-fontawesome'
-import { Field, Fields } from 'redux-form'
-import SpawnEntriesHeader from './SpawnEntriesHeader.jsx'
+import React from 'react';
+import { Row, Col, Button, Well, Table } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
+import { Field, Fields } from 'redux-form';
+import SpawnEntriesHeader from './SpawnEntriesHeader.jsx';
 
 class SpawnEntries extends React.Component {
   constructor(props) {

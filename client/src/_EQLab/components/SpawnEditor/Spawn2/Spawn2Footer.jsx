@@ -1,9 +1,9 @@
-import React from 'react'
-import { Row, Col, Button, FormGroup } from 'react-bootstrap'
-import FontAwesome from 'react-fontawesome'
-import api from '../../../../api.js'
-import { debounce } from 'lodash'
-import Select from 'react-select'
+import React from 'react';
+import { Row, Col, Button, FormGroup } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
+import api from '../../../../api.js';
+import { debounce } from 'lodash';
+import Select from 'react-select';
 
 
 class Spawn2Footer extends React.Component {
@@ -92,7 +92,7 @@ class Spawn2Footer extends React.Component {
                   <FontAwesome name="plus"/>&nbsp;New Spawngroup
                 </Button>
               : <Button bsStyle="danger" bsSize="xs"   style={{ marginTop: 20 }} onClick={this.props.clearSpawngroup}>
-                  <FontAwesome name="chain-broken"/>&nbsp;Clear
+                  <FontAwesome name="chain-broken"/>&nbsp;Unlink
                 </Button>
           }
         </Col>

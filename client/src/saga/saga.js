@@ -162,8 +162,6 @@ function* deleteSpawnentry(action) {
 *  --------------------NPC EDITOR
 */
 
-
-
 function* updateNPC(action) {
   yield call(api.npc.putNPC, action.npcID, action.values);
   yield call(refreshNPCData, action.npcID);

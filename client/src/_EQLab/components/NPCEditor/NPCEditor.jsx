@@ -145,7 +145,10 @@ class NPCEditor extends React.Component {
                       PASSIVES
                     </Tab.Pane>
                     <Tab.Pane eventKey="npcloot">
-                      LOOT
+                      <Field 
+                        component={NPCLoot} 
+                        name="type.loottable_id"
+                      />
                     </Tab.Pane>
                     <Tab.Pane eventKey="npcmerchant">
                       MERCHANT

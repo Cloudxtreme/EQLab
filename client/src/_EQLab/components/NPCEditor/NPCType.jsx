@@ -1,9 +1,9 @@
-import React from 'react'
-import { Row, Col } from 'react-bootstrap'
-import { Field } from 'redux-form'
-import Input from '../form/Input.jsx'
-import Checkbox from '../form/Checkbox.jsx'
-import Select from '../form/Select.jsx'
+import React from 'react';
+import { Row, Col } from 'react-bootstrap';
+import { Field } from 'redux-form';
+import Input from '../form/Input.jsx';
+import Checkbox from '../form/Checkbox.jsx';
+import Select from '../form/Select.jsx';
 import {
   GENDERS,
   NPC_CLASSES,
@@ -11,7 +11,7 @@ import {
   BODY_TYPES,
   MELEE_ATTACK_SKILLS,
   RANGE_ATTACK_SKILLS
-} from '../form/constants/constants.js'
+} from '../form/constants/constants.js';
 
 
 class NPCType extends React.PureComponent {

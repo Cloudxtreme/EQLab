@@ -1,11 +1,11 @@
-import React from 'react'
-import { Row, Col, Panel } from 'react-bootstrap'
-import { connect } from 'react-redux'
-import { reduxForm, Field } from 'redux-form'
-import Input from '../../form/Input.jsx'
-import Checkbox from '../../form/Checkbox.jsx'
-import Spawn2Header from './Spawn2Header.jsx'
-import Spawn2Footer from './Spawn2Footer.jsx'
+import React from 'react';
+import { Row, Col, Panel } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
+import Input from '../../form/Input.jsx';
+import Checkbox from '../../form/Checkbox.jsx';
+import Spawn2Header from './Spawn2Header.jsx';
+import Spawn2Footer from './Spawn2Footer.jsx';
 
 const mapStateToProps = state => ({
   initialValues: state.global.spawn.spawn2
