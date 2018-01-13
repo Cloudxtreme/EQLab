@@ -1,6 +1,9 @@
 import {
   ZONEAPP_RESET,
+  ZONEAPP_SET_ZONELIST,
+  ZONEAPP_SELECT_PANE,
   ZONEAPP_SET_ZONE,
+  ZONEAPP_SET_SPAWNS_MODE,
   ZONEAPP_BUILD_SPAWNTREE,
   ZONEAPP_CLEAR_SPAWNTREE,
   ZONEAPP_ADD_SPAWN2,
@@ -11,7 +14,11 @@ import {
 function get_INITIAL_STATE() {
   return { 
     zone: '',
-    spawnTree: []
+    zoneList: [],
+    pane: 'spawns',
+    spawnTree: [],
+    spawnsMode: '',
+    spawnsID: null
   }
 }
 
@@ -26,10 +33,26 @@ export default (state = get_INITIAL_STATE(), action) => {
   switch (action.type) {
     case ZONEAPP_RESET:
       return get_INITIAL_STATE();
+    case ZONEAPP_SET_ZONELIST:
+      return {
+        ...state,
+        zoneList: action.zoneList ? action.zoneList : []
+      }
     case ZONEAPP_SET_ZONE:
       return {
         ...state,
         zone: action.zone ? action.zone : ''
+      }
+    case ZONEAPP_SELECT_PANE:
+      return {
+        ...state,
+        pane: action.pane ? action.pane : 'spawns'
+      }
+    case ZONEAPP_SET_SPAWNS_MODE:
+      return {
+        ...state,
+        spawnsMode: action.mode ? action.mode : '',
+        spawnsID: action.spawnsID ? action.spawnsID : null
       }
     case ZONEAPP_BUILD_SPAWNTREE:
       return {

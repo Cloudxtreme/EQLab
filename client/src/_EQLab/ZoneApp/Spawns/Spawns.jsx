@@ -1,63 +1,59 @@
-import React from 'react'
-import { Row, Col, Button } from 'react-bootstrap'
-import { connect } from 'react-redux'
-import api from '../../../api.js'
-import ReactTable from 'react-table'
-import 'react-table/react-table.css'
-import FontAwesome from 'react-fontawesome'
-import SpawnEditor from '../../components/SpawnEditor/SpawnEditor.jsx'
-import NPCEditor from '../../components/NPCEditor/NPCEditor.jsx'
+import React from 'react';
+import { Row, Col, Button } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
+import FontAwesome from 'react-fontawesome';
+import {
+  ZONEAPP_SET_SPAWNS_MODE, 
+  ZONEAPP_POST_SPAWN2
+} from '../../../constants/actionTypes';
+import SpawnEditor from '../../components/SpawnEditor/SpawnEditor.jsx';
+import NPCEditor from '../../components/NPCEditor/NPCEditor.jsx';
 
 const mapStateToProps = state => ({
-  zone: state.zoneApp.zone,
-  spawnTree: state.zoneApp.spawnTree
+  mode: state.ZoneApp.spawnsMode,
+  id: state.ZoneApp.spawnsID
+});
+
+const mapDispatchToProps = dispatch => ({
+  setMode: (mode, spawnsID) =>
+    dispatch({ type: ZONEAPP_SET_SPAWNS_MODE, mode, spawnsID }),
+  postSpawn2: (zone) =>
+    dispatch({ type: ZONEAPP_POST_SPAWN2, zone })
 });
 
 class Spawns extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mode: '',
-      id: null
-    }
-
-    this.newSpawn2 = async () => {
+   
+    this.newSpawn2 = () => {
       if (this.props.zone) {
-        api.zone.postSpawn2(this.props.zone);
+        this.props.postSpawn2(this.props.zone);
       }
     }
 
     this.handleSpawn = (e) => {
-      let id = e.target.id
+      let id = e.target.id;
 
-      if (this.state.mode !== 'spawn') {
-        this.setState({ mode: 'spawn', id })
-      } else if (id !== this.state.id) {
-        this.setState({ id })
+      if (this.props.mode !== 'spawn' || (this.props.mode === 'spawn' && id !== this.props.id)) {
+        this.props.setMode('spawn', id);
       }
     }
 
     this.handleNPC = (e) => {
-      let id = e.target.id
+      let id = e.target.id;
 
-      if (this.state.mode !== 'npc') {
-        this.setState({ mode: 'npc', id })
-      } else if (id !== this.state.id) {
-        this.setState({ id })        
+      if (this.props.mode !== 'npc' || (this.props.mode === 'npc' && id !== this.props.id)) {
+        this.props.setMode('npc', id);
       }
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.zone && nextProps.zone !== this.props.zone) {
-      this.setState({ mode: '', id: null });
-    } else if (!nextProps.zone && nextProps.zone !== this.props.zone) {
-      this.setState({ mode: '', id: null })
+    if ((nextProps.zone && nextProps.zone !== this.props.zone) || (!nextProps.zone && nextProps.zone !== this.props.zone)) {
+      this.props.setMode('', null);
     }
-  }
-
-  componentDidUpdate() {
-    console.log('spawns update')
   }
 
   render() {
@@ -157,10 +153,10 @@ class Spawns extends React.Component {
           </Col>
           <Col md={17}>
             {
-              this.state.mode
-                ? this.state.mode !== 'spawn'
-                    ? <NPCEditor npcID={this.state.id}/>
-                    : <SpawnEditor zone={this.props.zone} spawn2ID={this.state.id}/>
+              this.props.mode
+                ? this.props.mode !== 'spawn'
+                    ? <NPCEditor npcID={this.props.id}/>
+                    : <SpawnEditor zone={this.props.zone} spawn2ID={this.props.id}/>
                 : null
             }
           </Col>
@@ -170,4 +166,4 @@ class Spawns extends React.Component {
   }
 }
 
-export default connect(mapStateToProps)(Spawns);
+export default connect(mapStateToProps, mapDispatchToProps)(Spawns);

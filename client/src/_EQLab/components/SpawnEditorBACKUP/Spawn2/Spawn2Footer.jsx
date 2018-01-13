@@ -1,12 +1,40 @@
 import React from 'react';
 import { Row, Col, Button, FormGroup } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
+import api from '../../../../api.js';
+import { debounce } from 'lodash';
 import Select from 'react-select';
 
 
-class Spawn2Footer extends React.PureComponent {
+class Spawn2Footer extends React.Component {
   constructor(props) {
     super(props);
+
+    this.searchSpawngroups = debounce((input, callback) => {
+      let options;
+      if (this.props.input.value === 0 && input === '') {
+        options = [];
+        callback(null, { options })
+      } else if (this.props.input.value !== 0 && input === '') {
+        options = [{ id: this.props.input.value, label: `${this.props.spawngroupName} (${this.props.input.value})` }];
+        callback(null, { options })
+      } else if (input.length > 2 || input === '') {
+        api.zone.searchSpawngroups(input ? input : this.props.input.value)
+          .then(results => {
+            options = results.map(spawngroup => {
+              return {
+                id: spawngroup.id,
+                label: `${spawngroup.name} (${spawngroup.id})`
+              }
+            });
+            callback(null, { options })
+          })
+          .catch(error => callback(error, null));
+      } else {
+        options = [];
+        callback(null, { options })
+      }
+    }, 400);
 
     this.selectSpawngroup = spawngroup => {
       if (spawngroup) {
@@ -15,12 +43,16 @@ class Spawn2Footer extends React.PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    this.refs.selectspawngroup.loadOptions("")
+  }
+
   render() {
     return (
       <Row id="Spawn2Footer">
         <Col md={10}>
           <FormGroup> 
-            <Select
+            <Select.Async
               name="selectspawngroup"
               ref="selectspawngroup"
               valueKey="id"
@@ -31,10 +63,11 @@ class Spawn2Footer extends React.PureComponent {
               onCloseResetsInput={false}
               backspaceRemoves={false}
               deleteRemoves={false}
+              cache={false}
+              autoload={true}
               value={this.props.input.value}
               resetValue={this.props.input.value}
-              options={[]}
-              onInputChange={this.props.searchSpawngroups}
+              loadOptions={this.searchSpawngroups}
               onChange={this.selectSpawngroup}
               className="input-sm"
             />

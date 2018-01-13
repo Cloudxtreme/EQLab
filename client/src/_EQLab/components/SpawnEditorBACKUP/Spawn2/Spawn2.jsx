@@ -8,7 +8,7 @@ import Spawn2Header from './Spawn2Header.jsx';
 import Spawn2Footer from './Spawn2Footer.jsx';
 
 const mapStateToProps = state => ({
-  initialValues: state.SpawnEditor.spawn.spawn2
+  initialValues: state.global.spawn.spawn2
 });
 
 const Spawn2Options = {
@@ -38,7 +38,6 @@ class Spawn2 extends React.PureComponent {
               component={Spawn2Footer} 
               spawngroupName={this.props.spawngroupName}
               newSpawngroup={this.props.newSpawngroup}
-              searchSpawngroups={this.props.searchSpawngroups}
               changeSpawngroup={this.props.changeSpawngroup}
               clearSpawngroup={this.props.clearSpawngroup}
             />

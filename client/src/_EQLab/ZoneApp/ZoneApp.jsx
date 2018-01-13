@@ -3,38 +3,42 @@ import { Row, Col, Panel, Tab, Nav, NavItem } from 'react-bootstrap';
 import Select from 'react-select';
 // import { Redirect, Route, Switch } from 'react-router-dom';
 // import { LinkContainer } from 'react-router-bootstrap';
-import api from '../../api.js';
 import { socketConnect } from 'socket.io-react';
 import { connect } from 'react-redux';
 import {
   SUBAPP_UNLOAD,
+  ZONEAPP_FETCH_ZONELIST,
   ZONEAPP_SELECT_ZONE,
-  ZONEAPP_POST_SPAWN2
+  ZONEAPP_SELECT_PANE,
+  ZONEAPP_ADD_SPAWN2
 } from '../../constants/actionTypes';
 import Spawns from './Spawns/Spawns.jsx';
 // import Loot from './Loot/Loot.jsx';
 
 
 const mapStateToProps = state => ({
-  zone: state.zoneApp.zone
+  zone: state.ZoneApp.zone,
+  zoneList: state.ZoneApp.zoneList,
+  pane: state.ZoneApp.pane,
+  spawnTree: state.ZoneApp.spawnTree
 });
 
 const mapDispatchToProps = dispatch => ({
   onUnload: () =>
     dispatch({ type: SUBAPP_UNLOAD }),
+  fetchZoneList: () =>
+    dispatch({ type: ZONEAPP_FETCH_ZONELIST }),
   selectZone: zone =>
     dispatch({ type: ZONEAPP_SELECT_ZONE, zone }),
+  selectPane: pane =>
+    dispatch({ type: ZONEAPP_SELECT_PANE, pane }),
   addSpawn2ToState: data =>
-    dispatch({ type: ZONEAPP_POST_SPAWN2, data })
+    dispatch({ type: ZONEAPP_ADD_SPAWN2, data })
 });
 
 class ZoneApp extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      zoneList: [],
-      pane: 'spawns'
-    }
 
     this.props.socket.on('spawn2insert', data => {
       if (data.zone === this.props.zone) {
@@ -55,16 +59,20 @@ class ZoneApp extends React.Component {
     }
 
     this.onSelectPane = pane => {
-      this.setState({ pane: pane ? pane : 'spawns' })
+      // this.setState({ pane: pane ? pane : 'spawns' })
+      this.props.selectPane(pane);
     }
   }
 
-  async componentWillMount() {
-    let zoneList = await api.zone.getZoneList();
-    this.setState({ zoneList })
-  }
+  // componentWillMount() {
+  //   // let zoneList = await api.zone.getZoneList();
+  //   // this.setState({ zoneList })
+  //   console.log('test2')
+  //   this.props.fetchZoneList();
+  // }
 
   componentDidMount() {
+    this.props.fetchZoneList();
     this.props.socket.emit('ZoneApp Loaded');
   }
 
@@ -75,8 +83,8 @@ class ZoneApp extends React.Component {
 
   render() {
     let options;
-    this.state.zoneList
-      ? options = this.state.zoneList.map(zone => {
+    this.props.zoneList.length
+      ? options = this.props.zoneList.map(zone => {
           return {
             short_name: zone.short_name,
             label: `${zone.short_name} - ${zone.long_name} (${zone.zoneidnumber})`
@@ -86,7 +94,7 @@ class ZoneApp extends React.Component {
 
     return (
       <div id="Zone">
-        <Tab.Container id="zone-panel" activeKey={this.state.pane} onSelect={this.onSelectPane}>
+        <Tab.Container id="zone-panel" activeKey={this.props.pane} onSelect={this.onSelectPane}>
           <Panel header={
             <Row id="zone-panel-header">
               <Col md={8}>
@@ -118,7 +126,10 @@ class ZoneApp extends React.Component {
           }>
             <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
               <Tab.Pane eventKey="spawns">
-                <Spawns />
+                <Spawns 
+                  zone={this.props.zone}
+                  spawnTree={this.props.spawnTree}
+                />
               </Tab.Pane>
               <Tab.Pane eventKey="loot">
                 {/* <Loot /> */}

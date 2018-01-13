@@ -6,7 +6,7 @@ import api from '../../../api.js';
 import {
   GLOBAL_LOAD_NPC,
   GLOBAL_UNLOAD_NPC,
-  GLOBAL_UPDATE_NPC
+  NPCEDITOR_UPDATE_NPC
 } from '../../../constants/actionTypes';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
@@ -27,7 +27,7 @@ const mapDispatchToProps = dispatch => ({
   unload: payload =>
     dispatch({ type: GLOBAL_UNLOAD_NPC }),
   updateNPC: (npcID, values) => 
-    dispatch({ type: GLOBAL_UPDATE_NPC, npcID, values})
+    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values})
 });
 
 const NPCEditorOptions = {

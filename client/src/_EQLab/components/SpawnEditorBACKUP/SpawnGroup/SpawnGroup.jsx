@@ -7,7 +7,7 @@ import SpawnGroupHeader from './SpawnGroupHeader.jsx'
 import SpawnEntries from './SpawnEntries.jsx'
 
 const mapStateToProps = state => ({
-  initialValues: state.SpawnEditor.spawn.spawngroup
+  initialValues: state.global.spawn.spawngroup
 });
 
 const SpawnGroupOptions = {

@@ -1,4 +1,4 @@
-import superagent from 'superagent'
+import superagent from 'superagent';
 
 
 const API_ROOT = '/eqlab/api';
@@ -40,8 +40,8 @@ const zone = {
 
   getSpawnData: spawn2ID => 
     requests.get(`/zone/spawn/${spawn2ID}`),
-  postSpawn2: zoneName => 
-    requests.post(`/zone/spawn/spawn2/${zoneName}`),
+  postSpawn2: zone => 
+    requests.post(`/zone/spawn/spawn2/${zone}`),
   putSpawn2: (id, body) => 
     requests.put(`/zone/spawn/spawn2/${id}`, body),
   deleteSpawn2: id => 

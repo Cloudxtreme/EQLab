@@ -1,62 +1,57 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { Row, Col } from 'react-bootstrap';
-import { confirm } from '../form/confirm/confirm.js';
-import { SubmissionError } from 'redux-form';
-import diff from 'object-diff';
-import { omit, pick, size, isEmpty } from 'lodash';
-import api from '../../../api.js';
-import { debounce } from 'lodash';
+import React from 'react'
+import { connect } from 'react-redux'
+import { Row, Col } from 'react-bootstrap'
+import { confirm } from '../form/confirm/confirm.js'
+import { SubmissionError } from 'redux-form'
+import diff from 'object-diff'
+import { omit, pick, size } from 'lodash'
+import api from '../../../api.js'
 import {
-  SPAWNEDITOR_FETCH_SPAWN,
-  SPAWNEDITOR_UNLOAD_SPAWN,
-  SPAWNEDITOR_UPDATE_SPAWN2,
-  SPAWNEDITOR_DELETE_SPAWN2,
-  SPAWNEDITOR_CHANGE_SPAWNGROUP,
-  SPAWNEDITOR_POST_SPAWNGROUP,
-  SPAWNEDITOR_UPDATE_SPAWNGROUP,
-  SPAWNEDITOR_DELETE_SPAWNGROUP,
-  SPAWNEDITOR_POST_SPAWNENTRY,
-  SPAWNEDITOR_DELETE_SPAWNENTRY
-} from '../../../constants/actionTypes';
-import Spawn2 from './Spawn2/Spawn2.jsx';
-import SpawnGroup from './SpawnGroup/SpawnGroup.jsx';
+  GLOBAL_LOAD_SPAWN,
+  GLOBAL_UNLOAD_SPAWN,
+  GLOBAL_UPDATE_SPAWN2,
+  GLOBAL_DELETE_SPAWN2,
+  GLOBAL_CHANGE_SPAWNGROUP,
+  GLOBAL_POST_SPAWNGROUP,
+  GLOBAL_UPDATE_SPAWNGROUP,
+  GLOBAL_DELETE_SPAWNGROUP,
+  GLOBAL_POST_SPAWNENTRY,
+  GLOBAL_DELETE_SPAWNENTRY
+} from '../../../constants/actionTypes'
+import Spawn2 from './Spawn2/Spawn2.jsx'
+import SpawnGroup from './SpawnGroup/SpawnGroup.jsx'
 
 
 const mapStateToProps = state => ({
-  isLoaded: state.SpawnEditor.isLoaded,
-  spawn: state.SpawnEditor.spawn
+  spawn: state.global.spawn
 });
 
 const mapDispatchToProps = dispatch => ({
-  load: spawn2ID =>
-    dispatch({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID }),
+  load: payload =>
+    dispatch({ type: GLOBAL_LOAD_SPAWN, payload }),
   unload: () =>
-    dispatch({ type: SPAWNEDITOR_UNLOAD_SPAWN }),
+    dispatch({ type: GLOBAL_UNLOAD_SPAWN }),
   updateSpawn2: (spawn2ID, delta, zone) => 
-    dispatch({ type: SPAWNEDITOR_UPDATE_SPAWN2, spawn2ID, delta }),
+    dispatch({ type: GLOBAL_UPDATE_SPAWN2, spawn2ID, delta }),
   deleteSpawn2: (spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWN2, spawn2ID, zone }),
+    dispatch({ type: GLOBAL_DELETE_SPAWN2, spawn2ID, zone }),
   changeSpawngroup: (spawn2ID, spawngroupID, zone) => 
-    dispatch({ type: SPAWNEDITOR_CHANGE_SPAWNGROUP, spawn2ID, spawngroupID, zone }),
+    dispatch({ type: GLOBAL_CHANGE_SPAWNGROUP, spawn2ID, spawngroupID, zone }),
   newSpawngroup: (spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_POST_SPAWNGROUP, spawn2ID, zone }),
+    dispatch({ type: GLOBAL_POST_SPAWNGROUP, spawn2ID, zone }),
   updateSpawngroup: (id, delta, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_UPDATE_SPAWNGROUP, id, delta, spawn2ID, zone }),
+    dispatch({ type: GLOBAL_UPDATE_SPAWNGROUP, id, delta, spawn2ID, zone }),
   deleteSpawngroup: (id, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNGROUP, id, spawn2ID, zone }),
+    dispatch({ type: GLOBAL_DELETE_SPAWNGROUP, id, spawn2ID, zone }),
   newSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_POST_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone}),
+    dispatch({ type: GLOBAL_POST_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone}),
   deleteSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone})
+    dispatch({ type: GLOBAL_DELETE_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone})
 });
 
 class SpawnEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      spawngroupSearchTerms: ''
-    }
 
     this.submitSpawn2Form = (values, dispatch, props) => {
       return new Promise((resolve, reject) => {
@@ -137,38 +132,6 @@ class SpawnEditor extends React.Component {
       }, () => {});
     }
 
-    this.fetchSpawngroupOptions = () => {
-      // let spawngroupID = this.props.spawn.spawn2.spawngroupID;
-      // let spawngroupName = this.props.spawn.spawngroup.name;
-      // let input = this.state.spawngroupSearchTerms;
-      // let options;
-
-      // if (spawngroupID === 0 && input === '') {
-      //   return [];
-      // } else if (spawngroupID !== 0 && input === '') {
-      //   console.log(spawngroupID)
-      //   return [{ id: spawngroupID, label: `${spawngroupName} (${spawngroupID})` }];
-      // } else if (input.length > 2 || input === '') {
-      //   api.zone.searchSpawngroups(input ? input : spawngroupID)
-      //     .then(results => {
-      //       options = results.map(spawngroup => {
-      //         return {
-      //           id: spawngroup.id,
-      //           label: `${spawngroup.name} (${spawngroup.id})`
-      //         }
-      //       });
-      //       return options;
-      //     })
-      //     .catch(error => null);
-      // } else {
-      //   return [];
-      // }
-    }
-
-    this.searchSpawngroups = debounce((input) => {
-      this.setState({ spawngroupSearchTerms: input });
-    }, 400);
-
     this.changeSpawngroup = (spawngroupID) => {
       this.props.changeSpawngroup(
         this.props.spawn.spawn2.id, 
@@ -218,13 +181,13 @@ class SpawnEditor extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.isLoaded && (nextProps.spawn2ID !== this.props.spawn2ID)) {
-      this.props.load(nextProps.spawn2ID);
+    if (nextProps.spawn2ID !== this.props.spawn2ID) {
+      this.props.load(api.zone.getSpawnData(nextProps.spawn2ID));
     }
   }
 
   componentDidMount() {
-    this.props.load(this.props.spawn2ID);
+    this.props.load(api.zone.getSpawnData(this.props.spawn2ID));
   }
 
   componentWillUnmount() {
@@ -232,49 +195,38 @@ class SpawnEditor extends React.Component {
   }
 
   render() {
-    if (!this.props.isLoaded) {
-      return null;
-    } else {
-
-      console.log(this.props)
-      const spawngroupOptions = this.fetchSpawngroupOptions();
-
-      
-      return (
-        <div id="SpawnEditor">
-          <Row>
-            <Col md={24}>
-              {
-                this.props.spawn.spawn2
-                  ? <Spawn2
-                      spawngroupName={this.props.spawn.spawngroup ? this.props.spawn.spawngroup.name : ''}
-                      deleteSpawn2={this.deleteSpawn2}
-                      searchSpawngroups={this.searchSpawngroups}
-                      spawngroupOptions={spawngroupOptions}
-                      changeSpawngroup={this.changeSpawngroup}
-                      clearSpawngroup={this.clearSpawngroup}
-                      newSpawngroup={this.newSpawngroup} 
-                      onSubmit={this.submitSpawn2Form} />
-                  : null
-              } 
-            </Col>
-          </Row>
-          <Row>
-            <Col md={24}>
-              {
-                this.props.spawn.spawngroup
-                  ? <SpawnGroup
-                      deleteSpawngroup={this.deleteSpawngroup} 
-                      newSpawnentry={this.newSpawnentry} 
-                      deleteSpawnentry={this.deleteSpawnentry}
-                      onSubmit={this.submitSpawngroupForm} />
-                  : null
-              }
-            </Col>
-          </Row>
-        </div>
-      );
-    }
+    return (
+      <div id="SpawnEditor">
+        <Row>
+          <Col md={24}>
+            {
+              this.props.spawn.spawn2
+                ? <Spawn2
+                    spawngroupName={this.props.spawn.spawngroup ? this.props.spawn.spawngroup.name : ''}
+                    deleteSpawn2={this.deleteSpawn2}
+                    changeSpawngroup={this.changeSpawngroup}
+                    clearSpawngroup={this.clearSpawngroup}
+                    newSpawngroup={this.newSpawngroup} 
+                    onSubmit={this.submitSpawn2Form} />
+                : null
+            } 
+          </Col>
+        </Row>
+        <Row>
+          <Col md={24}>
+            {
+              this.props.spawn.spawngroup
+                ? <SpawnGroup
+                    deleteSpawngroup={this.deleteSpawngroup} 
+                    newSpawnentry={this.newSpawnentry} 
+                    deleteSpawnentry={this.deleteSpawnentry}
+                    onSubmit={this.submitSpawngroupForm} />
+                : null
+            }
+          </Col>
+        </Row>
+      </div>
+    );
   }
 }
 

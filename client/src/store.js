@@ -3,7 +3,7 @@ import createSagaMiddleware from 'redux-saga';
 import promiseMiddleware from 'redux-promise';
 import localStorageMiddleware from './middleware';
 import reducer from './reducers/reducer.js';
-import rootSaga from './saga/saga.js';
+import rootSaga from './saga/rootSaga.js';
 
 // const getMiddleware = () => {
 //   if (process.env.NODE_ENV === 'production') {
