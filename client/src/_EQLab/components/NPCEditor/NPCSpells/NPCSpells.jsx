@@ -52,12 +52,8 @@ class NPCSpells extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.refs.selectspellset.loadOptions("")
-  }
-
   componentDidUpdate() {
-    console.log(this.props)
+    this.refs.selectspellset.loadOptions("")
   }
 
   render() {

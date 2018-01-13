@@ -17,7 +17,8 @@ import NPCSpells from './NPCSpells/NPCSpells.jsx';
 
 const mapStateToProps = state => ({
   initialValues: state.global.npc,
-  spells: state.global.npc.spells
+  spells: state.global.npc.spells,
+  loot: state.global.npc.loot
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -44,6 +45,10 @@ class NPCEditor extends React.Component {
 
     this.changeSpellSet = (spellsetID) => {
       this.props.updateNPC(this.props.npcID, {npc_spells_id: spellsetID});
+    }
+
+    this.changeLootTable = (loottableID) => {
+      this.props.updateNPC(this.props.npcID, {loottable_id: loottableID});
     }
   }
 
@@ -145,10 +150,12 @@ class NPCEditor extends React.Component {
                       PASSIVES
                     </Tab.Pane>
                     <Tab.Pane eventKey="npcloot">
-                      <Field 
+                      {/* <Field 
                         component={NPCLoot} 
                         name="type.loottable_id"
-                      />
+                        loot={this.props.loot}
+                        changeLootTable={this.changeLootTable}
+                      /> */}
                     </Tab.Pane>
                     <Tab.Pane eventKey="npcmerchant">
                       MERCHANT
