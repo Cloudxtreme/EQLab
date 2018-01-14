@@ -8,7 +8,7 @@ import {
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_SET_SPELLSET_OPTIONS,
-  NPCEDITOR_UPDATE_NPC
+  NPCEDITOR_PUT_NPC
 } from '../../../constants/actionTypes';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
@@ -31,8 +31,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_UNLOAD_NPC }),
   setSpellSetOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_SPELLSET_OPTIONS, options }),
-  updateNPC: (npcID, values) => 
-    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values})
+  putNPC: (npcID, values, zone) => 
+    dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone})
 });
 
 const NPCEditorOptions = {
@@ -68,12 +68,16 @@ class NPCEditor extends React.Component {
 
     this.changeSpellSet = (spellset) => {
       if (spellset) {
-        this.props.updateNPC(this.props.npcID, {npc_spells_id: spellset.id});
+        this.props.putNPC(
+          this.props.npcID, 
+          {npc_spells_id: spellset.id},
+          this.props.zone
+        );
       }
     }
 
     this.changeLootTable = (loottableID) => {
-      this.props.updateNPC(this.props.npcID, {loottable_id: loottableID});
+      this.props.putNPC(this.props.npcID, {loottable_id: loottableID});
     }
   }
 

@@ -95,7 +95,10 @@ class Spawns extends React.Component {
         width: 50,
         sortable: true, 
         resizable: false, 
-        filterable: true
+        filterable: true,
+        Cell: row => {
+          console.log(row)
+        }
       }, {
         Header: 'spawngroup',
         accessor: 'spawngroup',
@@ -155,7 +158,7 @@ class Spawns extends React.Component {
             {
               this.props.mode
                 ? this.props.mode !== 'spawn'
-                    ? <NPCEditor npcID={this.props.id}/>
+                    ? <NPCEditor zone={this.props.zone} npcID={this.props.id}/>
                     : <SpawnEditor zone={this.props.zone} spawn2ID={this.props.id}/>
                 : null
             }
