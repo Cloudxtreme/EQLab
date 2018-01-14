@@ -2,8 +2,7 @@ import React from 'react';
 import { Row, Col, PanelGroup, Panel, Button } from 'react-bootstrap';
 import { Field } from 'redux-form';
 import FontAwesome from 'react-fontawesome';
-import api from '../../../../api.js';
-import { debounce } from 'lodash';
+import { connect } from 'react-redux';
 import Select from 'react-select';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
@@ -11,37 +10,15 @@ import Input from '../../form/Input.jsx';
 import NPCSpellsTableHeader from './NPCSpellsTableHeader.jsx';
 
 
+const mapStateToProps = state => ({
+  options: state.NPCEditor.spellsetOptions
+});
+
 class NPCSpells extends React.Component {
   constructor(props) {
     super(props);
 
-    this.searchSpellSets = debounce((input, callback) => {
-      let options;
-      if (this.props.type.npc_spells_id.input.value === 0 && input === '') {
-        options = [];
-        callback(null, { options })
-      } else if (this.props.spells && this.props.type.npc_spells_id.input.value !== 0 && input === '') {
-        options = [{ id: this.props.type.npc_spells_id.input.value, label: `${this.props.spells.name} (${this.props.type.npc_spells_id.input.value})` }];
-        callback(null, { options })
-      } else if (input.length > 2 || input === '') {
-        api.npc.searchSpellSets(input ? input : this.props.type.npc_spells_id.input.value)
-          .then(results => {
-            options = results.map(spellset => {
-              return {
-                id: spellset.id,
-                label: `${spellset.name} (${spellset.id})`
-              }
-            });
-            callback(null, { options })
-          })
-          .catch(error => callback(error, null));
-      } else {
-        options = [];
-        callback(null, { options })
-      }
-    }, 400);
-
-    this.selectSpellSet = spellset => {
+    this.changeSpellSet = spellset => {
       if (spellset) {
         this.props.changeSpellSet(spellset.id);
       }
@@ -50,10 +27,6 @@ class NPCSpells extends React.Component {
     this.clearSpellSet = () => {
       this.props.changeSpellSet(0);
     }
-  }
-
-  componentDidUpdate() {
-    this.refs.selectspellset.loadOptions("")
   }
 
   render() {
@@ -104,27 +77,24 @@ class NPCSpells extends React.Component {
       <div id="NPCSpells">
         <Row style={{ height: 50}}>
           <Col md={12}>
-          
-              <Select.Async
-                name="selectspellset"
-                ref="selectspellset"
-                valueKey="id"
-                placeholder="Search Spell Sets"
-                searchPromptText="Minimum of 3 characters to search"
-                clearable={false}
-                onBlurResetsInput={false}
-                onCloseResetsInput={false}
-                backspaceRemoves={false}
-                deleteRemoves={false}
-                cache={false}
-                autoload={true}
-                value={this.props.type.npc_spells_id.input.value}
-                resetValue={this.props.type.npc_spells_id.input.value}
-                loadOptions={this.searchSpellSets}
-                onChange={this.selectSpellSet}
-                className="input-sm"
-              />
-
+            <Select
+              name="selectspellset"
+              ref="selectspellset"
+              valueKey="id"
+              placeholder="Search Spell Sets"
+              searchPromptText="Minimum of 3 characters to search"
+              clearable={false}
+              onBlurResetsInput={false}
+              onCloseResetsInput={false}
+              backspaceRemoves={false}
+              deleteRemoves={false}
+              value={this.props.type.npc_spells_id.input.value}
+              resetValue={this.props.type.npc_spells_id.input.value}
+              options={this.props.options}
+              onInputChange={this.props.searchSpellSets}
+              onChange={this.props.changeSpellSet}
+              className="input-sm"
+            />
           </Col>
           <Col md={4}>
             { 
@@ -185,4 +155,4 @@ class NPCSpells extends React.Component {
   }
 }
 
-export default NPCSpells;
+export default connect(mapStateToProps)(NPCSpells);

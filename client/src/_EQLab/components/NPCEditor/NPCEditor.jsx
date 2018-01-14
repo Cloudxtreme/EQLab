@@ -3,9 +3,11 @@ import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { reduxForm, FormSection, Field, Fields } from 'redux-form';
 import api from '../../../api.js';
+import { debounce } from 'lodash';
 import {
-  GLOBAL_LOAD_NPC,
-  GLOBAL_UNLOAD_NPC,
+  NPCEDITOR_FETCH_NPC,
+  NPCEDITOR_UNLOAD_NPC,
+  NPCEDITOR_SET_SPELLSET_OPTIONS,
   NPCEDITOR_UPDATE_NPC
 } from '../../../constants/actionTypes';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
@@ -16,16 +18,19 @@ import NPCSpells from './NPCSpells/NPCSpells.jsx';
 
 
 const mapStateToProps = state => ({
-  initialValues: state.global.npc,
-  spells: state.global.npc.spells,
-  loot: state.global.npc.loot
+  isLoaded: state.NPCEditor.isLoaded,
+  initialValues: state.NPCEditor.npc,
+  spells: state.NPCEditor.npc.spells,
+  loot: state.NPCEditor.npc.loot
 });
 
 const mapDispatchToProps = dispatch => ({
-  load: payload =>
-    dispatch({ type: GLOBAL_LOAD_NPC, payload }),
-  unload: payload =>
-    dispatch({ type: GLOBAL_UNLOAD_NPC }),
+  load: npcID =>
+    dispatch({ type: NPCEDITOR_FETCH_NPC, npcID }),
+  unload: () =>
+    dispatch({ type: NPCEDITOR_UNLOAD_NPC }),
+  setSpellSetOptions: (options) => 
+    dispatch({ type: NPCEDITOR_SET_SPELLSET_OPTIONS, options }),
   updateNPC: (npcID, values) => 
     dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values})
 });
@@ -43,6 +48,24 @@ class NPCEditor extends React.Component {
       console.log('NPC Deleted');
     }
 
+    this.searchSpellSets = debounce((input) => {
+      let options;
+
+      if (input.length > 2) {
+        api.npc.searchSpellSets(input ? input : this.props.spells.id)
+          .then(results => {
+            options = results.map(spellset => {
+              return {
+                id: spellset.id,
+                label: `${spellset.name} (${spellset.id})`
+              }
+            });
+            this.props.setSpellSetOptions(options);
+          })
+          .catch(error => null);
+      }
+    }, 400);
+
     this.changeSpellSet = (spellsetID) => {
       this.props.updateNPC(this.props.npcID, {npc_spells_id: spellsetID});
     }
@@ -53,13 +76,13 @@ class NPCEditor extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.npcID !== this.props.npcID) {
-      this.props.load(api.npc.getNPCData(nextProps.npcID))
+    if (this.props.isLoaded && (nextProps.npcID !== this.props.npcID)) {
+      this.props.load(nextProps.npcID);
     }
   }
 
   componentDidMount() {
-    this.props.load(api.npc.getNPCData(this.props.npcID))
+    this.props.load(this.props.npcID)
   }
 
   componentWillUnmount() {
@@ -67,107 +90,112 @@ class NPCEditor extends React.Component {
   }
 
   render() {
-    return (
-      <form id="NPCEditor" spellCheck={false}>
-        <Panel
-          header={
-            <Field
-              name="type.id"
-              component={NPCEditorHeader}
-              formPristine={this.props.pristine}
-              formSubmitting={this.props.submitting}
-              deleteNPC={this.deleteNPC}
-              reset={this.props.reset}
-              handleSubmit={this.props.handleSubmit}
-            />
-        }>
-          <Row>
-            <Col md={14}>
-              <Row>
-                <Panel style={{ maxHeight: 450, overflowY: "scroll"}}>
+    if (!this.props.isLoaded) {
+      return null;
+    } else {
+      return (
+        <form id="NPCEditor" spellCheck={false}>
+          <Panel
+            header={
+              <Field
+                name="type.id"
+                component={NPCEditorHeader}
+                formPristine={this.props.pristine}
+                formSubmitting={this.props.submitting}
+                deleteNPC={this.deleteNPC}
+                reset={this.props.reset}
+                handleSubmit={this.props.handleSubmit}
+              />
+          }>
+            <Row>
+              <Col md={14}>
+                <Row>
+                  <Panel style={{ maxHeight: 450, overflowY: "scroll"}}>
+                    <Col md={24}>
+                      <FormSection name="type">
+                        <NPCType />
+                      </FormSection>
+                    </Col>
+                  </Panel>
+                </Row>
+                <Row>
                   <Col md={24}>
-                    <FormSection name="type">
-                      <NPCType />
-                    </FormSection>
+                    <Tab.Container id="npc-panel" defaultActiveKey="specialabilities">
+                      <Panel header={
+                        <Nav bsStyle="tabs">
+                          <NavItem eventKey="specialabilities">Special Abilities</NavItem>
+                          <NavItem eventKey="faction">Faction</NavItem>
+                          <NavItem eventKey="emote">Emote</NavItem>
+                          <NavItem eventKey="tint">Tint</NavItem>
+                        </Nav> 
+                      }>
+                        <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
+                          <Tab.Pane eventKey="specialabilities">
+                            <Field 
+                              component={NPCSpecialAbilities} 
+                              name="type.special_abilities"
+                            />
+                          </Tab.Pane>
+                          <Tab.Pane eventKey="faction">
+                            FACTION
+                          </Tab.Pane>
+                          <Tab.Pane eventKey="emote">
+                            EMOTE
+                          </Tab.Pane>
+                          <Tab.Pane eventKey="tint">
+                            TINT
+                          </Tab.Pane>
+                        </Tab.Content>
+                      </Panel>
+                    </Tab.Container> 
                   </Col>
-                </Panel>
-              </Row>
-              <Row>
-                <Col md={24}>
-                  <Tab.Container id="npc-panel" defaultActiveKey="specialabilities">
-                    <Panel header={
+                </Row>
+              </Col>
+              <Col md={10}>
+                <Tab.Container id="npc-panel" defaultActiveKey="npcspells">
+                  <Panel style={{ height: 900, overflowY: "scroll"}} 
+                    header={
                       <Nav bsStyle="tabs">
-                        <NavItem eventKey="specialabilities">Special Abilities</NavItem>
-                        <NavItem eventKey="faction">Faction</NavItem>
-                        <NavItem eventKey="emote">Emote</NavItem>
-                        <NavItem eventKey="tint">Tint</NavItem>
+                        <NavItem eventKey="npcspells">Spells</NavItem>
+                        <NavItem eventKey="npceffects">Passives</NavItem>
+                        <NavItem eventKey="npcloot">Loot</NavItem>
+                        <NavItem eventKey="npcmerchant">Merchant</NavItem>
                       </Nav> 
-                    }>
-                      <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
-                        <Tab.Pane eventKey="specialabilities">
-                          <Field 
-                            component={NPCSpecialAbilities} 
-                            name="type.special_abilities"
-                          />
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="faction">
-                          FACTION
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="emote">
-                          EMOTE
-                        </Tab.Pane>
-                        <Tab.Pane eventKey="tint">
-                          TINT
-                        </Tab.Pane>
-                      </Tab.Content>
-                    </Panel>
-                  </Tab.Container> 
-                </Col>
-              </Row>
-            </Col>
-            <Col md={10}>
-              <Tab.Container id="npc-panel" defaultActiveKey="npcspells">
-                <Panel style={{ height: 900, overflowY: "scroll"}} 
-                  header={
-                    <Nav bsStyle="tabs">
-                      <NavItem eventKey="npcspells">Spells</NavItem>
-                      <NavItem eventKey="npceffects">Passives</NavItem>
-                      <NavItem eventKey="npcloot">Loot</NavItem>
-                      <NavItem eventKey="npcmerchant">Merchant</NavItem>
-                    </Nav> 
-                  }
-                >
-                  <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
-                    <Tab.Pane eventKey="npcspells">
-                      <Fields
-                        component={NPCSpells} 
-                        names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
-                        spells={this.props.spells}
-                        changeSpellSet={this.changeSpellSet}
-                      />
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="npceffects">
-                      PASSIVES
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="npcloot">
-                      {/* <Field 
-                        component={NPCLoot} 
-                        name="type.loottable_id"
-                        loot={this.props.loot}
-                        changeLootTable={this.changeLootTable}
-                      /> */}
-                    </Tab.Pane>
-                    <Tab.Pane eventKey="npcmerchant">
-                      MERCHANT
-                    </Tab.Pane>
-                  </Tab.Content>
-                </Panel>
-              </Tab.Container> 
-            </Col>
-          </Row>
-        </Panel>
-      </form>
-    );
+                    }
+                  >
+                    <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
+                      <Tab.Pane eventKey="npcspells">
+                        <Fields
+                          component={NPCSpells} 
+                          names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
+                          spells={this.props.spells}
+                          searchSpellSets={this.searchSpellSets}
+                          changeSpellSet={this.changeSpellSet}
+                        />
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="npceffects">
+                        PASSIVES
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="npcloot">
+                        {/* <Field 
+                          component={NPCLoot} 
+                          name="type.loottable_id"
+                          loot={this.props.loot}
+                          changeLootTable={this.changeLootTable}
+                        /> */}
+                      </Tab.Pane>
+                      <Tab.Pane eventKey="npcmerchant">
+                        MERCHANT
+                      </Tab.Pane>
+                    </Tab.Content>
+                  </Panel>
+                </Tab.Container> 
+              </Col>
+            </Row>
+          </Panel>
+        </form>
+      );
+    }
   }
 }
 
