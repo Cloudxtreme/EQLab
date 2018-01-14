@@ -40,7 +40,7 @@ function* fetchSpawn(action) {
 
 function* updateSpawn2(action) {
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }
@@ -54,9 +54,9 @@ function* deleteSpawn2(action) {
 }
 
 function* changeSpawngroup(action) {
-  yield call(api.zone.putSpawn2, action.spawn2ID, { "spawngroupID": action.spawngroupID });
+  yield call(api.zone.putSpawn2, action.spawn2ID, { spawngroupID: action.spawngroupID });
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }
@@ -68,14 +68,14 @@ function* changeSpawngroup(action) {
 function* postSpawngroup(action) {
   yield call(api.zone.postSpawngroup, action.spawn2ID, action.zone);
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }
 
 function* updateSpawngroup(action) {
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }
@@ -83,7 +83,7 @@ function* updateSpawngroup(action) {
 function* deleteSpawngroup(action) {
   yield call(api.zone.deleteSpawngroup, action.id);
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }
@@ -95,7 +95,7 @@ function* deleteSpawngroup(action) {
 function* postSpawnentry(action) {
   yield call(api.zone.postSpawnentry, action.spawngroupID, action.npcID);
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }
@@ -103,7 +103,7 @@ function* postSpawnentry(action) {
 function* deleteSpawnentry(action) {
   yield call(api.zone.deleteSpawnentry, action.spawngroupID, action.npcID);
   yield all([
-    call(fetchSpawn, action.spawn2ID),
+    put({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID: action.spawn2ID }),
     action.zone && put({ type: ZONEAPP_FETCH_SPAWN2TREE, spawn2ID: action.spawn2ID })
   ]);
 }

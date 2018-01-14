@@ -16,16 +16,15 @@ export const ZoneAppSaga = [
   takeLatest(ZONEAPP_FETCH_ZONELIST, fetchZoneList),
   takeLatest(ZONEAPP_SELECT_ZONE, selectZone),
   takeLatest(ZONEAPP_POST_SPAWN2, postSpawn2),
-  takeLatest(ZONEAPP_FETCH_SPAWN2TREE, refreshSingleSpawnTree)
+  takeLatest(ZONEAPP_FETCH_SPAWN2TREE, fetchSpawn2Tree)
 ];
 
-function* refreshSingleSpawnTree(spawn2ID) {
-  const spawn2 = yield call(api.zone.getSingleSpawnTreeData, spawn2ID);
+function* fetchSpawn2Tree(action) {
+  const spawn2 = yield call(api.zone.getSingleSpawnTreeData, action.spawn2ID);
   yield put({ type: ZONEAPP_REFRESH_SPAWN2, spawn2 });
 }
 
 function* fetchZoneList() {
-  console.log('test')
   const zoneList = yield call(api.zone.getZoneList);
   yield put({ type: ZONEAPP_SET_ZONELIST, zoneList });
   

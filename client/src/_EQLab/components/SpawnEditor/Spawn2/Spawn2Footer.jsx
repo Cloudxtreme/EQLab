@@ -2,19 +2,14 @@ import React from 'react';
 import { Row, Col, Button, FormGroup } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import Select from 'react-select';
+import { connect } from 'react-redux';
 
+
+const mapStateToProps = state => ({
+  options: state.SpawnEditor.spawngroupOptions
+});
 
 class Spawn2Footer extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.selectSpawngroup = spawngroup => {
-      if (spawngroup) {
-        this.props.changeSpawngroup(spawngroup.id);
-      }
-    }
-  }
-
   render() {
     return (
       <Row id="Spawn2Footer">
@@ -33,9 +28,9 @@ class Spawn2Footer extends React.PureComponent {
               deleteRemoves={false}
               value={this.props.input.value}
               resetValue={this.props.input.value}
-              options={[]}
+              options={this.props.options}
               onInputChange={this.props.searchSpawngroups}
-              onChange={this.selectSpawngroup}
+              onChange={this.props.changeSpawngroup}
               className="input-sm"
             />
           </FormGroup>
@@ -58,4 +53,4 @@ class Spawn2Footer extends React.PureComponent {
   }
 }
 
-export default Spawn2Footer;
+export default connect(mapStateToProps)(Spawn2Footer);

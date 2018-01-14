@@ -1,10 +1,10 @@
-import React from 'react'
-import { Row, Col, Panel } from 'react-bootstrap'
-import { connect } from 'react-redux'
-import { reduxForm, FieldArray, Field } from 'redux-form'
-import Input from '../../form/Input.jsx'
-import SpawnGroupHeader from './SpawnGroupHeader.jsx'
-import SpawnEntries from './SpawnEntries.jsx'
+import React from 'react';
+import { Row, Col, Panel } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { reduxForm, FieldArray, Field } from 'redux-form';
+import Input from '../../form/Input.jsx';
+import SpawnGroupHeader from './SpawnGroupHeader.jsx';
+import SpawnEntries from './SpawnEntries.jsx';
 
 const mapStateToProps = state => ({
   initialValues: state.SpawnEditor.spawn.spawngroup
@@ -119,6 +119,7 @@ class SpawnGroup extends React.PureComponent {
                 name="spawnentries" 
                 component={SpawnEntries}
                 formSubmitting={this.props.submitting}
+                searchNPCs={this.props.searchNPCs}
                 newSpawnentry={this.props.newSpawnentry}
                 deleteSpawnentry={this.props.deleteSpawnentry}
                 change={this.props.change} />

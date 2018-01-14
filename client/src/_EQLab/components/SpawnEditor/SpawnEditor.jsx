@@ -4,7 +4,7 @@ import { Row, Col } from 'react-bootstrap';
 import { confirm } from '../form/confirm/confirm.js';
 import { SubmissionError } from 'redux-form';
 import diff from 'object-diff';
-import { omit, pick, size, isEmpty } from 'lodash';
+import { omit, pick, size } from 'lodash';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
 import {
@@ -12,10 +12,12 @@ import {
   SPAWNEDITOR_UNLOAD_SPAWN,
   SPAWNEDITOR_UPDATE_SPAWN2,
   SPAWNEDITOR_DELETE_SPAWN2,
+  SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS,
   SPAWNEDITOR_CHANGE_SPAWNGROUP,
   SPAWNEDITOR_POST_SPAWNGROUP,
   SPAWNEDITOR_UPDATE_SPAWNGROUP,
   SPAWNEDITOR_DELETE_SPAWNGROUP,
+  SPAWNEDITOR_SET_NPC_OPTIONS,
   SPAWNEDITOR_POST_SPAWNENTRY,
   SPAWNEDITOR_DELETE_SPAWNENTRY
 } from '../../../constants/actionTypes';
@@ -37,6 +39,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: SPAWNEDITOR_UPDATE_SPAWN2, spawn2ID, delta }),
   deleteSpawn2: (spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_DELETE_SPAWN2, spawn2ID, zone }),
+  setSpawngroupOptions: (options) => 
+    dispatch({ type: SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS, options }),
   changeSpawngroup: (spawn2ID, spawngroupID, zone) => 
     dispatch({ type: SPAWNEDITOR_CHANGE_SPAWNGROUP, spawn2ID, spawngroupID, zone }),
   newSpawngroup: (spawn2ID, zone) => 
@@ -45,6 +49,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: SPAWNEDITOR_UPDATE_SPAWNGROUP, id, delta, spawn2ID, zone }),
   deleteSpawngroup: (id, spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_DELETE_SPAWNGROUP, id, spawn2ID, zone }),
+  setNPCOptions: (options) => 
+    dispatch({ type: SPAWNEDITOR_SET_NPC_OPTIONS, options }),
   newSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_POST_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone}),
   deleteSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
@@ -54,9 +60,6 @@ const mapDispatchToProps = dispatch => ({
 class SpawnEditor extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      spawngroupSearchTerms: ''
-    }
 
     this.submitSpawn2Form = (values, dispatch, props) => {
       return new Promise((resolve, reject) => {
@@ -137,44 +140,50 @@ class SpawnEditor extends React.Component {
       }, () => {});
     }
 
-    this.fetchSpawngroupOptions = () => {
-      // let spawngroupID = this.props.spawn.spawn2.spawngroupID;
-      // let spawngroupName = this.props.spawn.spawngroup.name;
-      // let input = this.state.spawngroupSearchTerms;
-      // let options;
-
-      // if (spawngroupID === 0 && input === '') {
-      //   return [];
-      // } else if (spawngroupID !== 0 && input === '') {
-      //   console.log(spawngroupID)
-      //   return [{ id: spawngroupID, label: `${spawngroupName} (${spawngroupID})` }];
-      // } else if (input.length > 2 || input === '') {
-      //   api.zone.searchSpawngroups(input ? input : spawngroupID)
-      //     .then(results => {
-      //       options = results.map(spawngroup => {
-      //         return {
-      //           id: spawngroup.id,
-      //           label: `${spawngroup.name} (${spawngroup.id})`
-      //         }
-      //       });
-      //       return options;
-      //     })
-      //     .catch(error => null);
-      // } else {
-      //   return [];
-      // }
-    }
-
     this.searchSpawngroups = debounce((input) => {
-      this.setState({ spawngroupSearchTerms: input });
+      let options;
+
+      if (input.length > 2) {
+        api.zone.searchSpawngroups(input ? input : this.props.spawn.spawn2.spawngroupID)
+          .then(results => {
+            options = results.map(spawngroup => {
+              return {
+                id: spawngroup.id,
+                label: `${spawngroup.name} (${spawngroup.id})`
+              }
+            });
+            this.props.setSpawngroupOptions(options);
+          })
+          .catch(error => null);
+      }
     }, 400);
 
-    this.changeSpawngroup = (spawngroupID) => {
-      this.props.changeSpawngroup(
-        this.props.spawn.spawn2.id, 
-        spawngroupID,
-        this.props.zone ? this.props.zone : null
-      );
+    this.searchNPCs = debounce((input) => {
+      let options;
+
+      if (input.length > 2) {
+        api.npc.searchNPCs(input ? input : '')
+          .then(results => {
+            options = results.map(npc => {
+              return {
+                id: npc.id,
+                label: `${npc.name} (${npc.id})`
+              }
+            });
+            this.props.setNPCOptions(options);
+          })
+          .catch(error => null);
+      }
+    }, 400);
+
+    this.changeSpawngroup = (spawngroup) => {
+      if (spawngroup) {
+        this.props.changeSpawngroup(
+          this.props.spawn.spawn2.id, 
+          spawngroup.id,
+          this.props.zone ? this.props.zone : null
+        );
+      }
     }
 
     this.clearSpawngroup = () => {
@@ -202,7 +211,9 @@ class SpawnEditor extends React.Component {
       }, () => {});
     }
 
-    this.deleteSpawnentry = (npcID) => {
+    this.deleteSpawnentry = (e) => {
+      const npcID = parseInt(e.currentTarget.id, 10);
+
       confirm('Are you sure you want to delete this entry?'
         + ' This will remove the entry from all spawngroups that use it.', {
         title: 'Delete Spawnentry'
@@ -235,11 +246,6 @@ class SpawnEditor extends React.Component {
     if (!this.props.isLoaded) {
       return null;
     } else {
-
-      console.log(this.props)
-      const spawngroupOptions = this.fetchSpawngroupOptions();
-
-      
       return (
         <div id="SpawnEditor">
           <Row>
@@ -250,7 +256,6 @@ class SpawnEditor extends React.Component {
                       spawngroupName={this.props.spawn.spawngroup ? this.props.spawn.spawngroup.name : ''}
                       deleteSpawn2={this.deleteSpawn2}
                       searchSpawngroups={this.searchSpawngroups}
-                      spawngroupOptions={spawngroupOptions}
                       changeSpawngroup={this.changeSpawngroup}
                       clearSpawngroup={this.clearSpawngroup}
                       newSpawngroup={this.newSpawngroup} 
@@ -265,6 +270,7 @@ class SpawnEditor extends React.Component {
                 this.props.spawn.spawngroup
                   ? <SpawnGroup
                       deleteSpawngroup={this.deleteSpawngroup} 
+                      searchNPCs={this.searchNPCs}
                       newSpawnentry={this.newSpawnentry} 
                       deleteSpawnentry={this.deleteSpawnentry}
                       onSubmit={this.submitSpawngroupForm} />

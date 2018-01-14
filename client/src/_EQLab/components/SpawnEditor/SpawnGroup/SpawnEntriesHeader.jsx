@@ -1,10 +1,13 @@
-import React from 'react'
-import { Col, Button, FormGroup } from 'react-bootstrap'
-import FontAwesome from 'react-fontawesome'
-import api from '../../../../api.js'
-import { debounce } from 'lodash'
-import Select from 'react-select'
+import React from 'react';
+import { Col, Button, FormGroup } from 'react-bootstrap';
+import FontAwesome from 'react-fontawesome';
+import { connect } from 'react-redux';
+import Select from 'react-select';
 
+
+const mapStateToProps = state => ({
+  options: state.SpawnEditor.npcOptions
+});
 
 class SpawnEntriesHeader extends React.Component {
   constructor(props) {
@@ -12,26 +15,6 @@ class SpawnEntriesHeader extends React.Component {
     this.state = {
       npcID: ''
     }
-
-    this.searchNPCs = debounce((input, callback) => {
-      let options;
-      if (input.length > 2) {
-        api.npc.searchNPCs(input ? input : '')
-          .then(results => {
-            options = results.map(npc => {
-              return {
-                id: npc.id,
-                label: `${npc.name} (${npc.id})`
-              }
-            });
-            callback(null, { options })
-          })
-          .catch(error => callback(error, null));
-      } else {
-        options = [];
-        callback(null, { options })
-      }
-    }, 400);
 
     this.selectNPC = npc => {
       this.setState({ npcID: npc.id })
@@ -49,7 +32,7 @@ class SpawnEntriesHeader extends React.Component {
       <div id="SpawnEntriesHeader">
         <Col md={20}>
           <FormGroup> 
-            <Select.Async
+            <Select
               name="selectnpc"
               ref="selectnpc"
               valueKey="id"
@@ -61,11 +44,10 @@ class SpawnEntriesHeader extends React.Component {
               onSelectResetsInput={false}
               backspaceRemoves={false}
               deleteRemoves={false}
-              cache={false}
-              autoload={false}
               value={this.state.npcID}
               resetValue={this.state.npcID}
-              loadOptions={this.searchNPCs}
+              options={this.props.options}
+              onInputChange={this.props.searchNPCs}
               onChange={this.selectNPC}
               className="input-sm"
             />
@@ -88,5 +70,4 @@ class SpawnEntriesHeader extends React.Component {
   }
 }
 
-export default SpawnEntriesHeader;
-
+export default connect(mapStateToProps)(SpawnEntriesHeader);

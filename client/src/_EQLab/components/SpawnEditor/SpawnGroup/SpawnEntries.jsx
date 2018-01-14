@@ -25,10 +25,6 @@ class SpawnEntries extends React.Component {
         });
       }
     }
-
-    this.handleDelete = e => {
-      this.props.deleteSpawnentry(parseInt(e.currentTarget.id, 10));
-    }
   }
 
   render() {
@@ -57,7 +53,7 @@ class SpawnEntries extends React.Component {
               bsSize="xs"
               disabled={this.props.formSubmitting}
               id={`${entry.npcID.input.value}`}
-              onClick={this.handleDelete}
+              onClick={this.props.deleteSpawnentry}
             >
               <FontAwesome name="chain-broken"/>
             </Button>
@@ -70,6 +66,7 @@ class SpawnEntries extends React.Component {
       <div id="SpawnEntries">
         <Row>
           <SpawnEntriesHeader
+            searchNPCs={this.props.searchNPCs}
             formSubmitting={this.props.formSubmitting}
             newSpawnentry={this.props.newSpawnentry}
           />
