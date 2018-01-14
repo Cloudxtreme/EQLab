@@ -12,7 +12,7 @@ const mapStateToProps = state => ({
 class Spawn2Footer extends React.PureComponent {
   render() {
     return (
-      <Row id="Spawn2Footer">
+      <Row id="Spawn2Footer" style={{ height: 45 }}>
         <Col md={10}>
           <FormGroup> 
             <Select
@@ -32,6 +32,7 @@ class Spawn2Footer extends React.PureComponent {
               onInputChange={this.props.searchSpawngroups}
               onChange={this.props.changeSpawngroup}
               className="input-sm"
+              style={{ borderRadius: 0}}
             />
           </FormGroup>
         </Col>

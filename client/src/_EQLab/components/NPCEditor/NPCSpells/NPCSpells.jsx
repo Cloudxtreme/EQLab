@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
+import { NPC_SPELL_TYPES } from '../../form/constants/constants.js';
 import Input from '../../form/Input.jsx';
 import NPCSpellsTableHeader from './NPCSpellsTableHeader.jsx';
 
@@ -22,7 +23,8 @@ class NPCSpells extends React.PureComponent {
       width: 120
     }, {
       Header: "type",
-      accessor: "type",
+      id: "spelltype",
+      accessor: (data) => NPC_SPELL_TYPES[data.type],
       width: 40
     }, {
       Header: "minlevel",
@@ -47,6 +49,7 @@ class NPCSpells extends React.PureComponent {
     }];
 
     const tableProps = {
+      style: { border: "none"},
       columns: columns,
       filterable: false,
       className: "-striped -highlight",
@@ -61,7 +64,7 @@ class NPCSpells extends React.PureComponent {
 
     return (
       <div id="NPCSpells">
-        <Row style={{ height: 50}}>
+        <Row>
           <Col md={12}>
             <Select
               name="selectspellset"
@@ -80,6 +83,7 @@ class NPCSpells extends React.PureComponent {
               onInputChange={this.props.searchSpellSets}
               onChange={this.props.changeSpellSet}
               className="input-sm"
+              style={{ borderRadius: 0}}
             />
           </Col>
           <Col md={4}>
@@ -99,42 +103,50 @@ class NPCSpells extends React.PureComponent {
           </Col>
         </Row>
         <Row>
+          <Col md={24} style={{ height: 785, overflowY: "scroll" }}>
           {
             !this.props.spells
               ? null
-              : <PanelGroup>
-                  <Panel collapsible defaultExpanded={true} eventKey="spellset" 
-                    header={<NPCSpellsTableHeader spells={this.props.spells} />}
-                  >
-                    {
-                      !this.props.spells.entries.length
-                        ? <center><span>No Spell Entries Found</span></center>
-                        : <ReactTable
-                            data={this.props.spells.entries}
-                            pageSize={this.props.spells.entries.length}
-                            {...tableProps}
-                          />
-                    }
+              : <PanelGroup id="npc-spells">
+                  <Panel defaultExpanded={true} eventKey="spellset">
+                    <Panel.Heading>
+                      <NPCSpellsTableHeader spells={this.props.spells}/>
+                    </Panel.Heading>
+                    <Panel.Body collapsible={true} style={{ padding: 0 }}>
+                      {
+                        !this.props.spells.entries.length
+                          ? <center><span>No Spell Entries Found</span></center>
+                          : <ReactTable
+                              data={this.props.spells.entries}
+                              pageSize={this.props.spells.entries.length}
+                              {...tableProps}
+                            />
+                      }
+                    </Panel.Body>
                   </Panel>
                   {
                     !this.props.spells.parent_list
                       ? null
-                      : <Panel collapsible defaultExpanded={true} eventKey="spellset_parent_list"
-                          header={<NPCSpellsTableHeader spells={this.props.spells.parent_list} />}
-                        >
-                          {
-                            !this.props.spells.parent_list.entries.length
-                              ? <center><span>No Spell Entries Found</span></center>
-                              : <ReactTable
-                                  data={this.props.spells.parent_list.entries}
-                                  pageSize={this.props.spells.parent_list.entries.length}
-                                  {...tableProps}
-                                />
-                          }
+                      : <Panel defaultExpanded={true} eventKey="spellset_parent_list">
+                          <Panel.Heading>
+                            <NPCSpellsTableHeader spells={this.props.spells.parent_list}/>
+                          </Panel.Heading>
+                          <Panel.Body collapsible={true} style={{ padding: 0 }}>
+                            {
+                              !this.props.spells.parent_list.entries.length
+                                ? <center><span>No Spell Entries Found</span></center>
+                                : <ReactTable
+                                    data={this.props.spells.parent_list.entries}
+                                    pageSize={this.props.spells.parent_list.entries.length}
+                                    {...tableProps}
+                                  />
+                            }
+                          </Panel.Body>
                         </Panel>
                   }
             </PanelGroup>
           }
+          </Col>
         </Row>
       </div>
     );

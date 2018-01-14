@@ -20,8 +20,8 @@ class Spawn2 extends React.PureComponent {
   render() {
     return (
       <form id="Spawn2" spellCheck={false}>
-        <Panel 
-          header={
+        <Panel >
+          <Panel.Heading>
             <Field 
               name="id" 
               component={Spawn2Header} 
@@ -31,8 +31,97 @@ class Spawn2 extends React.PureComponent {
               reset={this.props.reset}
               handleSubmit={this.props.handleSubmit}
             />
-          } 
-          footer={
+          </Panel.Heading>
+          <Panel.Body collapsible={false}>
+            <Row>
+              <Col md={19}>
+                <fieldset className="form-border">
+                <legend className="form-border">Location</legend>
+                  <Row>
+                    <Col md={3}>
+                      <Field component={Input} type="text" name="zone" label="zone"  
+                        bsSize="sm"
+                        readOnly />
+                    </Col>
+                    <Col md={2}>
+                      <Field component={Input} type="text" name="version" label="version"  
+                        bsSize="sm" />
+                    </Col>
+                    <Col md={4}>
+                      <Field component={Input} type="text" name="x" label="x"  
+                        bsSize="sm" />      
+                    </Col>
+                    <Col md={4}>
+                      <Field component={Input} type="text" name="y" label="y"  
+                        bsSize="sm" />            
+                    </Col>
+                    <Col md={4}>
+                      <Field component={Input} type="text" name="z" label="z"  
+                        bsSize="sm" />             
+                    </Col>
+                    <Col md={4}>
+                      <Field component={Input} type="text" name="heading" label="heading"  
+                        bsSize="sm" />            
+                    </Col>
+                    <Col md={3}>
+                      <Field component={Input} type="text" name="pathgrid" label="pathgrid"  
+                        bsSize="sm" />             
+                    </Col>
+                  </Row>
+                </fieldset>
+              </Col>
+              <Col md={5}>
+              {/* Empty */}
+              </Col>
+            </Row>
+            <Row>
+              <Col md={24}>
+                <Row>
+                  <Col md={12}>
+                    <fieldset className="form-border">
+                    <legend className="form-border">Respawn</legend>
+                      <Row>
+                        <Col md={6}>
+                          <Field component={Input} type="text" name="respawntime" label="respawntime"  
+                            bsSize="sm" />
+                        </Col>
+                        <Col md={6}>
+                          <Field component={Input} type="text" name="variance" label="variance"  
+                            bsSize="sm" />
+                        </Col>
+                        <Col md={6}>
+                          <Field component={Input} type="text" name="_condition" label="_condition"  
+                            bsSize="sm" />
+                        </Col>
+                        <Col md={6}>
+                          <Field component={Input} type="text" name="cond_value" label="cond_value"  
+                            bsSize="sm" />
+                        </Col>
+                      </Row>
+                    </fieldset>
+                  </Col>
+                  <Col md={6}>
+                    <fieldset className="form-border">
+                    <legend className="form-border">Misc</legend>
+                      <Row>
+                      <Col md={12}>
+                          <Field component={Input} type="text" name="animation" label="animation"  
+                            bsSize="sm" />
+                        </Col>
+                        <Col md={12}>
+                          <Field component={Checkbox} name="enabled" label="enabled" />
+                        </Col>
+                      </Row>
+                    </fieldset>
+                  </Col>
+                  <Col md={6}>
+                  {/* Empty */}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+          </Panel.Body>
+          <Panel.Footer>
             <Field 
               name="spawngroupID"
               component={Spawn2Footer} 
@@ -42,95 +131,7 @@ class Spawn2 extends React.PureComponent {
               changeSpawngroup={this.props.changeSpawngroup}
               clearSpawngroup={this.props.clearSpawngroup}
             />
-          }
-        >
-          <Row>
-            <Col md={19}>
-              <fieldset className="form-border">
-              <legend className="form-border">Location</legend>
-                <Row>
-                  <Col md={3}>
-                    <Field component={Input} type="text" name="zone" label="zone"  
-                      bsSize="sm"
-                      readOnly />
-                  </Col>
-                  <Col md={2}>
-                    <Field component={Input} type="text" name="version" label="version"  
-                      bsSize="sm" />
-                  </Col>
-                  <Col md={4}>
-                    <Field component={Input} type="text" name="x" label="x"  
-                      bsSize="sm" />      
-                  </Col>
-                  <Col md={4}>
-                    <Field component={Input} type="text" name="y" label="y"  
-                      bsSize="sm" />            
-                  </Col>
-                  <Col md={4}>
-                    <Field component={Input} type="text" name="z" label="z"  
-                      bsSize="sm" />             
-                  </Col>
-                  <Col md={4}>
-                    <Field component={Input} type="text" name="heading" label="heading"  
-                      bsSize="sm" />            
-                  </Col>
-                  <Col md={3}>
-                    <Field component={Input} type="text" name="pathgrid" label="pathgrid"  
-                      bsSize="sm" />             
-                  </Col>
-                </Row>
-              </fieldset>
-            </Col>
-            <Col md={5}>
-            {/* Empty */}
-            </Col>
-          </Row>
-          <Row>
-            <Col md={24}>
-              <Row>
-                <Col md={12}>
-                  <fieldset className="form-border">
-                  <legend className="form-border">Respawn</legend>
-                    <Row>
-                      <Col md={6}>
-                        <Field component={Input} type="text" name="respawntime" label="respawntime"  
-                          bsSize="sm" />
-                      </Col>
-                      <Col md={6}>
-                        <Field component={Input} type="text" name="variance" label="variance"  
-                          bsSize="sm" />
-                      </Col>
-                      <Col md={6}>
-                        <Field component={Input} type="text" name="_condition" label="_condition"  
-                          bsSize="sm" />
-                      </Col>
-                      <Col md={6}>
-                        <Field component={Input} type="text" name="cond_value" label="cond_value"  
-                          bsSize="sm" />
-                      </Col>
-                    </Row>
-                  </fieldset>
-                </Col>
-                <Col md={6}>
-                  <fieldset className="form-border">
-                  <legend className="form-border">Misc</legend>
-                    <Row>
-                    <Col md={12}>
-                        <Field component={Input} type="text" name="animation" label="animation"  
-                          bsSize="sm" />
-                      </Col>
-                      <Col md={12}>
-                        <Field component={Checkbox} name="enabled" label="enabled" />
-                      </Col>
-                    </Row>
-                  </fieldset>
-                </Col>
-                <Col md={6}>
-                {/* Empty */}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+          </Panel.Footer>
         </Panel>
       </form>
     )

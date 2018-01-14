@@ -95,6 +95,12 @@ npc_router.get("/passivelist", (req, res, next) => {
   })
 });
 
+npc_router.put("/:npcID", (req, res, next) => {
+  npc.update(req.params.npcID, req.body).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
 // Overking Bathezid 103056
 npc_router.get("/:npcID", async (req, res, next) => {
   res.status(200).type('json').json({
@@ -107,12 +113,6 @@ npc_router.get("/:npcID", async (req, res, next) => {
     "emotes": await npc.getEmotes(req.params.npcID),
     "tintset": await npc.getTints(req.params.npcID)
   })
-});
-
-npc_router.put("/:npcID", (req, res, next) => {
-  npc.update(req.params.npcID, req.body).then(data => {
-    res.status(200).type('json').json(data)
-  });
 });
 
 module.exports = npc_router;

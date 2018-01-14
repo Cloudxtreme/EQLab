@@ -59,17 +59,9 @@ class ZoneApp extends React.Component {
     }
 
     this.onSelectPane = pane => {
-      // this.setState({ pane: pane ? pane : 'spawns' })
       this.props.selectPane(pane);
     }
   }
-
-  // componentWillMount() {
-  //   // let zoneList = await api.zone.getZoneList();
-  //   // this.setState({ zoneList })
-  //   console.log('test2')
-  //   this.props.fetchZoneList();
-  // }
 
   componentDidMount() {
     this.props.fetchZoneList();
@@ -94,47 +86,57 @@ class ZoneApp extends React.Component {
 
     return (
       <div id="Zone">
-        <Tab.Container id="zone-panel" activeKey={this.props.pane} onSelect={this.onSelectPane}>
-          <Panel header={
-            <Row id="zone-panel-header">
-              <Col md={8}>
-              <div className="form-group">
-              <Select
-                  id="zone-select"
-                  name="selectzone"
-                  className="input-sm"
-                  placeholder="Select a Zone"
-                  clearable={true}
-                  resetValue=""
-                  valueKey="short_name"
-                  labelKey="label"
-                  value={this.props.zone}
-                  options={options}
-                  onChange={this.onSelectZone}
-                />
-              </div>
-              </Col>
-              <Col md={8}>
-                <Nav bsStyle="tabs">
-                  <NavItem eventKey="spawns">Spawns</NavItem>
-                  <NavItem eventKey="loot">Loot</NavItem>
-                </Nav> 
-              </Col>
-              <Col md={8}>
-              </Col>
-            </Row>
-          }>
-            <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
-              <Tab.Pane eventKey="spawns">
-                <Spawns 
-                  zone={this.props.zone}
-                  spawnTree={this.props.spawnTree}
-                />
-              </Tab.Pane>
-              <Tab.Pane eventKey="loot">
-                {/* <Loot /> */}
-              </Tab.Pane>
-            </Tab.Content>
+        <Tab.Container id="zone-panel-container" activeKey={this.props.pane} onSelect={this.onSelectPane}>
+          <Panel id="zone-panel" style={{ height: 1006 }}>
+            <Panel.Heading style={{ padding: 0 }}>
+              <Row id="zone-panel-header" style={{ height: 45 }}>
+                <Col md={8}>
+                  {/* <div className="form-group"> */}
+                  {/* 
+                  menuContainerStyle
+                  menuStyle
+                  style
+                  wrapperStyle 
+                  */}
+                    <Select
+                      id="zone-select"
+                      name="selectzone"
+                      className="input-sm"
+                      placeholder="Select a Zone"
+                      clearable={true}
+                      resetValue=""
+                      valueKey="short_name"
+                      labelKey="label"
+                      value={this.props.zone}
+                      options={options}
+                      onChange={this.onSelectZone}
+                      style={{ fontSize: 12, borderRadius: 0}}
+                    />
+                  {/* </div> */}
+                </Col>
+                <Col md={8}>
+                  <Nav bsStyle="tabs" style={{ marginTop: 7, borderBottom: "none" }}>
+                    <NavItem eventKey="spawns">Spawns</NavItem>
+                    <NavItem eventKey="loot">Loot</NavItem>
+                  </Nav> 
+                </Col>
+                <Col md={8}>
+                </Col>
+              </Row>
+            </Panel.Heading>
+            <Panel.Body collapsible={false}>
+              <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
+                <Tab.Pane eventKey="spawns">
+                  <Spawns 
+                    zone={this.props.zone}
+                    spawnTree={this.props.spawnTree}
+                  />
+                </Tab.Pane>
+                <Tab.Pane eventKey="loot">
+                  {/* <Loot /> */}
+                </Tab.Pane>
+              </Tab.Content>
+            </Panel.Body>
           </Panel>
         </Tab.Container>
       </div>

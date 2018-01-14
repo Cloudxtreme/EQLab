@@ -64,7 +64,7 @@ class SpawnEntries extends React.Component {
 
     return (
       <div id="SpawnEntries">
-        <Row>
+        <Row style={{ height: 50, padding: 0 }}>
           <SpawnEntriesHeader
             searchNPCs={this.props.searchNPCs}
             formSubmitting={this.props.formSubmitting}
@@ -73,7 +73,7 @@ class SpawnEntries extends React.Component {
         </Row>
         <Row>
           <Col md={24}>
-            <Well style={{ height: 400, overflowY: "scroll"}}>
+            <Well style={{ height: 560, overflowY: "scroll", padding: 0 }}>
               <Table condensed={true} striped={true} responsive={false}>
                 <thead>
                   <tr>

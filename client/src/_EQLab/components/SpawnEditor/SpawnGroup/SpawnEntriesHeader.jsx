@@ -30,7 +30,7 @@ class SpawnEntriesHeader extends React.Component {
   render() {
     return (
       <div id="SpawnEntriesHeader">
-        <Col md={20}>
+        <Col md={20} style={{ padding: 0 }}>
           <FormGroup> 
             <Select
               name="selectnpc"
@@ -50,6 +50,7 @@ class SpawnEntriesHeader extends React.Component {
               onInputChange={this.props.searchNPCs}
               onChange={this.selectNPC}
               className="input-sm"
+              style={{ borderRadius: 0}}
             />
           </FormGroup>
         </Col>

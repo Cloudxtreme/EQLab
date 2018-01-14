@@ -8,9 +8,9 @@ import { SocketProvider } from 'socket.io-react';
 import io from 'socket.io-client';
 import './css/bootstrap.css'; // Custom Bootstrap
 import './css/bootstrap-theme.css'; // Custom Bootstrap Theme
-import './css/custom.css'; // Custom CSS
 import 'react-select/dist/react-select.css';
 import 'font-awesome/css/font-awesome.min.css';
+import './css/custom.css'; // Custom CSS
 import EQLab from './_EQLab/EQLab.jsx';
 
 const socket = io.connect();

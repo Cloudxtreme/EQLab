@@ -164,18 +164,19 @@ class NPCSpecialAbilities extends React.Component {
 
     return (
       <div id="NPCSpecialAbilities">
-        <Row>
+        <Row style={{ maxHeight: 30 }}>
           <Col md={24}>
             <Input
               type="text"
               input={this.props.input} 
               meta={this.props.meta}
               bsSize="sm"
+              showLabel={false}
             />
           </Col>
         </Row>
         <Row>
-          <Col md={24} className="scroll-col" style={{ height: 325 }}>
+          <Col md={24} style={{ maxHeight: 359, overflowY: "scroll" }}>
             <Row>
               <Col md={4}>
                 <span>Summon/Warp</span>

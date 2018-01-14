@@ -19,7 +19,7 @@
     "object-diff": "0.0.4",
     "prop-types": "^15.6.0",
     "react": "^15.6.2",
-    "react-bootstrap": "^0.31.5",
+    "react-bootstrap": "^0.32.0",
     "react-color": "^2.13.8",
     "react-confirm": "^0.1.16",
     "react-dom": "^15.6.2",

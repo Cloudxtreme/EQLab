@@ -146,7 +146,7 @@ class Spawns extends React.Component {
               ]}
               filterable={false}
               className="-striped -highlight"
-              style={{ height: 950, overflowY: "auto", fontSize: 12 }}
+              style={{ height: 945, overflowY: "auto", fontSize: 12 }}
               showPagination={false}
               pageSize={this.props.spawnTree.length}
             />

@@ -97,8 +97,8 @@ class NPCEditor extends React.Component {
     } else {
       return (
         <form id="NPCEditor" spellCheck={false}>
-          <Panel
-            header={
+          <Panel style={{ height: 945 }}>
+            <Panel.Heading>
               <Field
                 name="type.id"
                 component={NPCEditorHeader}
@@ -108,92 +108,98 @@ class NPCEditor extends React.Component {
                 reset={this.props.reset}
                 handleSubmit={this.props.handleSubmit}
               />
-          }>
-            <Row>
-              <Col md={14}>
-                <Row>
-                  <Panel style={{ maxHeight: 450, overflowY: "scroll"}}>
+            </Panel.Heading>
+            <Panel.Body collapsible={false}>
+              <Row>
+                <Col md={14}>
+                  <Row>
                     <Col md={24}>
-                      <FormSection name="type">
-                        <NPCType />
-                      </FormSection>
+                      <Panel style={{ height: 449, overflowY: "scroll", padding: 5, marginBottom: 5 }}>
+                        <FormSection name="type">
+                          <NPCType />
+                        </FormSection>
+                      </Panel>
                     </Col>
-                  </Panel>
-                </Row>
-                <Row>
-                  <Col md={24}>
-                    <Tab.Container id="npc-panel" defaultActiveKey="specialabilities">
-                      <Panel header={
-                        <Nav bsStyle="tabs">
-                          <NavItem eventKey="specialabilities">Special Abilities</NavItem>
-                          <NavItem eventKey="faction">Faction</NavItem>
-                          <NavItem eventKey="emote">Emote</NavItem>
-                          <NavItem eventKey="tint">Tint</NavItem>
+                  </Row>
+                  <Row>
+                    <Col md={24}>
+                      <Tab.Container id="npc-panel" defaultActiveKey="specialabilities">
+                        <Panel style={{ height: 449, marginBottom: 0 }}>
+                          <Panel.Heading style={{ paddingBottom: 0 }}>
+                            <Nav bsStyle="tabs" style={{ borderBottom: "none" }}>
+                              <NavItem eventKey="specialabilities">Special Abilities</NavItem>
+                              <NavItem eventKey="faction">Faction</NavItem>
+                              <NavItem eventKey="emote">Emote</NavItem>
+                              <NavItem eventKey="tint">Tint</NavItem>
+                            </Nav> 
+                          </Panel.Heading>
+                          <Panel.Body collapsible={false}>
+                            <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
+                              <Tab.Pane eventKey="specialabilities">
+                                <Field 
+                                  component={NPCSpecialAbilities} 
+                                  name="type.special_abilities"
+                                />
+                              </Tab.Pane>
+                              <Tab.Pane eventKey="faction">
+                                FACTION
+                              </Tab.Pane>
+                              <Tab.Pane eventKey="emote">
+                                EMOTE
+                              </Tab.Pane>
+                              <Tab.Pane eventKey="tint">
+                                TINT
+                              </Tab.Pane>
+                            </Tab.Content>
+                          </Panel.Body>
+                        </Panel>
+                      </Tab.Container> 
+                    </Col>
+                  </Row>
+                </Col>
+                <Col md={10}>
+                  <Tab.Container id="npc-panel" defaultActiveKey="npcspells">
+                    <Panel>
+                      <Panel.Heading style={{ paddingBottom: 0 }}>
+                        <Nav bsStyle="tabs" style={{ borderBottom: "none" }}>
+                          <NavItem eventKey="npcspells">Spells</NavItem>
+                          <NavItem eventKey="npceffects">Passives</NavItem>
+                          <NavItem eventKey="npcloot">Loot</NavItem>
+                          <NavItem eventKey="npcmerchant">Merchant</NavItem>
                         </Nav> 
-                      }>
+                      </Panel.Heading>
+                      <Panel.Body collapsible={false}>
                         <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
-                          <Tab.Pane eventKey="specialabilities">
-                            <Field 
-                              component={NPCSpecialAbilities} 
-                              name="type.special_abilities"
+                          <Tab.Pane eventKey="npcspells">
+                            <Fields
+                              component={NPCSpells} 
+                              names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
+                              spells={this.props.spells}
+                              searchSpellSets={this.searchSpellSets}
+                              changeSpellSet={this.changeSpellSet}
                             />
                           </Tab.Pane>
-                          <Tab.Pane eventKey="faction">
-                            FACTION
+                          <Tab.Pane eventKey="npceffects">
+                            PASSIVES
                           </Tab.Pane>
-                          <Tab.Pane eventKey="emote">
-                            EMOTE
+                          <Tab.Pane eventKey="npcloot">
+                            {/* <Field 
+                              component={NPCLoot} 
+                              name="type.loottable_id"
+                              loot={this.props.loot}
+                              changeLootTable={this.changeLootTable}
+                            /> */}
                           </Tab.Pane>
-                          <Tab.Pane eventKey="tint">
-                            TINT
+                          <Tab.Pane eventKey="npcmerchant">
+                            MERCHANT
                           </Tab.Pane>
                         </Tab.Content>
-                      </Panel>
-                    </Tab.Container> 
-                  </Col>
-                </Row>
-              </Col>
-              <Col md={10}>
-                <Tab.Container id="npc-panel" defaultActiveKey="npcspells">
-                  <Panel style={{ height: 900, overflowY: "scroll"}} 
-                    header={
-                      <Nav bsStyle="tabs">
-                        <NavItem eventKey="npcspells">Spells</NavItem>
-                        <NavItem eventKey="npceffects">Passives</NavItem>
-                        <NavItem eventKey="npcloot">Loot</NavItem>
-                        <NavItem eventKey="npcmerchant">Merchant</NavItem>
-                      </Nav> 
-                    }
-                  >
-                    <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
-                      <Tab.Pane eventKey="npcspells">
-                        <Fields
-                          component={NPCSpells} 
-                          names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
-                          spells={this.props.spells}
-                          searchSpellSets={this.searchSpellSets}
-                          changeSpellSet={this.changeSpellSet}
-                        />
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="npceffects">
-                        PASSIVES
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="npcloot">
-                        {/* <Field 
-                          component={NPCLoot} 
-                          name="type.loottable_id"
-                          loot={this.props.loot}
-                          changeLootTable={this.changeLootTable}
-                        /> */}
-                      </Tab.Pane>
-                      <Tab.Pane eventKey="npcmerchant">
-                        MERCHANT
-                      </Tab.Pane>
-                    </Tab.Content>
-                  </Panel>
-                </Tab.Container> 
-              </Col>
-            </Row>
+                      </Panel.Body>
+                    </Panel>
+                  </Tab.Container> 
+                </Col>
+              </Row>
+            </Panel.Body>
           </Panel>
         </form>
       );

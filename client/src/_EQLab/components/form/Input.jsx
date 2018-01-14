@@ -2,11 +2,16 @@ import React from 'react'
 import { FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap'
 
 class Input extends React.PureComponent {
+  static defaultProps = {
+    showLabel: true
+  };
+
   render () {
     const {
       bsSize,
       feedbackIcon,
       input,
+      showLabel,
       label,
       type,
       meta: { error, warning, touched },
@@ -22,7 +27,9 @@ class Input extends React.PureComponent {
 
     return (
       <FormGroup controlId={input.name} bsSize={ bsSize } validationState={ validationState }>
-        <ControlLabel>{ label }</ControlLabel>
+        {
+          showLabel && <ControlLabel>{ label }</ControlLabel>
+        }
         <FormControl { ...input }
                       type={ type }
                       { ...props } />
