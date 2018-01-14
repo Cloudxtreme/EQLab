@@ -163,7 +163,7 @@ class NPCEditor extends React.Component {
                 </Col>
                 <Col md={10}>
                   <Tab.Container id="npc-panel" defaultActiveKey="npcspells">
-                    <Panel>
+                    <Panel style={{ height: 903 }}>
                       <Panel.Heading style={{ paddingBottom: 0 }}>
                         <Nav bsStyle="tabs" style={{ borderBottom: "none" }}>
                           <NavItem eventKey="npcspells">Spells</NavItem>

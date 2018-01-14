@@ -18,34 +18,41 @@ const mapStateToProps = state => ({
 class NPCSpells extends React.PureComponent {
   render() {
     const columns = [{
-      Header: "spell",
+      Header: "Spell",
       accessor: "name",
       width: 120
     }, {
-      Header: "type",
+      Header: "Type",
       id: "spelltype",
       accessor: (data) => NPC_SPELL_TYPES[data.type],
-      width: 40
+      width: 40,
+      style: { textAlign: "center" }
     }, {
-      Header: "minlevel",
+      Header: "Min Lvl",
       accessor: "minlevel",
-      width: 70
+      width: 60,
+      style: { textAlign: "center" }
     }, {
-      Header: "maxlevel",
+      Header: "Max Lvl",
       accessor: "maxlevel",
-      width: 70
+      width: 60,
+      style: { textAlign: "center" }
     }, {
-      Header: "recast_delay",
-      accessor: "recast_delay",
-      width: 80
+      Header: "Recast Delay",
+      id: "recast_delay",
+      // accessor: "recast_delay",
+      accessor: (data) => data.recast_delay === -1 ? "None" : data.recast_delay,
+      width: 90,
+      style: { textAlign: "center" }
     }, {
-      Header: "priority",
+      Header: "Priority",
       accessor: "priority",
-      width: 60
+      width: 50,
+      style: { textAlign: "center" }
     }, {
-      Header: "resist_adjust",
+      Header: "Resist Adjust",
       accessor: "resist_adjust",
-      width: 70
+      style: { textAlign: "center" }
     }];
 
     const tableProps = {
@@ -103,16 +110,16 @@ class NPCSpells extends React.PureComponent {
           </Col>
         </Row>
         <Row>
-          <Col md={24} style={{ height: 785, overflowY: "scroll" }}>
+          <Col md={24} style={{ maxHeight: 797, overflowY: "scroll" }}>
           {
             !this.props.spells
               ? null
               : <PanelGroup id="npc-spells">
-                  <Panel defaultExpanded={true} eventKey="spellset">
+                  <Panel>
                     <Panel.Heading>
-                      <NPCSpellsTableHeader spells={this.props.spells}/>
+                      <NPCSpellsTableHeader isParentList={false} spells={this.props.spells}/>
                     </Panel.Heading>
-                    <Panel.Body collapsible={true} style={{ padding: 0 }}>
+                    <Panel.Body style={{ padding: 0 }}>
                       {
                         !this.props.spells.entries.length
                           ? <center><span>No Spell Entries Found</span></center>
@@ -127,11 +134,11 @@ class NPCSpells extends React.PureComponent {
                   {
                     !this.props.spells.parent_list
                       ? null
-                      : <Panel defaultExpanded={true} eventKey="spellset_parent_list">
+                      : <Panel>
                           <Panel.Heading>
-                            <NPCSpellsTableHeader spells={this.props.spells.parent_list}/>
+                            <NPCSpellsTableHeader isParentList={true} spells={this.props.spells.parent_list}/>
                           </Panel.Heading>
-                          <Panel.Body collapsible={true} style={{ padding: 0 }}>
+                          <Panel.Body style={{ padding: 0 }}>
                             {
                               !this.props.spells.parent_list.entries.length
                                 ? <center><span>No Spell Entries Found</span></center>

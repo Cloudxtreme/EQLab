@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Checkbox } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
@@ -73,7 +73,7 @@ class Spawns extends React.Component {
           )
       },
       columns: [{
-        Header: 'spawn2',
+        Header: 'Spawn2',
         accessor: 'id',
         width: 80,
         sortable: true,
@@ -83,56 +83,125 @@ class Spawns extends React.Component {
           return <a onClick={this.handleSpawn} key={row.value} id={row.value}>{row.value}</a>
         }
       }, {
-        Header: 'v',
+        Header: 'Version',
         accessor: 'version',
         width: 50,
         sortable: true, 
         resizable: false, 
-        filterable: true
+        filterable: true,
+        Cell: row => <div><center>{row.value}</center></div>
       }, {
-        Header: 'e',
+        Header: 'Enabled',
         accessor: 'enabled',
-        width: 50,
+        width: 100,
         sortable: true, 
         resizable: false, 
         filterable: true,
-        Cell: row => {
-          console.log(row)
-        }
-      }, {
-        Header: 'spawngroup',
-        accessor: 'spawngroup',
-        sortable: false, 
-        resizable: false, 
-        filterable: true,
+        filterMethod: (filter, row) => {
+          if (filter.value === "all") {
+            return true;
+          }
+          if (filter.value === "1") {
+            return row.enabled === 1;
+          }
+          return row.enabled !== 1;
+        },
+        Filter: ({ filter, onChange }) => {
+          return (
+            <select
+              onChange={event => onChange(event.target.value)}
+              style={{ width: "100%" }}
+              value={filter ? filter.value : "all"}
+            >
+              <option value="all">Show All</option>
+              <option value="1">Enabled</option>
+              <option value="0">Disabled</option>
+            </select>
+          )
+        },
         Cell: row => {
           if (!row.value) {
             return null;
           } else {
             return (
               <div>
-                <p>{row.value.name}</p>
-                {
-                  row.value.spawnentries
-                    ? <ul>
-                        {row.value.spawnentries.map(entry => {
-                          return(
-                            <li key={entry.npc_id}>
-                              <a onClick={this.handleNPC} id={entry.npc_id}>
-                                {entry.chance}% {entry.npc_name} ({entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null})
-                              </a>
-                            </li>
-                          )
-                        })} 
-                      </ul> 
-                    : null
-                }
+                <center><Checkbox disabled={true} checked={row.value === 1 ? true : false} style={{ margin: 0 }}/></center>
               </div>
+            )
+          }
+        }
+      }, {
+        Header: 'Spawngroup',
+        accessor: 'spawngroup',
+        sortable: false, 
+        resizable: false, 
+        filterable: true,
+        filterMethod: (filter, row) => {
+          if (row.spawngroup) {
+            return row.spawngroup.name.toLowerCase().includes(filter.value.toLowerCase());
+          } else if (row.spawngroup && row.spawngroup.spawnentries) {
+            return row.spawngroup.spawnentries.some(npc => npc.npc_name.toLowerCase().includes(filter.value.toLowerCase()));
+          } else {
+            return false;
+          }
+        },
+        Cell: row => {
+          if (!row.value) {
+            return null;
+          } else if (!row.value.spawnentries) {
+            return (
+              <table style={{ float: "right" }}>
+                <tbody>
+                  <tr>
+                    <th colSpan="4">{row.value.name}</th>
+                  </tr>
+                </tbody>
+              </table>
+            )
+          } else {
+            return (
+              <table style={{ float: "right" }}>
+                <tbody>
+                  <tr>
+                    <th colSpan="3" style={{ borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black", textAlign: "center" }}>{row.value.name}</th>
+                  </tr>
+                  {
+                    row.value.spawnentries.map(entry => {
+                      return (
+                        <tr key={entry.npc_id}>
+                          <td style={{ textAlign: "left" }}>{entry.chance}%</td>
+                          <td><a onClick={this.handleNPC} id={entry.npc_id}>{entry.npc_name}</a></td>
+                          <td>{entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null}</td>
+                        </tr>
+                      )
+                    })
+                  }
+                </tbody>
+              </table>
             )
           }
         }
       }]
     }];
+
+                  // <div>
+              //   <p>{row.value.name}</p>
+              //   {
+              //     !row.value.spawnentries
+              //       ? null
+              //       : <ul>
+              //           {row.value.spawnentries.map(entry => {
+              //             return(
+              //               <li key={entry.npc_id}>
+              //                 <a onClick={this.handleNPC} id={entry.npc_id}>
+              //                   {entry.chance}% {entry.npc_name} ({entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null})
+              //                 </a>
+              //               </li>
+              //             )
+              //           })} 
+              //         </ul> 
+              //   }
+              // </div>
  
     return (
       <div id="Spawns">

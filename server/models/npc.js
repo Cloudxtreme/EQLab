@@ -153,11 +153,11 @@ module.exports = {
     effects = effects.grow(SQLdata[0]).getData();
   
     queryStr = `
-    SELECT npc_spells_effects.id, npc_spells_effects.name, npc_spells_effects_entries.id AS 'effectentries:id',
-    npc_spells_effects_entries.spell_effect_id AS 'effectentries:spell_effect_id', 
-    npc_spells_effects_entries.minlevel AS 'effectentries:minlevel', npc_spells_effects_entries.maxlevel AS 'effectentries:maxlevel', 
-    npc_spells_effects_entries.se_base AS 'effectentries:se_base', npc_spells_effects_entries.se_limit AS 'effectentries:se_limit',
-    npc_spells_effects_entries.se_max AS 'effectentries:se_max'
+    SELECT npc_spells_effects.id, npc_spells_effects.name, npc_spells_effects_entries.id AS 'entries:id',
+    npc_spells_effects_entries.spell_effect_id AS 'entries:spell_effect_id', 
+    npc_spells_effects_entries.minlevel AS 'entries:minlevel', npc_spells_effects_entries.maxlevel AS 'entries:maxlevel', 
+    npc_spells_effects_entries.se_base AS 'entries:se_base', npc_spells_effects_entries.se_limit AS 'entries:se_limit',
+    npc_spells_effects_entries.se_max AS 'entries:se_max'
     FROM npc_spells_effects
     LEFT JOIN npc_spells_effects_entries ON npc_spells_effects.id = npc_spells_effects_entries.npc_spells_effects_id
     WHERE npc_spells_effects.id = '${effects[0].parent_list}'

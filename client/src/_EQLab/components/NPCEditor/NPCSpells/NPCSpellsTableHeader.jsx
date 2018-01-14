@@ -9,7 +9,7 @@ class NPCSpellsTableHeader extends React.PureComponent {
     return (
       <div>
       {
-        spells.parent_list
+        !this.props.isParentList
           ? null
           : <Row>
               <Col md={24}>
@@ -21,7 +21,11 @@ class NPCSpellsTableHeader extends React.PureComponent {
         !(spells.attack_proc > 0) && 
         !(spells.ranged_proc > 0) && 
         !(spells.defensive_proc > 0)
-          ? null
+          ? <Row>
+              <Col md={24}>
+                <span>No Procs</span>
+              </Col>
+            </Row>
           : <Row>
               <Col md={24}>
                 <div style={{ overflowX: "auto" }}>

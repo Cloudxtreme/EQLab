@@ -91,34 +91,30 @@ class ZoneApp extends React.Component {
             <Panel.Heading style={{ padding: 0 }}>
               <Row id="zone-panel-header" style={{ height: 45 }}>
                 <Col md={8}>
-                  {/* <div className="form-group"> */}
-                  {/* 
-                  menuContainerStyle
-                  menuStyle
-                  style
-                  wrapperStyle 
-                  */}
-                    <Select
-                      id="zone-select"
-                      name="selectzone"
-                      className="input-sm"
-                      placeholder="Select a Zone"
-                      clearable={true}
-                      resetValue=""
-                      valueKey="short_name"
-                      labelKey="label"
-                      value={this.props.zone}
-                      options={options}
-                      onChange={this.onSelectZone}
-                      style={{ fontSize: 12, borderRadius: 0}}
-                    />
-                  {/* </div> */}
+                  <Select
+                    id="zone-select"
+                    name="selectzone"
+                    className="input-sm"
+                    placeholder="Select a Zone"
+                    clearable={true}
+                    resetValue=""
+                    valueKey="short_name"
+                    labelKey="label"
+                    value={this.props.zone}
+                    options={options}
+                    onChange={this.onSelectZone}
+                    style={{ fontSize: 12, borderRadius: 0}}
+                  />
                 </Col>
                 <Col md={8}>
-                  <Nav bsStyle="tabs" style={{ marginTop: 7, borderBottom: "none" }}>
-                    <NavItem eventKey="spawns">Spawns</NavItem>
-                    <NavItem eventKey="loot">Loot</NavItem>
-                  </Nav> 
+                {
+                  !this.props.zone
+                    ? null
+                    : <Nav bsStyle="tabs" style={{ marginTop: 7, borderBottom: "none" }}>
+                        <NavItem eventKey="spawns">Spawns</NavItem>
+                        <NavItem eventKey="loot">Loot</NavItem>
+                      </Nav> 
+                }
                 </Col>
                 <Col md={8}>
                 </Col>
