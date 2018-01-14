@@ -1,1 +1,0 @@
-export const getZone = state => state.zoneApp.zone;
