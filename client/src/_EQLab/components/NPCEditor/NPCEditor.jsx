@@ -66,8 +66,10 @@ class NPCEditor extends React.Component {
       }
     }, 400);
 
-    this.changeSpellSet = (spellsetID) => {
-      this.props.updateNPC(this.props.npcID, {npc_spells_id: spellsetID});
+    this.changeSpellSet = (spellset) => {
+      if (spellset) {
+        this.props.updateNPC(this.props.npcID, {npc_spells_id: spellset.id});
+      }
     }
 
     this.changeLootTable = (loottableID) => {

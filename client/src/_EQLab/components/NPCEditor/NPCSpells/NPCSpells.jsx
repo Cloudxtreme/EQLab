@@ -14,21 +14,7 @@ const mapStateToProps = state => ({
   options: state.NPCEditor.spellsetOptions
 });
 
-class NPCSpells extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.changeSpellSet = spellset => {
-      if (spellset) {
-        this.props.changeSpellSet(spellset.id);
-      }
-    }
-
-    this.clearSpellSet = () => {
-      this.props.changeSpellSet(0);
-    }
-  }
-
+class NPCSpells extends React.PureComponent {
   render() {
     const columns = [{
       Header: "spell",
@@ -100,7 +86,7 @@ class NPCSpells extends React.Component {
             { 
               !this.props.spells
                 ? null
-                : <Button bsStyle="danger" bsSize="xs" style={{ marginTop: 20 }} onClick={this.clearSpellSet}>
+                : <Button bsStyle="danger" bsSize="xs" style={{ marginTop: 20 }} onClick={() => this.props.changeSpellSet({id: 0})}>
                     <FontAwesome name="chain-broken"/>&nbsp;Unlink
                   </Button>
             }
