@@ -7,11 +7,11 @@ import Select from '../form/Select.jsx';
 import {
   GENDERS,
   NPC_CLASSES,
-  RACES,
   BODY_TYPES,
   MELEE_ATTACK_SKILLS,
   RANGE_ATTACK_SKILLS
 } from '../form/constants/constants.js';
+import { RACES } from '../form/constants/races.js';
 
 
 class NPCType extends React.PureComponent {

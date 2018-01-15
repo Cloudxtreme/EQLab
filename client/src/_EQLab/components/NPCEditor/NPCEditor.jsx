@@ -8,12 +8,14 @@ import {
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_SET_SPELLSET_OPTIONS,
+  NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_PUT_NPC
 } from '../../../constants/actionTypes';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
 import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
 import NPCSpells from './NPCSpells/NPCSpells.jsx';
+import NPCEffects from './NPCEffects/NPCEffects.jsx';
 // import NPCLoot from './NPCLoot.jsx';
 
 
@@ -21,6 +23,7 @@ const mapStateToProps = state => ({
   isLoaded: state.NPCEditor.isLoaded,
   initialValues: state.NPCEditor.npc,
   spells: state.NPCEditor.npc.spells,
+  effects: state.NPCEditor.npc.effects,
   loot: state.NPCEditor.npc.loot
 });
 
@@ -31,6 +34,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_UNLOAD_NPC }),
   setSpellSetOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_SPELLSET_OPTIONS, options }),
+  setEffectSetOptions: (options) => 
+    dispatch({ type: NPCEDITOR_SET_EFFECTSET_OPTIONS, options }),
   putNPC: (npcID, values, zone) => 
     dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone})
 });
@@ -71,6 +76,34 @@ class NPCEditor extends React.Component {
         this.props.putNPC(
           this.props.npcID, 
           {npc_spells_id: spellset.id},
+          this.props.zone
+        );
+      }
+    }
+
+    this.searchEffectSets = debounce((input) => {
+      let options;
+
+      if (input.length > 2) {
+        api.npc.searchEffectSets(input ? input : this.props.effects.id)
+          .then(results => {
+            options = results.map(effectset => {
+              return {
+                id: effectset.id,
+                label: `${effectset.name} (${effectset.id})`
+              }
+            });
+            this.props.setEffectSetOptions(options);
+          })
+          .catch(error => null);
+      }
+    }, 400);
+
+    this.changeEffectSet = (effectset) => {
+      if (effectset) {
+        this.props.putNPC(
+          this.props.npcID, 
+          {npc_spells_effects_id: effectset.id},
           this.props.zone
         );
       }
@@ -184,7 +217,13 @@ class NPCEditor extends React.Component {
                             />
                           </Tab.Pane>
                           <Tab.Pane eventKey="npceffects">
-                            PASSIVES
+                            <Field
+                              component={NPCEffects} 
+                              name="type.npc_spells_effects_id"
+                              effects={this.props.effects}
+                              searchEffectSets={this.searchEffectSets}
+                              changeEffectSet={this.changeEffectSet}
+                            />
                           </Tab.Pane>
                           <Tab.Pane eventKey="npcloot">
                             {/* <Field 

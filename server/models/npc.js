@@ -129,7 +129,6 @@ module.exports = {
         SQLdata[0] = sanitize(SQLdata[0]);
         spells.parent_list = parentList.grow(SQLdata[0]).getData()[0];
       }
-      
       return spells;
     }
   },
@@ -148,26 +147,39 @@ module.exports = {
     `;
 
     let SQLdata = await db.raw(queryStr);
-    let effects = new Treeize;
-    SQLdata[0] = sanitize(SQLdata[0]);
-    effects = effects.grow(SQLdata[0]).getData();
-  
-    queryStr = `
-    SELECT npc_spells_effects.id, npc_spells_effects.name, npc_spells_effects_entries.id AS 'entries:id',
-    npc_spells_effects_entries.spell_effect_id AS 'entries:spell_effect_id', 
-    npc_spells_effects_entries.minlevel AS 'entries:minlevel', npc_spells_effects_entries.maxlevel AS 'entries:maxlevel', 
-    npc_spells_effects_entries.se_base AS 'entries:se_base', npc_spells_effects_entries.se_limit AS 'entries:se_limit',
-    npc_spells_effects_entries.se_max AS 'entries:se_max'
-    FROM npc_spells_effects
-    LEFT JOIN npc_spells_effects_entries ON npc_spells_effects.id = npc_spells_effects_entries.npc_spells_effects_id
-    WHERE npc_spells_effects.id = '${effects[0].parent_list}'
-    `;
 
-    SQLdata = await db.raw(queryStr);
-    let parentList = new Treeize;
-    SQLdata[0] = sanitize(SQLdata[0]);
-    effects[0].parent_list = parentList.grow(SQLdata[0]).getData()[0];
-    return effects[0];
+    if (!SQLdata[0][0].id) {
+      return null;
+    } else {
+      let effects = new Treeize;
+      SQLdata[0] = sanitize(SQLdata[0]);
+      effects = effects.grow(SQLdata[0]).getData()[0];
+
+      if (!effects.entries[0].id) {
+        effects.entries = [];
+      }
+
+      if (!effects.parent_list) {
+        effects.parent_list = null;
+      } else {
+        queryStr = `
+        SELECT npc_spells_effects.id, npc_spells_effects.name, npc_spells_effects_entries.id AS 'entries:id',
+        npc_spells_effects_entries.spell_effect_id AS 'entries:spell_effect_id', 
+        npc_spells_effects_entries.minlevel AS 'entries:minlevel', npc_spells_effects_entries.maxlevel AS 'entries:maxlevel', 
+        npc_spells_effects_entries.se_base AS 'entries:se_base', npc_spells_effects_entries.se_limit AS 'entries:se_limit',
+        npc_spells_effects_entries.se_max AS 'entries:se_max'
+        FROM npc_spells_effects
+        LEFT JOIN npc_spells_effects_entries ON npc_spells_effects.id = npc_spells_effects_entries.npc_spells_effects_id
+        WHERE npc_spells_effects.id = '${effects.parent_list}'
+        `;
+    
+        SQLdata = await db.raw(queryStr);
+        let parentList = new Treeize;
+        SQLdata[0] = sanitize(SQLdata[0]);
+        effects.parent_list = parentList.grow(SQLdata[0]).getData()[0];
+      }
+      return effects;
+    }
   },
   
   getLoot: async (npcID) => {
@@ -256,6 +268,18 @@ module.exports = {
     let queryStr=`
     SELECT id, name
     FROM npc_spells
+    WHERE id LIKE '${searchTerm}%'
+    OR name LIKE '%${searchTerm}%'
+    `
+    
+    let results = await db.raw(queryStr);
+    return results[0];
+  },
+
+  searchNPCEffects: async (searchTerm) => {
+    let queryStr=`
+    SELECT id, name
+    FROM npc_spells_effects
     WHERE id LIKE '${searchTerm}%'
     OR name LIKE '%${searchTerm}%'
     `

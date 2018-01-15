@@ -5,6 +5,12 @@ const express    = require("express"),
       npc        = require("../models/npc.js");
 
 
+npc_router.get("/effectset/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCEffects(req.params.searchTerm).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});     
+
 npc_router.get("/spellset/search/:searchTerm", (req, res, next) => {
   npc.searchNPCSpells(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)

@@ -3,7 +3,8 @@ import {
   NPCEDITOR_LOAD_NPC,
   NPCEDITOR_UNLOAD_NPC,
   // NPCEDITOR_UPDATE_NPC,
-  NPCEDITOR_SET_SPELLSET_OPTIONS
+  NPCEDITOR_SET_SPELLSET_OPTIONS,
+  NPCEDITOR_SET_EFFECTSET_OPTIONS
 } from '../constants/actionTypes';
 
 
@@ -12,6 +13,7 @@ function get_INITIAL_STATE() {
     isLoaded: false,
     npc: {},
     spellsetOptions: [],
+    effectsetOptions: []
   }
 }
 
@@ -24,19 +26,20 @@ export default (state = get_INITIAL_STATE(), action) => {
         ...state,
         isLoaded: true,
         npc: action.payload ? action.payload : {},
-        spellsetOptions: action.payload.spells ? [{ id: action.payload.spells.id, label: `${action.payload.spells.name} (${action.payload.spells.id})` }] : []
+        spellsetOptions: action.payload.spells ? [{ id: action.payload.spells.id, label: `${action.payload.spells.name} (${action.payload.spells.id})` }] : [],
+        effectsetOptions: action.payload.effects ? [{ id: action.payload.effects.id, label: `${action.payload.effects.name} (${action.payload.effects.id})` }] : []
       }
     case NPCEDITOR_UNLOAD_NPC:
-      return {
-        ...state,
-        isLoaded: false,
-        npc: {},
-        spellsetOptions: []
-      }
+      return get_INITIAL_STATE();
     case NPCEDITOR_SET_SPELLSET_OPTIONS:
       return {
         ...state,
         spellsetOptions: action.options ? action.options : []
+      }
+    case NPCEDITOR_SET_EFFECTSET_OPTIONS:
+      return {
+        ...state,
+        effectsetOptions: action.options ? action.options : []
       }
     default:
       return state;

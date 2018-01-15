@@ -75,6 +75,8 @@ const npc = {
     requests.get(`/npc/search/${searchTerm}`),
   searchSpellSets: searchTerm =>
     requests.get(`/npc/spellset/search/${searchTerm}`),
+  searchEffectSets: searchTerm =>
+    requests.get(`/npc/effectset/search/${searchTerm}`),
   getSpellList: () =>
     requests.get(`/npc/spelllist`),
   getPassiveList: () =>
