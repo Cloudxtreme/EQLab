@@ -17,6 +17,7 @@ import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
 import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
 import NPCFaction from './NPCFaction.jsx';
+import NPCEmotes from './NPCEmotes.jsx';
 import NPCSpells from './NPCSpells/NPCSpells.jsx';
 import NPCEffects from './NPCEffects.jsx';
 import NPCLoot from './NPCLoot.jsx';
@@ -27,6 +28,7 @@ const mapStateToProps = state => ({
   isLoaded: state.NPCEditor.isLoaded,
   initialValues: state.NPCEditor.npc,
   faction: state.NPCEditor.npc.faction,
+  emotes: state.NPCEditor.npc.emotes,
   spells: state.NPCEditor.npc.spells,
   effects: state.NPCEditor.npc.effects,
   loot: state.NPCEditor.npc.loot,
@@ -225,7 +227,7 @@ class NPCEditor extends React.Component {
                             <Nav bsStyle="tabs" style={{ borderBottom: "none" }}>
                               <NavItem eventKey="npcspecialabilities">Special Abilities</NavItem>
                               <NavItem eventKey="npcfaction">Faction</NavItem>
-                              <NavItem eventKey="npcemote">Emote</NavItem>
+                              <NavItem eventKey="npcemotes">Emotes</NavItem>
                               <NavItem eventKey="npctint">Tint</NavItem>
                             </Nav> 
                           </Panel.Heading>
@@ -246,8 +248,12 @@ class NPCEditor extends React.Component {
                                   changeFaction={this.changeFaction}
                                 />
                               </Tab.Pane>
-                              <Tab.Pane eventKey="npcemote">
-                                EMOTE
+                              <Tab.Pane eventKey="npcemotes">
+                                <Field
+                                  component={NPCEmotes} 
+                                  name="type.emoteid"
+                                  emotes={this.props.emotes}
+                                />
                               </Tab.Pane>
                               <Tab.Pane eventKey="npctint">
                                 TINT

@@ -251,3 +251,23 @@ export const NPC_FACTION_ENTRIES = {
     "3": "Faction is permanent, but player does not recieve a message.",
   }
 }
+
+export const NPC_EMOTE_ENTRIES = {
+  event_: {
+    "0": "Leave Combat",
+    "1": "Enter Combat",
+    "2": "On Death",
+    "3": "After Death",
+    "4": "Hailed",
+    "5": "Killed PC",
+    "6": "Killed NPC",
+    "7": "On Spawn",
+    "8": "On Despawn"
+  },
+  type: {
+    "1": "Emote",
+    "2": "Shout",
+    "3": "Proximity Emote",
+    "Other": "Say"
+  }
+}
