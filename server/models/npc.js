@@ -184,8 +184,13 @@ module.exports = {
   
   getLoot: async (npcID) => {
     let queryStr = `
-    SELECT npc_types.loottable_id AS 'id', loottable.name AS 'name', loottable_entries.lootdrop_id AS 'lootdrops:id',
-    lootdrop.name AS 'lootdrops:name', lootdrop_entries.item_id AS 'lootdrops:items:id', items.Name AS 'lootdrops:items:name'
+    SELECT npc_types.loottable_id AS 'id', loottable.name, loottable.mincash, loottable.maxcash, loottable.avgcoin, 
+    loottable_entries.lootdrop_id AS 'lootdrops:id', lootdrop.name AS 'lootdrops:name', loottable_entries.multiplier AS 'lootdrops:multiplier', 
+    loottable_entries.droplimit AS 'lootdrops:droplimit', loottable_entries.mindrop AS 'lootdrops:mindrop', 
+    loottable_entries.probability AS 'lootdrops:probability', lootdrop_entries.item_id AS 'lootdrops:entries:id', items.Name AS 'lootdrops:entries:name', 
+    lootdrop_entries.item_charges AS 'lootdrops:entries:item_charges', lootdrop_entries.equip_item AS 'lootdrops:entries:equip_item',
+    lootdrop_entries.chance AS 'lootdrops:entries:chance', lootdrop_entries.minlevel AS 'lootdrops:entries:minlevel', 
+    lootdrop_entries.maxlevel AS 'lootdrops:entries:maxlevel',lootdrop_entries.multiplier AS 'lootdrops:entries:multiplier'
     FROM npc_types
     LEFT JOIN loottable ON npc_types.loottable_id = loottable.id
     LEFT JOIN loottable_entries ON loottable.id = loottable_entries.loottable_id
@@ -196,10 +201,16 @@ module.exports = {
     `;
 
     let SQLdata = await db.raw(queryStr);
-    let lootTree  = new Treeize();
-    SQLdata[0] = sanitize(SQLdata[0]);
-    lootTree = lootTree.grow(SQLdata[0]).getData()[0]
-    return lootTree;
+
+    if (!SQLdata[0][0].id) {
+      return null;
+    } else {
+      let loot  = new Treeize();
+      SQLdata[0] = sanitize(SQLdata[0]);
+      loot = loot.grow(SQLdata[0]).getData()[0]
+
+      return loot;
+    }
   },
 
   getMerchantTable: async (npcID) => {

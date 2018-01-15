@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import { SPELL_EFFECTS } from '../../form/constants/spell_effects.js';
-// import NPCEffectsTableHeader from './NPCEffectsTableHeader.jsx';
+import { SPELL_EFFECTS } from '../../../constants/spell_effects.js';
 
 
 const mapStateToProps = state => ({
@@ -64,7 +63,7 @@ class NPCEffects extends React.PureComponent {
     return (
       <div id="NPCEffects">
         <Row style={{ height: 50 }}>
-          <Col md={12}>
+          <Col md={20}>
             <Select
               name="selecteffectset"
               ref="selecteffectset"
@@ -93,8 +92,6 @@ class NPCEffects extends React.PureComponent {
                     <FontAwesome name="chain-broken"/>&nbsp;Unlink
                   </Button>
             }
-          </Col>
-          <Col md={8}>
           </Col>
         </Row>
         <Row>
@@ -140,7 +137,7 @@ class NPCEffects extends React.PureComponent {
                           </Panel.Body>
                         </Panel>
                   }
-            </PanelGroup>
+                </PanelGroup>
           }
           </Col>
         </Row>

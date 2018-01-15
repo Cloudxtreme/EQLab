@@ -92,9 +92,15 @@ const npc = {
 
 };
 
+const item = {
+  searchLootTables: searchTerm =>
+    requests.get(`/item/loottable/search/${searchTerm}`)
+}
+
 export default {
   auth,
   zone,
   npc,
+  item,
   setToken: (_token) => { token = _token; }
 };

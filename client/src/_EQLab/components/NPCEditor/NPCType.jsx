@@ -10,8 +10,8 @@ import {
   BODY_TYPES,
   MELEE_ATTACK_SKILLS,
   RANGE_ATTACK_SKILLS
-} from '../form/constants/constants.js';
-import { RACES } from '../form/constants/races.js';
+} from '../../../constants/constants.js';
+import { RACES } from '../../../constants/races.js';
 
 
 class NPCType extends React.PureComponent {

@@ -89,11 +89,12 @@ class Spawns extends React.Component {
         sortable: true, 
         resizable: false, 
         filterable: true,
-        Cell: row => <div><center>{row.value}</center></div>
+        style: { textAlign: "center" }
       }, {
         Header: 'Enabled',
         accessor: 'enabled',
         width: 100,
+        style: { textAlign: "center" },
         sortable: true, 
         resizable: false, 
         filterable: true,
@@ -123,11 +124,7 @@ class Spawns extends React.Component {
           if (!row.value) {
             return null;
           } else {
-            return (
-              <div>
-                <center><Checkbox disabled={true} checked={row.value === 1 ? true : false} style={{ margin: 0 }}/></center>
-              </div>
-            )
+            return <Checkbox disabled={true} checked={row.value === 1 ? true : false} style={{ margin: 0 }}/>
           }
         }
       }, {

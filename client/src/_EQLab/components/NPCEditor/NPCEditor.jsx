@@ -9,14 +9,15 @@ import {
   NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_SET_SPELLSET_OPTIONS,
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
+  NPCEDITOR_SET_LOOTTABLE_OPTIONS,
   NPCEDITOR_PUT_NPC
-} from '../../../constants/actionTypes';
+} from '../../../constants/actionTypes.js';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
 import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
 import NPCSpells from './NPCSpells/NPCSpells.jsx';
-import NPCEffects from './NPCEffects/NPCEffects.jsx';
-// import NPCLoot from './NPCLoot.jsx';
+import NPCEffects from './NPCEffects.jsx';
+import NPCLoot from './NPCLoot.jsx';
 
 
 const mapStateToProps = state => ({
@@ -36,6 +37,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_SET_SPELLSET_OPTIONS, options }),
   setEffectSetOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_EFFECTSET_OPTIONS, options }),
+  setLootTableOptions: (options) => 
+    dispatch({ type: NPCEDITOR_SET_LOOTTABLE_OPTIONS, options }),
   putNPC: (npcID, values, zone) => 
     dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone})
 });
@@ -55,7 +58,6 @@ class NPCEditor extends React.Component {
 
     this.searchSpellSets = debounce((input) => {
       let options;
-
       if (input.length > 2) {
         api.npc.searchSpellSets(input ? input : this.props.spells.id)
           .then(results => {
@@ -83,7 +85,6 @@ class NPCEditor extends React.Component {
 
     this.searchEffectSets = debounce((input) => {
       let options;
-
       if (input.length > 2) {
         api.npc.searchEffectSets(input ? input : this.props.effects.id)
           .then(results => {
@@ -109,8 +110,31 @@ class NPCEditor extends React.Component {
       }
     }
 
-    this.changeLootTable = (loottableID) => {
-      this.props.putNPC(this.props.npcID, {loottable_id: loottableID});
+    this.searchLootTables = debounce((input) => {
+      let options;
+      if (input.length > 2) {
+        api.item.searchLootTables(input ? input : this.props.loot.id)
+          .then(results => {
+            options = results.map(loottable => {
+              return {
+                id: loottable.id,
+                label: `${loottable.name} (${loottable.id})`
+              }
+            });
+            this.props.setLootTableOptions(options);
+          })
+          .catch(error => null);
+      }
+    }, 400);
+
+    this.changeLootTable = (loottable) => {
+      if (loottable) {
+        this.props.putNPC(
+          this.props.npcID, 
+          {loottable_id: loottable.id},
+          this.props.zone
+        );
+      }
     }
   }
 
@@ -226,12 +250,13 @@ class NPCEditor extends React.Component {
                             />
                           </Tab.Pane>
                           <Tab.Pane eventKey="npcloot">
-                            {/* <Field 
+                            <Field
                               component={NPCLoot} 
                               name="type.loottable_id"
                               loot={this.props.loot}
+                              searchLootTables={this.searchLootTables}
                               changeLootTable={this.changeLootTable}
-                            /> */}
+                            />
                           </Tab.Pane>
                           <Tab.Pane eventKey="npcmerchant">
                             MERCHANT

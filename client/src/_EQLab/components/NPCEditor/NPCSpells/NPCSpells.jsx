@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Select from 'react-select';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import { NPC_SPELL_TYPES } from '../../form/constants/constants.js';
+import { NPC_SPELL_TYPES } from '../../../../constants/constants.js';
 import Input from '../../form/Input.jsx';
 import NPCSpellsTableHeader from './NPCSpellsTableHeader.jsx';
 
@@ -20,7 +20,7 @@ class NPCSpells extends React.PureComponent {
     const columns = [{
       Header: "Spell",
       accessor: "name",
-      width: 120
+      width: 115
     }, {
       Header: "Type",
       id: "spelltype",
@@ -151,7 +151,7 @@ class NPCSpells extends React.PureComponent {
                           </Panel.Body>
                         </Panel>
                   }
-            </PanelGroup>
+                </PanelGroup>
           }
           </Col>
         </Row>
