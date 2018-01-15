@@ -3,8 +3,6 @@ import { Row, Col, Panel } from 'react-bootstrap';
 import Input from '../form/Input.jsx';
 import Select from '../form/Select.jsx';
 // import FontAwesome from 'react-fontawesome';
-// import { connect } from 'react-redux';
-// import Select from 'react-select';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 

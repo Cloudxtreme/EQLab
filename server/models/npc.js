@@ -292,6 +292,18 @@ module.exports = {
     
     let results = await db.raw(queryStr);
     return results[0];
+  },
+
+  searchNPCFactions: async (searchTerm) => {
+    let queryStr=`
+    SELECT id, name
+    FROM npc_faction
+    WHERE id LIKE '${searchTerm}%'
+    OR name LIKE '%${searchTerm}%'
+    `
+    
+    let results = await db.raw(queryStr);
+    return results[0];
   }
 
 }

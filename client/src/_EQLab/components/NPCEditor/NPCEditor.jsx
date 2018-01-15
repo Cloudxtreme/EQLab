@@ -7,6 +7,7 @@ import { debounce } from 'lodash';
 import {
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_UNLOAD_NPC,
+  NPCEDITOR_SET_FACTION_OPTIONS,
   NPCEDITOR_SET_SPELLSET_OPTIONS,
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_SET_LOOTTABLE_OPTIONS,
@@ -15,15 +16,17 @@ import {
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
 import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
+import NPCFaction from './NPCFaction.jsx';
 import NPCSpells from './NPCSpells/NPCSpells.jsx';
 import NPCEffects from './NPCEffects.jsx';
 import NPCLoot from './NPCLoot.jsx';
-import NPCMerchantTable from './NPCMerchantTable';
+import NPCMerchantTable from './NPCMerchantTable.jsx';
 
 
 const mapStateToProps = state => ({
   isLoaded: state.NPCEditor.isLoaded,
   initialValues: state.NPCEditor.npc,
+  faction: state.NPCEditor.npc.faction,
   spells: state.NPCEditor.npc.spells,
   effects: state.NPCEditor.npc.effects,
   loot: state.NPCEditor.npc.loot,
@@ -36,6 +39,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_FETCH_NPC, npcID }),
   unload: () =>
     dispatch({ type: NPCEDITOR_UNLOAD_NPC }),
+  setFactionOptions: (options) => 
+    dispatch({ type: NPCEDITOR_SET_FACTION_OPTIONS, options }),
   setSpellSetOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_SPELLSET_OPTIONS, options }),
   setEffectSetOptions: (options) => 
@@ -57,6 +62,33 @@ class NPCEditor extends React.Component {
 
     this.deleteNPC = () => {
       console.log('NPC Deleted');
+    }
+
+    this.searchFactions = debounce((input) => {
+      let options;
+      if (input.length > 2) {
+        api.npc.searchFactions(input ? input : this.props.faction.id)
+          .then(results => {
+            options = results.map(faction => {
+              return {
+                id: faction.id,
+                label: `${faction.name} (${faction.id})`
+              }
+            });
+            this.props.setFactionOptions(options);
+          })
+          .catch(error => null);
+      }
+    }, 400);
+
+    this.changeFaction = (faction) => {
+      if (faction) {
+        this.props.putNPC(
+          this.props.npcID, 
+          {npc_faction_id: faction.id},
+          this.props.zone
+        );
+      }
     }
 
     this.searchSpellSets = debounce((input) => {
@@ -187,31 +219,37 @@ class NPCEditor extends React.Component {
                   </Row>
                   <Row>
                     <Col md={24}>
-                      <Tab.Container id="npc-panel" defaultActiveKey="specialabilities">
+                      <Tab.Container id="npc-panel" defaultActiveKey="npcspecialabilities">
                         <Panel style={{ height: 449, marginBottom: 0 }}>
                           <Panel.Heading style={{ paddingBottom: 0 }}>
                             <Nav bsStyle="tabs" style={{ borderBottom: "none" }}>
-                              <NavItem eventKey="specialabilities">Special Abilities</NavItem>
-                              <NavItem eventKey="faction">Faction</NavItem>
-                              <NavItem eventKey="emote">Emote</NavItem>
-                              <NavItem eventKey="tint">Tint</NavItem>
+                              <NavItem eventKey="npcspecialabilities">Special Abilities</NavItem>
+                              <NavItem eventKey="npcfaction">Faction</NavItem>
+                              <NavItem eventKey="npcemote">Emote</NavItem>
+                              <NavItem eventKey="npctint">Tint</NavItem>
                             </Nav> 
                           </Panel.Heading>
                           <Panel.Body collapsible={false}>
                             <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
-                              <Tab.Pane eventKey="specialabilities">
+                              <Tab.Pane eventKey="npcspecialabilities">
                                 <Field 
                                   component={NPCSpecialAbilities} 
                                   name="type.special_abilities"
                                 />
                               </Tab.Pane>
-                              <Tab.Pane eventKey="faction">
-                                FACTION
+                              <Tab.Pane eventKey="npcfaction">
+                                <Field
+                                  component={NPCFaction} 
+                                  name="type.npc_faction_id"
+                                  faction={this.props.faction}
+                                  searchFactions={this.searchFactions}
+                                  changeFaction={this.changeFaction}
+                                />
                               </Tab.Pane>
-                              <Tab.Pane eventKey="emote">
+                              <Tab.Pane eventKey="npcemote">
                                 EMOTE
                               </Tab.Pane>
-                              <Tab.Pane eventKey="tint">
+                              <Tab.Pane eventKey="npctint">
                                 TINT
                               </Tab.Pane>
                             </Tab.Content>

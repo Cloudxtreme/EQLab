@@ -237,3 +237,17 @@ export const NPC_SPELL_TYPES = {
   1048576: "PreCombatBuff",
   2097152: "PreCombatBuffSong"
 }
+
+export const NPC_FACTION_ENTRIES = {
+  npc_value: {
+    "-1": "Attack",
+    "0": "Neutral",
+    "1": "Assist"
+  },
+  temp: {
+    "0": "Faction is permanent, player recieves a message.",
+    "1": "Faction is temporary, player does not recieve a message.",
+    "2": "Faction is temporary, player recieves a message.",
+    "3": "Faction is permanent, but player does not recieve a message.",
+  }
+}

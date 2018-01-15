@@ -17,6 +17,12 @@ npc_router.get("/spellset/search/:searchTerm", (req, res, next) => {
   });
 });
 
+npc_router.get("/faction/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCFactions(req.params.searchTerm).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
 npc_router.get("/search/:searchTerm", (req, res, next) => {
   npc.searchNPCs(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)

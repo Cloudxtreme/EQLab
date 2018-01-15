@@ -118,7 +118,7 @@ class Spawns extends React.Component {
               <option value="1">Enabled</option>
               <option value="0">Disabled</option>
             </select>
-          )
+          );
         },
         Cell: row => {
           if (!row.value) {
