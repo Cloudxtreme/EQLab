@@ -4,6 +4,7 @@ const express    = require('express'),
       api_router = express.Router();
 
 
+api_router.use('/global', require('./global_router'));
 api_router.use('/zone', require('./zone_router'));
 // api_router.use('/class', require('./class_router'));
 api_router.use('/item', require('./item_router'));

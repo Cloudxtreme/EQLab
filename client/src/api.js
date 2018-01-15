@@ -30,6 +30,11 @@ const auth = {
     requests.post('/auth/register', { user: { username, email, password } })
 };
 
+const global = {
+  getGlobalVariables: () =>
+    requests.get('/global/variables')
+}
+
 const zone = {
   getZoneList: () =>
     requests.get('/zone/zonelist'),
@@ -99,6 +104,7 @@ const item = {
 
 export default {
   auth,
+  global,
   zone,
   npc,
   item,

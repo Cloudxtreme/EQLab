@@ -1,5 +1,5 @@
-import React from 'react'
-import { FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap'
+import React from 'react';
+import { FormGroup, FormControl, ControlLabel, HelpBlock } from 'react-bootstrap';
 
 class Input extends React.PureComponent {
   static defaultProps = {

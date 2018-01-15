@@ -60,19 +60,13 @@ npc_router.get("/:npcID/spells", (req, res, next) => {
 });      
  
 npc_router.get("/:npcID/loot", (req, res, next) => {
-  npc.getLootTableTree(req.params.npcID).then(data => {
+  npc.getLoot(req.params.npcID).then(data => {
     res.status(200).type('json').json(data)
   })
 });
 
 npc_router.get("/tintlist", (req, res, next) => {
   npc.getTintList().then(data => {
-    res.status(200).type('json').json(data)
-  })
-});
-
-npc_router.get("/altcurrencylist", (req, res, next) => {
-  npc.getAltCurrencyList().then(data => {
     res.status(200).type('json').json(data)
   })
 });

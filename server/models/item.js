@@ -18,13 +18,13 @@ module.exports = {
 
   getAltCurrencyList: async () => {
     let queryStr = `
-    SELECT alternate_currency.id, items.id AS 'item_id', items.Name AS 'name'
+    SELECT alternate_currency.id AS 'value', items.id AS 'item_id', items.name AS 'label'
     FROM alternate_currency
     LEFT JOIN items ON items.id = alternate_currency.item_id
     `;
 
     let SQLdata = await db.raw(queryStr);
-    return sanitize(SQLdata[0]);
+    return SQLdata[0];
   },
 
   searchLootTables: async (searchTerm) => {

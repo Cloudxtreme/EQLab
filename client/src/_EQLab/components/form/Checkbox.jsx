@@ -1,5 +1,5 @@
-import React from 'react'
-import { Checkbox as BootstrapCheckbox, FormGroup, HelpBlock } from 'react-bootstrap'
+import React from 'react';
+import { Checkbox as BootstrapCheckbox, FormGroup, HelpBlock } from 'react-bootstrap';
 
 
 class Checkbox extends React.PureComponent {

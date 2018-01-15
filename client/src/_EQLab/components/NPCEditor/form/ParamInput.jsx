@@ -1,5 +1,5 @@
-import React from 'react'
-import { FormGroup, FormControl } from 'react-bootstrap'
+import React from 'react';
+import { FormGroup, FormControl } from 'react-bootstrap';
 
 class ParamInput extends React.PureComponent {
   render () {

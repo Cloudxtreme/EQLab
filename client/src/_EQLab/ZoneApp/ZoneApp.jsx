@@ -6,8 +6,8 @@ import Select from 'react-select';
 import { socketConnect } from 'socket.io-react';
 import { connect } from 'react-redux';
 import {
-  SUBAPP_UNLOAD,
-  ZONEAPP_FETCH_ZONELIST,
+  ZONEAPP_LOAD,
+  ZONEAPP_UNLOAD,
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SELECT_PANE,
   ZONEAPP_ADD_SPAWN2
@@ -24,10 +24,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onUnload: () =>
-    dispatch({ type: SUBAPP_UNLOAD }),
-  fetchZoneList: () =>
-    dispatch({ type: ZONEAPP_FETCH_ZONELIST }),
+  load: () =>
+    dispatch({ type: ZONEAPP_LOAD }),
+  unload: () =>
+    dispatch({ type: ZONEAPP_UNLOAD }),
   selectZone: zone =>
     dispatch({ type: ZONEAPP_SELECT_ZONE, zone }),
   selectPane: pane =>
@@ -64,13 +64,13 @@ class ZoneApp extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchZoneList();
+    this.props.load();
     this.props.socket.emit('ZoneApp Loaded');
   }
 
   componentWillUnmount() {
     this.props.socket.emit('ZoneApp Unloaded');
-    this.props.onUnload();
+    this.props.unload();
   }
 
   render() {

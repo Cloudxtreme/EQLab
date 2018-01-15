@@ -1,5 +1,5 @@
-import React from 'react'
-import { Checkbox } from 'react-bootstrap'
+import React from 'react';
+import { Checkbox } from 'react-bootstrap';
 
 
 class AbilityCheckbox extends React.PureComponent {

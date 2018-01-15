@@ -1,7 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types'
-import { Modal, Button } from 'react-bootstrap'
-import { confirmable } from 'react-confirm'
+import PropTypes from 'prop-types';
+import { Modal, Button } from 'react-bootstrap';
+import { confirmable } from 'react-confirm';
 
 class Confirmation extends React.Component {
   render() {

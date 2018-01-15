@@ -1,8 +1,8 @@
-import React from 'react'
-import { Row, Col, FormGroup, FormControl } from 'react-bootstrap'
-import Input from '../form/Input.jsx'
-import AbilityCheckbox from './form/AbilityCheckbox.jsx'
-import ParamInput from './form/ParamInput.jsx'
+import React from 'react';
+import { Row, Col, FormGroup, FormControl } from 'react-bootstrap';
+import Input from '../form/Input.jsx';
+import AbilityCheckbox from './form/AbilityCheckbox.jsx';
+import ParamInput from './form/ParamInput.jsx';
 
 
 class NPCSpecialAbilities extends React.Component {
@@ -168,7 +168,7 @@ class NPCSpecialAbilities extends React.Component {
           <Col md={24}>
             <Input
               type="text"
-              input={this.props.input} 
+              input={this.props.input}
               meta={this.props.meta}
               bsSize="sm"
               showLabel={false}

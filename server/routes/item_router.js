@@ -9,6 +9,12 @@ item_router.get("/loottable/search/:searchTerm", (req, res, next) => {
   item.searchLootTables(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
   });
-});     
+});
+
+item_router.get("/altcurrencylist", (req, res, next) => {
+  item.getAltCurrencyList().then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
 
 module.exports = item_router;

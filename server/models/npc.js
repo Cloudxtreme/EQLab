@@ -224,23 +224,18 @@ module.exports = {
     LEFT JOIN items ON items.id = merchantlist.item
     WHERE npc_types.id = '${npcID}'
     `;
+
     let SQLdata = await db.raw(queryStr);
  
-    let merchantTable = new Treeize;
-    SQLdata[0] = sanitize(SQLdata[0]);
-    merchantTable = merchantTable.grow(SQLdata[0]).getData();
-    return merchantTable[0];
-  },
-
-  getAltCurrencyList: async () => {
-    let queryStr = `
-    SELECT alternate_currency.id, items.id AS 'item_id', items.Name AS 'name'
-    FROM alternate_currency
-    LEFT JOIN items ON items.id = alternate_currency.item_id
-    `;
-
-    let SQLdata = await db.raw(queryStr);
-    return sanitize(SQLdata[0]);
+    if (!SQLdata[0][0].id) {
+      return null;
+    } else {
+      let merchantTable = new Treeize;
+      SQLdata[0] = sanitize(SQLdata[0]);
+      merchantTable = merchantTable.grow(SQLdata[0]).getData()[0];
+      
+      return merchantTable;
+    } 
   },
 
   getTintList: async () => {

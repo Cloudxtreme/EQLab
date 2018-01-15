@@ -1,5 +1,5 @@
 import {
-  ZONEAPP_RESET,
+  ZONEAPP_UNLOAD,
   ZONEAPP_SET_ZONELIST,
   ZONEAPP_SELECT_PANE,
   ZONEAPP_SET_ZONE,
@@ -31,7 +31,7 @@ function get_INITIAL_STATE() {
 
 export default (state = get_INITIAL_STATE(), action) => {
   switch (action.type) {
-    case ZONEAPP_RESET:
+    case ZONEAPP_UNLOAD:
       return get_INITIAL_STATE();
     case ZONEAPP_SET_ZONELIST:
       return {

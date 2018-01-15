@@ -14,7 +14,7 @@ const mapStateToProps = state => ({
 class NPCLoot extends React.PureComponent {
   render() {
     const loot = this.props.loot;
-    const lootdrops = loot.lootdrops && loot.lootdrops.sort((a, b) => b.probability - a.probability);
+    const lootdrops = loot && loot.lootdrops && loot.lootdrops.sort((a, b) => b.probability - a.probability);
 
     const columns = [{
       Header: "Item",

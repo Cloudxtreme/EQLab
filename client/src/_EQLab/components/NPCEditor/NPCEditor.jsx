@@ -18,6 +18,7 @@ import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
 import NPCSpells from './NPCSpells/NPCSpells.jsx';
 import NPCEffects from './NPCEffects.jsx';
 import NPCLoot from './NPCLoot.jsx';
+import NPCMerchantTable from './NPCMerchantTable';
 
 
 const mapStateToProps = state => ({
@@ -25,7 +26,9 @@ const mapStateToProps = state => ({
   initialValues: state.NPCEditor.npc,
   spells: state.NPCEditor.npc.spells,
   effects: state.NPCEditor.npc.effects,
-  loot: state.NPCEditor.npc.loot
+  loot: state.NPCEditor.npc.loot,
+  merchant: state.NPCEditor.npc.merchant,
+  altCurrency: state.Global.altCurrency
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -259,7 +262,12 @@ class NPCEditor extends React.Component {
                             />
                           </Tab.Pane>
                           <Tab.Pane eventKey="npcmerchant">
-                            MERCHANT
+                            <Fields
+                              component={NPCMerchantTable}
+                              names={[ 'type.merchant_id', 'type.alt_currency_id' ]}
+                              merchant={this.props.merchant}
+                              altCurrency={this.props.altCurrency}
+                            />
                           </Tab.Pane>
                         </Tab.Content>
                       </Panel.Body>
@@ -277,6 +285,4 @@ class NPCEditor extends React.Component {
 
 NPCEditor = reduxForm(NPCEditorOptions)(NPCEditor);
 
-NPCEditor = connect(mapStateToProps, mapDispatchToProps)(NPCEditor);
-
-export default NPCEditor;
+export default connect(mapStateToProps, mapDispatchToProps)(NPCEditor);

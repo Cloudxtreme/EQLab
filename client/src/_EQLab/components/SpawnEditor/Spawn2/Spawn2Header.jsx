@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
-import FontAwesome from 'react-fontawesome'
+import FontAwesome from 'react-fontawesome';
 
 
 class Spawn2Header extends React.PureComponent {
