@@ -183,25 +183,6 @@ class Spawns extends React.Component {
       }]
     }];
 
-                  // <div>
-              //   <p>{row.value.name}</p>
-              //   {
-              //     !row.value.spawnentries
-              //       ? null
-              //       : <ul>
-              //           {row.value.spawnentries.map(entry => {
-              //             return(
-              //               <li key={entry.npc_id}>
-              //                 <a onClick={this.handleNPC} id={entry.npc_id}>
-              //                   {entry.chance}% {entry.npc_name} ({entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null})
-              //                 </a>
-              //               </li>
-              //             )
-              //           })} 
-              //         </ul> 
-              //   }
-              // </div>
- 
     return (
       <div id="Spawns">
         <Row>
@@ -226,8 +207,8 @@ class Spawns extends React.Component {
             {
               this.props.mode
                 ? this.props.mode !== 'spawn'
-                    ? <NPCEditor zone={this.props.zone} npcID={this.props.id}/>
-                    : <SpawnEditor zone={this.props.zone} spawn2ID={this.props.id}/>
+                    ? <NPCEditor npcID={this.props.id} zone={this.props.zone} />
+                    : <SpawnEditor spawn2ID={this.props.id} zone={this.props.zone} />
                 : null
             }
           </Col>

@@ -107,6 +107,12 @@ npc_router.get("/passivelist", (req, res, next) => {
   })
 });
 
+npc_router.delete("/:npcID", (req, res, next) => {
+  npc.delete(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
 npc_router.put("/:npcID", (req, res, next) => {
   npc.update(req.params.npcID, req.body).then(data => {
     res.status(200).type('json').json(data)

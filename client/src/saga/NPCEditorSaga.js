@@ -4,15 +4,17 @@ import {
   ZONEAPP_REBUILD_SPAWNTREE,
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_LOAD_NPC,
-  // NPCEDITOR_UNLOAD_NPC,
+  NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_PUT_NPC,
-  NPCEDITOR_UPDATE_NPC
+  NPCEDITOR_UPDATE_NPC,
+  NPCEDITOR_DELETE_NPC
 } from '../constants/actionTypes';
 
 export const NPCEditorSaga = [
   takeLatest(NPCEDITOR_FETCH_NPC, fetchNPC),
   takeLatest(NPCEDITOR_PUT_NPC, putNPC),
-  takeLatest(NPCEDITOR_UPDATE_NPC, updateNPC)
+  takeLatest(NPCEDITOR_UPDATE_NPC, updateNPC),
+  takeLatest(NPCEDITOR_DELETE_NPC, deleteNPC)
 ];
 
 function* fetchNPC(action) {
@@ -28,6 +30,14 @@ function* putNPC(action) {
 function* updateNPC(action) {
   yield all([
     put({ type: NPCEDITOR_FETCH_NPC, npcID: action.npcID }),
+    action.zone && put({ type: ZONEAPP_REBUILD_SPAWNTREE, zone: action.zone })
+  ]);
+}
+
+function* deleteNPC(action) {
+  yield call(api.npc.deleteNPC, action.npcID);
+  yield all([
+    put({ type: NPCEDITOR_UNLOAD_NPC }),
     action.zone && put({ type: ZONEAPP_REBUILD_SPAWNTREE, zone: action.zone })
   ]);
 }

@@ -16,6 +16,18 @@ module.exports = {
     }
   },
 
+  delete: async (id) => {
+    if (id) {
+      return await db.delete('npc_types', { id });
+      /* Linked Tables
+          spawnentry
+          pets
+          fishing
+          merchantlist_temp
+      */
+    }
+  },
+
   getFactions: async (npcID) => {
     let queryStr = `
     SELECT npc_types.npc_faction_id AS 'id', npc_faction.name, npc_faction.primaryfaction AS 'primaryfaction_id', 
@@ -242,26 +254,6 @@ module.exports = {
     } 
   },
 
-  getTintList: async () => {
-    return await db.select('npc_types_tint', ['id', 'tint_set_name'], {});
-  },
-
-  getRaceList: async () => {
-    return await db.select('races', ['id', 'name'], {});
-  },
-
-  getNPCFactionList: async () => {
-    return await db.select('npc_faction', ['id', 'name'], {});
-  },
-
-  getNPCSpellList: async () => {
-    return await db.select('npc_spells', ['id', 'name'], {});
-  },
-
-  getNPCPassiveList: async () => {
-    return await db.select('npc_spells_effects', ['id', 'name'], {});
-  },
-
   searchNPCs: async (searchTerm) => {
     let queryStr=`
     SELECT id, name
@@ -320,6 +312,26 @@ module.exports = {
     
     let results = await db.raw(queryStr);
     return results[0];
+  },
+
+  getTintList: async () => {
+    return await db.select('npc_types_tint', ['id', 'tint_set_name'], {});
+  },
+
+  getRaceList: async () => {
+    return await db.select('races', ['id', 'name'], {});
+  },
+
+  getNPCFactionList: async () => {
+    return await db.select('npc_faction', ['id', 'name'], {});
+  },
+
+  getNPCSpellList: async () => {
+    return await db.select('npc_spells', ['id', 'name'], {});
+  },
+
+  getNPCPassiveList: async () => {
+    return await db.select('npc_spells_effects', ['id', 'name'], {});
   }
 
 }

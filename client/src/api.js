@@ -76,6 +76,8 @@ const npc = {
     requests.get(`/npc/${npcID}`),
   putNPC: (npcID, body) => 
     requests.put(`/npc/${npcID}`, body),
+  deleteNPC: npcID => 
+    requests.delete(`/npc/${npcID}`),
   searchNPCs: searchTerm =>
     requests.get(`/npc/search/${searchTerm}`),
   searchFactions: searchTerm =>

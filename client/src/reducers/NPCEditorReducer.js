@@ -1,8 +1,6 @@
 import {
-  NPCEDITOR_RESET,
   NPCEDITOR_LOAD_NPC,
   NPCEDITOR_UNLOAD_NPC,
-  // NPCEDITOR_UPDATE_NPC,
   NPCEDITOR_SET_FACTION_OPTIONS,
   NPCEDITOR_SET_TINT_OPTIONS,
   NPCEDITOR_SET_SPELLSET_OPTIONS,
@@ -25,7 +23,7 @@ function get_INITIAL_STATE() {
 
 export default (state = get_INITIAL_STATE(), action) => {
   switch (action.type) {
-    case NPCEDITOR_RESET:
+    case NPCEDITOR_UNLOAD_NPC:
       return get_INITIAL_STATE();
     case NPCEDITOR_LOAD_NPC:
       return {
@@ -38,8 +36,6 @@ export default (state = get_INITIAL_STATE(), action) => {
         effectsetOptions: action.payload.effects ? [{ id: action.payload.effects.id, label: `${action.payload.effects.name} (${action.payload.effects.id})` }] : [],
         loottableOptions: action.payload.loot ? [{ id: action.payload.loot.id, label: `${action.payload.loot.name} (${action.payload.loot.id})` }] : []
       }
-    case NPCEDITOR_UNLOAD_NPC:
-      return get_INITIAL_STATE();
     case NPCEDITOR_SET_FACTION_OPTIONS:
       return {
         ...state,

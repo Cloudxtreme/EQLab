@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Panel, Button } from 'react-bootstrap';
+import { Row, Col, Panel, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 import { connect } from 'react-redux';
 import Select from 'react-select';
@@ -55,7 +55,7 @@ class NPCFaction extends React.PureComponent {
             <Panel style={{ height: 393 }}>
               <Panel.Heading>
                 <Row style={{ height: 50 }}>
-                  <Col md={20}>
+                  <Col md={16}>
                     <Select
                       name="selectfaction"
                       ref="selectfaction"
@@ -85,18 +85,39 @@ class NPCFaction extends React.PureComponent {
                           </Button>
                     }
                   </Col>
+                  <Col md={4}>
+                  </Col>
                 </Row>
               </Panel.Heading>
               <Panel.Body style={{ padding: 0 }}>
               {
                 !faction
                   ? null
-                  : 
-                      <ReactTable
-                        data={faction.entries}
-                        pageSize={faction.entries.length}
-                        {...tableProps}
-                      />
+                  : <ListGroup>
+                      <ListGroupItem>
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Primary Faction</th>
+                              <th>Ignore Primary Assist</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{faction.primaryfaction_name}</td>
+                              <td>{faction.ignore_primary_assist}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </ListGroupItem>
+                      <ListGroupItem style={{ padding: 0 }}>
+                        <ReactTable
+                          data={faction.entries}
+                          pageSize={faction.entries.length}
+                          {...tableProps}
+                        />
+                      </ListGroupItem>
+                    </ListGroup>
               }
               </Panel.Body>
             </Panel>

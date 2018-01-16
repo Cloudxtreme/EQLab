@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, FormSection, Field, Fields } from 'redux-form';
+import { confirm } from '../form/confirm/confirm.js';
 import diff from 'object-diff';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
@@ -14,7 +15,8 @@ import {
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_SET_LOOTTABLE_OPTIONS,
   NPCEDITOR_PUT_NPC,
-  NPCEDITOR_UPDATE_NPC
+  NPCEDITOR_UPDATE_NPC,
+  NPCEDITOR_DELETE_NPC
 } from '../../../constants/actionTypes.js';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
@@ -59,7 +61,9 @@ const mapDispatchToProps = dispatch => ({
   putNPC: (npcID, values, zone) => 
     dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone}),
   updateNPC: (npcID, values, zone) => 
-    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values, zone})
+    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values, zone}),
+  deleteNPC: (npcID, zone) => 
+    dispatch({ type: NPCEDITOR_DELETE_NPC, npcID, zone})
 });
 
 const NPCEditorOptions = {
@@ -72,7 +76,14 @@ class NPCEditor extends React.Component {
     super(props);
 
     this.deleteNPC = () => {
-      console.log('NPC Deleted');
+      confirm('Are you sure you want to delete this NPC?', {
+        title: 'Delete NPC'
+      }).then(() => {
+        this.props.deleteNPC(
+          this.props.npcID, 
+          this.props.zone ? this.props.zone : null
+        );
+      }, () => {});
     }
 
     this.submitNPCForm = (values, dispatch, props) => {
