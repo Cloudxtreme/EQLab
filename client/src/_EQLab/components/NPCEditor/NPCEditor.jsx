@@ -1,7 +1,8 @@
 import React from 'react';
 import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { reduxForm, FormSection, Field, Fields } from 'redux-form';
+import { reduxForm, SubmissionError, FormSection, Field, Fields } from 'redux-form';
+import diff from 'object-diff';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
 import {
@@ -12,7 +13,8 @@ import {
   NPCEDITOR_SET_SPELLSET_OPTIONS,
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_SET_LOOTTABLE_OPTIONS,
-  NPCEDITOR_PUT_NPC
+  NPCEDITOR_PUT_NPC,
+  NPCEDITOR_UPDATE_NPC
 } from '../../../constants/actionTypes.js';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
@@ -55,7 +57,9 @@ const mapDispatchToProps = dispatch => ({
   setLootTableOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_LOOTTABLE_OPTIONS, options }),
   putNPC: (npcID, values, zone) => 
-    dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone})
+    dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone}),
+  updateNPC: (npcID, values, zone) => 
+    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values, zone})
 });
 
 const NPCEditorOptions = {
@@ -69,6 +73,26 @@ class NPCEditor extends React.Component {
 
     this.deleteNPC = () => {
       console.log('NPC Deleted');
+    }
+
+    this.submitNPCForm = (values, dispatch, props) => {
+      return new Promise((resolve, reject) => {
+        if (props.dirty && props.valid) {
+          const delta = diff(props.initialValues.type, values.type);
+          api.npc.putNPC(values.type.id, delta).then(res => {
+            this.props.updateNPC(
+              values.type.id, 
+              delta,
+              this.props.zone ? this.props.zone : null
+            );
+            resolve();
+          }).catch(error => {
+            if (error.validationErrors) {
+              reject(new SubmissionError(error.validationErrors));
+            } 
+          });
+        }
+      });
     }
 
     this.searchFactions = debounce((input) => {
@@ -236,7 +260,7 @@ class NPCEditor extends React.Component {
                 formSubmitting={this.props.submitting}
                 deleteNPC={this.deleteNPC}
                 reset={this.props.reset}
-                handleSubmit={this.props.handleSubmit}
+                handleSubmit={this.props.handleSubmit(this.submitNPCForm)}
               />
             </Panel.Heading>
             <Panel.Body collapsible={false}>

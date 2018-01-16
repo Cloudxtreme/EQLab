@@ -7,6 +7,7 @@ import {
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SET_ZONE,
   ZONEAPP_BUILD_SPAWNTREE,
+  ZONEAPP_REBUILD_SPAWNTREE,
   ZONEAPP_REFRESH_SPAWN2,
   ZONEAPP_POST_SPAWN2,
   ZONEAPP_FETCH_SPAWN2TREE
@@ -17,6 +18,7 @@ export const ZoneAppSaga = [
   takeLatest(ZONEAPP_LOAD, load),
   takeLatest(ZONEAPP_SELECT_ZONE, selectZone),
   takeLatest(ZONEAPP_POST_SPAWN2, postSpawn2),
+  takeLatest(ZONEAPP_REBUILD_SPAWNTREE, rebuildSpawnTree),
   takeLatest(ZONEAPP_FETCH_SPAWN2TREE, fetchSpawn2Tree)
 ];
 
@@ -43,6 +45,11 @@ function* selectZone(action) {
     put({ type: ZONEAPP_SET_ZONE, zone: action.zone }),
     put({ type: ZONEAPP_BUILD_SPAWNTREE, spawnTree })
   ]);
+}
+
+function* rebuildSpawnTree(action) {
+  const spawnTree = yield call(api.zone.getSpawnTreeData, action.zone);
+  yield put({ type: ZONEAPP_BUILD_SPAWNTREE, spawnTree });
 }
 
 function* postSpawn2(action) {

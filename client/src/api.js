@@ -72,7 +72,7 @@ const zone = {
 };
 
 const npc = { 
-  getNPCData: npcID =>
+  getNPC: npcID =>
     requests.get(`/npc/${npcID}`),
   putNPC: (npcID, body) => 
     requests.put(`/npc/${npcID}`, body),
