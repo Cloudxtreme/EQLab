@@ -8,6 +8,7 @@ import {
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_SET_FACTION_OPTIONS,
+  NPCEDITOR_SET_TINT_OPTIONS,
   NPCEDITOR_SET_SPELLSET_OPTIONS,
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_SET_LOOTTABLE_OPTIONS,
@@ -18,6 +19,7 @@ import NPCType from './NPCType.jsx';
 import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
 import NPCFaction from './NPCFaction.jsx';
 import NPCEmotes from './NPCEmotes.jsx';
+import NPCTint from './NPCTint.jsx';
 import NPCSpells from './NPCSpells/NPCSpells.jsx';
 import NPCEffects from './NPCEffects.jsx';
 import NPCLoot from './NPCLoot.jsx';
@@ -29,6 +31,7 @@ const mapStateToProps = state => ({
   initialValues: state.NPCEditor.npc,
   faction: state.NPCEditor.npc.faction,
   emotes: state.NPCEditor.npc.emotes,
+  tint: state.NPCEditor.npc.tint,
   spells: state.NPCEditor.npc.spells,
   effects: state.NPCEditor.npc.effects,
   loot: state.NPCEditor.npc.loot,
@@ -43,6 +46,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_UNLOAD_NPC }),
   setFactionOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_FACTION_OPTIONS, options }),
+  setTintOptions: (options) => 
+    dispatch({ type: NPCEDITOR_SET_TINT_OPTIONS, options }),
   setSpellSetOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_SPELLSET_OPTIONS, options }),
   setEffectSetOptions: (options) => 
@@ -88,6 +93,33 @@ class NPCEditor extends React.Component {
         this.props.putNPC(
           this.props.npcID, 
           {npc_faction_id: faction.id},
+          this.props.zone
+        );
+      }
+    }
+
+    this.searchTints = debounce((input) => {
+      let options;
+      if (input.length > 2) {
+        api.npc.searchTints(input ? input : this.props.tint.id)
+          .then(results => {
+            options = results.map(tint => {
+              return {
+                id: tint.id,
+                label: `${tint.tint_set_name} (${tint.id})`
+              }
+            });
+            this.props.setTintOptions(options);
+          })
+          .catch(error => null);
+      }
+    }, 400);
+
+    this.changeTint = (tint) => {
+      if (tint) {
+        this.props.putNPC(
+          this.props.npcID, 
+          {armortint_id: tint.id},
           this.props.zone
         );
       }
@@ -256,7 +288,13 @@ class NPCEditor extends React.Component {
                                 />
                               </Tab.Pane>
                               <Tab.Pane eventKey="npctint">
-                                TINT
+                                <Field
+                                  component={NPCTint} 
+                                  name="type.armortint_id" // Possibly need to add more: armortint_red, armortint_green, armortint_blue
+                                  tint={this.props.tint}
+                                  searchTints={this.searchTints}
+                                  changeTint={this.changeTint}
+                                />
                               </Tab.Pane>
                             </Tab.Content>
                           </Panel.Body>

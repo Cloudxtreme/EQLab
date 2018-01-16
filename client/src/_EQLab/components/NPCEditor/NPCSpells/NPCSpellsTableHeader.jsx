@@ -30,12 +30,14 @@ class NPCSpellsTableHeader extends React.PureComponent {
               <Col md={24}>
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ tableLayout: "fixed", width: 400 }}>
-                    <tbody>
+                    <thead>
                       <tr>
                         <th style={{ borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Proc Type</th>
                         <th style={{ borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Name</th>
                         <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Chance</th>
                       </tr>
+                    </thead>
+                    <tbody>
                       {
                         !(spells.attack_proc > 0)
                           ? null

@@ -148,20 +148,22 @@ class Spawns extends React.Component {
           } else if (!row.value.spawnentries) {
             return (
               <table style={{ float: "right" }}>
-                <tbody>
+                <thead>
                   <tr>
                     <th colSpan="4">{row.value.name}</th>
                   </tr>
-                </tbody>
+                </thead>
               </table>
             )
           } else {
             return (
               <table style={{ float: "right" }}>
-                <tbody>
+                <thead>
                   <tr>
                     <th colSpan="3" style={{ borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black", textAlign: "center" }}>{row.value.name}</th>
                   </tr>
+                </thead>
+                <tbody>
                   {
                     row.value.spawnentries.map(entry => {
                       return (

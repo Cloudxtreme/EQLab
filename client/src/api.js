@@ -80,6 +80,8 @@ const npc = {
     requests.get(`/npc/search/${searchTerm}`),
   searchFactions: searchTerm =>
     requests.get(`/npc/faction/search/${searchTerm}`),
+  searchTints: searchTerm =>
+    requests.get(`/npc/tint/search/${searchTerm}`),
   searchSpellSets: searchTerm =>
     requests.get(`/npc/spellset/search/${searchTerm}`),
   searchEffectSets: searchTerm =>

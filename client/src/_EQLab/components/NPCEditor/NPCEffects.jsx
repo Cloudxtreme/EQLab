@@ -14,6 +14,9 @@ const mapStateToProps = state => ({
 
 class NPCEffects extends React.PureComponent {
   render() {
+
+    const effects = this.props.effects;
+
     const columns = [{
       Header: "Effect",
       id: "effect_id",
@@ -86,7 +89,7 @@ class NPCEffects extends React.PureComponent {
           </Col>
           <Col md={4}>
             { 
-              !this.props.effects
+              !effects
                 ? null
                 : <Button bsStyle="danger" bsSize="xs" style={{ marginTop: 20 }} onClick={() => this.props.changeEffectSet({id: 0})}>
                     <FontAwesome name="chain-broken"/>&nbsp;Unlink
@@ -97,40 +100,40 @@ class NPCEffects extends React.PureComponent {
         <Row>
           <Col md={24} style={{ maxHeight: 797, overflowY: "scroll" }}>
           {
-            !this.props.effects
+            !effects
               ? null
               : <PanelGroup id="npc-effects">
                   <Panel>
                     <Panel.Body style={{ padding: 0 }}>
                       {
-                        !this.props.effects.entries.length
+                        !effects.entries.length
                           ? <center><span>No Effect Entries Found</span></center>
                           : <ReactTable
-                              data={this.props.effects.entries}
-                              pageSize={this.props.effects.entries.length}
+                              data={effects.entries}
+                              pageSize={effects.entries.length}
                               {...tableProps}
                             />
                       }
                     </Panel.Body>
                   </Panel>
                   {
-                    !this.props.effects.parent_list
+                    !effects.parent_list
                       ? null
                       : <Panel>
                           <Panel.Heading>
                             <Row>
                               <Col md={24}>
-                                <span>{`Parent List: ${this.props.effects.parent_list.name} (${this.props.effects.parent_list.id})`}</span>
+                                <span>{`Parent List: ${effects.parent_list.name} (${effects.parent_list.id})`}</span>
                               </Col>
                             </Row>                       
                           </Panel.Heading>
                           <Panel.Body style={{ padding: 0 }}>
                             {
-                              !this.props.effects.parent_list.entries.length
+                              !effects.parent_list.entries.length
                                 ? <center><span>No Effect Entries Found</span></center>
                                 : <ReactTable
-                                    data={this.props.effects.parent_list.entries}
-                                    pageSize={this.props.effects.parent_list.entries.length}
+                                    data={effects.parent_list.entries}
+                                    pageSize={effects.parent_list.entries.length}
                                     {...tableProps}
                                   />
                             }

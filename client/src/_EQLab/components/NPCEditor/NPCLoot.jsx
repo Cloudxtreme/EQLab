@@ -105,12 +105,14 @@ class NPCLoot extends React.PureComponent {
             !loot
               ? null
               : <table style={{ tableLayout: "fixed", width: 130 }}>
-                  <tbody>
+                  <thead>
                     <tr>
                       <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Min</th>
                       <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Max</th>
                       <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Avg</th>
                     </tr>
+                  </thead>
+                  <tbody>
                     <tr>
                       <td style={{ textAlign: "center", overflow: "hidden" }}>{loot.mincash}</td>
                       <td style={{ textAlign: "center", overflow: "hidden" }}>{loot.maxcash}</td>
@@ -136,7 +138,7 @@ class NPCLoot extends React.PureComponent {
                               <Row>
                                 <Col md={24}>
                                   <table style={{ tableLayout: "fixed", width: 480 }}>
-                                    <tbody>
+                                    <thead>
                                       <tr>
                                         <th style={{ textAlign: "left", rowspan: 2, overflow: "hidden"}}>{lootdrop.name}</th>
                                         <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Multiplier</th>
@@ -144,6 +146,8 @@ class NPCLoot extends React.PureComponent {
                                         <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Min Drop</th>
                                         <th style={{ textAlign: "center", borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black" }}>Drop Limit</th>
                                       </tr>
+                                    </thead>
+                                    <tbody>
                                       <tr>
                                         <td></td>
                                         <td style={{ textAlign: "center", overflow: "hidden" }}>{lootdrop.multiplier}</td>

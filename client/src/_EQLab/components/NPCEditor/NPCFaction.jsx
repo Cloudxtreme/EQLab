@@ -87,17 +87,18 @@ class NPCFaction extends React.PureComponent {
                   </Col>
                 </Row>
               </Panel.Heading>
+              <Panel.Body style={{ padding: 0 }}>
               {
                 !faction
                   ? null
-                  : <Panel.Body>
+                  : 
                       <ReactTable
                         data={faction.entries}
                         pageSize={faction.entries.length}
                         {...tableProps}
                       />
-                    </Panel.Body>
               }
+              </Panel.Body>
             </Panel>
           </Col>
         </Row>

@@ -17,6 +17,12 @@ npc_router.get("/spellset/search/:searchTerm", (req, res, next) => {
   });
 });
 
+npc_router.get("/tint/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCTints(req.params.searchTerm).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
 npc_router.get("/faction/search/:searchTerm", (req, res, next) => {
   npc.searchNPCFactions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
@@ -117,7 +123,7 @@ npc_router.get("/:npcID", async (req, res, next) => {
     "merchant": await npc.getMerchantTable(req.params.npcID),
     "faction": await npc.getFactions(req.params.npcID),
     "emotes": await npc.getEmotes(req.params.npcID),
-    "tintset": await npc.getTints(req.params.npcID)
+    "tint": await npc.getTints(req.params.npcID)
   })
 });
 

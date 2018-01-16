@@ -1,6 +1,5 @@
 import React from 'react';
-import { Row, Col, Panel, Button } from 'react-bootstrap';
-import FontAwesome from 'react-fontawesome';
+import { Row, Col, Panel } from 'react-bootstrap';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { NPC_EMOTE_ENTRIES } from '../../../constants/constants.js';
@@ -63,17 +62,17 @@ class NPCEmotes extends React.PureComponent {
                   </Col>
                 </Row>
               </Panel.Heading>
+              <Panel.Body style={{ padding: 0 }}>
               {
                 !emotes
                   ? null
-                  : <Panel.Body>
-                      <ReactTable
-                        data={emotes.entries}
-                        pageSize={emotes.entries.length}
-                        {...tableProps}
-                      />
-                    </Panel.Body>
+                  : <ReactTable
+                      data={emotes.entries}
+                      pageSize={emotes.entries.length}
+                      {...tableProps}
+                    />
               }
+              </Panel.Body>
             </Panel>
           </Col>
         </Row>

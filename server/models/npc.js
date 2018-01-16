@@ -39,7 +39,7 @@ module.exports = {
 
   getTints: async (npcID) => {
     let queryStr = `
-    SELECT npc_types.armortint_id AS 'tint_set_id', npc_types_tint.tint_set_name, npc_types_tint.red1h, npc_types_tint.grn1h, 
+    SELECT npc_types.armortint_id AS 'id', npc_types_tint.tint_set_name, npc_types_tint.red1h, npc_types_tint.grn1h, 
     npc_types_tint.blu1h, npc_types_tint.red2c, npc_types_tint.grn2c, npc_types_tint.blu2c, npc_types_tint.red3a, npc_types_tint.grn3a, 
     npc_types_tint.blu3a, npc_types_tint.red4b, npc_types_tint.grn4b, npc_types_tint.blu4b,npc_types_tint.red5g, npc_types_tint.grn5g, 
     npc_types_tint.blu5g, npc_types_tint.red6l, npc_types_tint.grn6l, npc_types_tint.blu6l, npc_types_tint.red7f, npc_types_tint.grn7f,
@@ -51,8 +51,12 @@ module.exports = {
     `;
 
     let tints = await db.raw(queryStr);
-    tints = sanitize(tints[0])
-    return tints[0];
+
+    if (!tints[0][0].id) {
+      return null;
+    } else {
+      return tints[0][0];
+    }
   },
 
   getEmotes: async (npcID) => {
@@ -300,6 +304,18 @@ module.exports = {
     FROM npc_faction
     WHERE id LIKE '${searchTerm}%'
     OR name LIKE '%${searchTerm}%'
+    `
+    
+    let results = await db.raw(queryStr);
+    return results[0];
+  },
+
+  searchNPCTints: async (searchTerm) => {
+    let queryStr=`
+    SELECT id, tint_set_name
+    FROM npc_types_tint
+    WHERE id LIKE '${searchTerm}%'
+    OR tint_set_name LIKE '%${searchTerm}%'
     `
     
     let results = await db.raw(queryStr);

@@ -17,6 +17,9 @@ const mapStateToProps = state => ({
 
 class NPCSpells extends React.PureComponent {
   render() {
+
+    const spells = this.props.spells;
+
     const columns = [{
       Header: "Spell",
       accessor: "name",
@@ -95,7 +98,7 @@ class NPCSpells extends React.PureComponent {
           </Col>
           <Col md={4}>
             { 
-              !this.props.spells
+              !spells
                 ? null
                 : <Button bsStyle="danger" bsSize="xs" style={{ marginTop: 20 }} onClick={() => this.props.changeSpellSet({id: 0})}>
                     <FontAwesome name="chain-broken"/>&nbsp;Unlink
@@ -112,39 +115,39 @@ class NPCSpells extends React.PureComponent {
         <Row>
           <Col md={24} style={{ maxHeight: 797, overflowY: "scroll" }}>
           {
-            !this.props.spells
+            !spells
               ? null
               : <PanelGroup id="npc-spells">
                   <Panel>
                     <Panel.Heading>
-                      <NPCSpellsTableHeader isParentList={false} spells={this.props.spells}/>
+                      <NPCSpellsTableHeader isParentList={false} spells={spells}/>
                     </Panel.Heading>
                     <Panel.Body style={{ padding: 0 }}>
                       {
-                        !this.props.spells.entries.length
+                        !spells.entries.length
                           ? <center><span>No Spell Entries Found</span></center>
                           : <ReactTable
-                              data={this.props.spells.entries}
-                              pageSize={this.props.spells.entries.length}
+                              data={spells.entries}
+                              pageSize={spells.entries.length}
                               {...tableProps}
                             />
                       }
                     </Panel.Body>
                   </Panel>
                   {
-                    !this.props.spells.parent_list
+                    !spells.parent_list
                       ? null
                       : <Panel>
                           <Panel.Heading>
-                            <NPCSpellsTableHeader isParentList={true} spells={this.props.spells.parent_list}/>
+                            <NPCSpellsTableHeader isParentList={true} spells={spells.parent_list}/>
                           </Panel.Heading>
                           <Panel.Body style={{ padding: 0 }}>
                             {
-                              !this.props.spells.parent_list.entries.length
+                              !spells.parent_list.entries.length
                                 ? <center><span>No Spell Entries Found</span></center>
                                 : <ReactTable
-                                    data={this.props.spells.parent_list.entries}
-                                    pageSize={this.props.spells.parent_list.entries.length}
+                                    data={spells.parent_list.entries}
+                                    pageSize={spells.parent_list.entries.length}
                                     {...tableProps}
                                   />
                             }
