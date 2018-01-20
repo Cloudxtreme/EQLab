@@ -27,7 +27,7 @@ module.exports = {
     return SQLdata[0];
   },
 
-  searchLootTables: async (searchTerm) => {
+  searchLootTableOptions: async (searchTerm) => {
       let queryStr=`
       SELECT id, name
       FROM loottable

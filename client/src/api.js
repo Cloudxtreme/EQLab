@@ -37,75 +37,77 @@ const global = {
 
 const zone = {
   getZoneList: () =>
-    requests.get('/zone/zonelist'),
-  getSpawnTreeData: zoneName => 
-    requests.get(`/zone/spawntree/${zoneName}`),
-  getSingleSpawnTreeData: spawn2ID => 
-    requests.get(`/zone/singlespawn2tree/${spawn2ID}`),
+    requests.get('/zones/list'),
+  getFullSpawnTree: zoneName => 
+    requests.get(`/zones/spawn/tree/${zoneName}`),
+  getSingleSpawn2Tree: spawn2ID => 
+    requests.get(`/zones/spawn2/tree/${spawn2ID}`),
+  getSingleSpawngroupTree: spawngroupID => 
+    requests.get(`/zones/spawngroup/tree/${spawngroupID}`),
 
-  getSpawnData: spawn2ID => 
-    requests.get(`/zone/spawn/${spawn2ID}`),
+  getSpawn2: id => 
+    requests.get(`/zones/spawn/${id}`),
   postSpawn2: zone => 
-    requests.post(`/zone/spawn/spawn2/${zone}`),
+    requests.post(`/zones/${zone}/spawn/spawn2`),
   putSpawn2: (id, body) => 
-    requests.put(`/zone/spawn/spawn2/${id}`, body),
+    requests.put(`/zones/spawn/spawn2/${id}`, body),
   deleteSpawn2: id => 
-    requests.delete(`/zone/spawn/spawn2/${id}`),
+    requests.delete(`/zones/spawn/spawn2/${id}`),
         
-  searchSpawngroups: searchTerm =>
-    requests.get(`/zone/spawn/spawngroup/search/${searchTerm}`),
-  selectSpawngroup: id =>
-    requests.get(`/zone/spawn/spawngroup/${id}`),
+  searchSpawngroupOptions: searchTerm =>
+    requests.get(`/zones/spawn/spawngroup/options/search/${searchTerm}`),
+  getSpawngroup: id =>
+    requests.get(`/zones/spawn/spawngroup/${id}`),
   postSpawngroup: (spawn2ID, zone) => 
-    requests.post(`/zone/spawn/spawngroup/${spawn2ID}`, { zone }),
+    requests.post(`/zones/spawn/${spawn2ID}/spawngroup`, { zone }),
   putSpawngroup: (id, body) => 
-    requests.put(`/zone/spawn/spawngroup/${id}`, body),
+    requests.put(`/zones/spawn/spawngroup/${id}`, body),
   deleteSpawngroup: id => 
-    requests.delete(`/zone/spawn/spawngroup/${id}`),
+    requests.delete(`/zones/spawn/spawngroup/${id}`),
 
   postSpawnentry: (spawngroupID, npcID) => 
-    requests.post(`/zone/spawn/spawngroup/spawnentry/${spawngroupID}/${npcID}`),
-  updateSpawnentry: (spawngroupID, npcID, values) => 
-    requests.put(`/zone/spawn/spawngroup/spawnentry/${spawngroupID}/${npcID}`),
+    requests.post(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`),
+  putSpawnentry: (spawngroupID, npcID, values) => 
+    requests.put(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`),
   deleteSpawnentry: (spawngroupID, npcID) => 
-    requests.delete(`/zone/spawn/spawngroup/spawnentry/${spawngroupID}/${npcID}`)
+    requests.delete(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`)
 };
 
 const npc = { 
   getNPC: npcID =>
-    requests.get(`/npc/${npcID}`),
+    requests.get(`/npcs/${npcID}`),
   putNPC: (npcID, body) => 
-    requests.put(`/npc/${npcID}`, body),
+    requests.put(`/npcs/${npcID}`, body),
   deleteNPC: npcID => 
-    requests.delete(`/npc/${npcID}`),
-  searchNPCs: searchTerm =>
-    requests.get(`/npc/search/${searchTerm}`),
-  searchFactions: searchTerm =>
-    requests.get(`/npc/faction/search/${searchTerm}`),
-  searchTints: searchTerm =>
-    requests.get(`/npc/tint/search/${searchTerm}`),
-  searchSpellSets: searchTerm =>
-    requests.get(`/npc/spellset/search/${searchTerm}`),
-  searchEffectSets: searchTerm =>
-    requests.get(`/npc/effectset/search/${searchTerm}`),
+    requests.delete(`/npcs/${npcID}`),
+  searchNPCOptions: searchTerm =>
+    requests.get(`/npcs/options/search/${searchTerm}`),
+  searchFactionOptions: searchTerm =>
+    requests.get(`/npcs/faction/options/search/${searchTerm}`),
+  searchTintOptions: searchTerm =>
+    requests.get(`/npcs/tint/options/search/${searchTerm}`),
+  searchSpellSetOptions: searchTerm =>
+    requests.get(`/npcs/spellset/options/search/${searchTerm}`),
+  searchEffectSetOptions: searchTerm =>
+    requests.get(`/npcs/effectset/options/search/${searchTerm}`),
   getSpellList: () =>
-    requests.get(`/npc/spelllist`),
+    requests.get(`/npcs/spellset/list`),
   getPassiveList: () =>
-    requests.get(`/npc/passivelist`),
+    requests.get(`/npcs/effectset/list`),
   getRaceList: () =>
-    requests.get(`/npc/racelist`),
+    requests.get(`/npcs/race/list`),
   getFactionList: () =>
-    requests.get(`/npc/factionlist`),
+    requests.get(`/npcs/faction/list`),
   getAltCurrencyList: () =>
-    requests.get(`/npc/altcurrencylist`),
+    requests.get(`/npcs/altcurrency/list`),
   getTintList: () =>
-    requests.get(`/npc/tintlist`)
+    requests.get(`/npcs/tint/list`)
 
 };
 
 const item = {
-  searchLootTables: searchTerm =>
-    requests.get(`/item/loottable/search/${searchTerm}`)
+  searchLootTableOptions: searchTerm =>
+    requests.get(`/items/loottable/options/search/${searchTerm}`)
 }
 
 export default {

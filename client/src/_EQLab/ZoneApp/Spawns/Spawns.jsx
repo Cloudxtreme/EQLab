@@ -5,8 +5,8 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import FontAwesome from 'react-fontawesome';
 import {
-  ZONEAPP_SET_SPAWNS_MODE, 
-  ZONEAPP_POST_SPAWN2
+  ZONEAPP_SPAWNS_SET_MODE, 
+  ZONEAPP_SPAWNS_POST_SPAWN2
 } from '../../../constants/actionTypes';
 import SpawnEditor from '../../components/SpawnEditor/SpawnEditor.jsx';
 import NPCEditor from '../../components/NPCEditor/NPCEditor.jsx';
@@ -18,9 +18,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   setMode: (mode, spawnsID) =>
-    dispatch({ type: ZONEAPP_SET_SPAWNS_MODE, mode, spawnsID }),
+    dispatch({ type: ZONEAPP_SPAWNS_SET_MODE, mode, spawnsID }),
   postSpawn2: (zone) =>
-    dispatch({ type: ZONEAPP_POST_SPAWN2, zone })
+    dispatch({ type: ZONEAPP_SPAWNS_POST_SPAWN2, zone })
 });
 
 class Spawns extends React.Component {

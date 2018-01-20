@@ -254,7 +254,7 @@ module.exports = {
     } 
   },
 
-  searchNPCs: async (searchTerm) => {
+  searchNPCOptions: async (searchTerm) => {
     let queryStr=`
     SELECT id, name
     FROM npc_types
@@ -266,7 +266,7 @@ module.exports = {
     return results[0];
   },
 
-  searchNPCSpells: async (searchTerm) => {
+  searchNPCSpellSetOptions: async (searchTerm) => {
     let queryStr=`
     SELECT id, name
     FROM npc_spells
@@ -278,7 +278,7 @@ module.exports = {
     return results[0];
   },
 
-  searchNPCEffects: async (searchTerm) => {
+  searchNPCEffectSetOptions: async (searchTerm) => {
     let queryStr=`
     SELECT id, name
     FROM npc_spells_effects
@@ -290,7 +290,7 @@ module.exports = {
     return results[0];
   },
 
-  searchNPCFactions: async (searchTerm) => {
+  searchNPCFactionOptions: async (searchTerm) => {
     let queryStr=`
     SELECT id, name
     FROM npc_faction
@@ -302,7 +302,7 @@ module.exports = {
     return results[0];
   },
 
-  searchNPCTints: async (searchTerm) => {
+  searchNPCTintOptions: async (searchTerm) => {
     let queryStr=`
     SELECT id, tint_set_name
     FROM npc_types_tint
@@ -326,11 +326,11 @@ module.exports = {
     return await db.select('npc_faction', ['id', 'name'], {});
   },
 
-  getNPCSpellList: async () => {
+  getNPCSpellSetList: async () => {
     return await db.select('npc_spells', ['id', 'name'], {});
   },
 
-  getNPCPassiveList: async () => {
+  getNPCEffectSetList: async () => {
     return await db.select('npc_spells_effects', ['id', 'name'], {});
   }
 

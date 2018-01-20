@@ -1,5 +1,4 @@
 import {
-  SPAWNEDITOR_RESET,
   SPAWNEDITOR_LOAD_SPAWN,
   SPAWNEDITOR_UNLOAD_SPAWN,
   SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS,
@@ -17,7 +16,7 @@ function get_INITIAL_STATE() {
 
 export default (state = get_INITIAL_STATE(), action) => {
   switch (action.type) {
-    case SPAWNEDITOR_RESET:
+    case SPAWNEDITOR_UNLOAD_SPAWN:
       return get_INITIAL_STATE();
     case SPAWNEDITOR_LOAD_SPAWN:
       return {
@@ -25,13 +24,6 @@ export default (state = get_INITIAL_STATE(), action) => {
         isLoaded: true,
         spawn: action.payload ? action.payload : {},
         spawngroupOptions: action.payload.spawn2.spawngroupID ? [{ id: action.payload.spawn2.spawngroupID, label: `${action.payload.spawngroup.name} (${action.payload.spawn2.spawngroupID})` }] : []
-      }
-    case SPAWNEDITOR_UNLOAD_SPAWN:
-      return {
-        ...state,
-        isLoaded: false,
-        spawn: {},
-        spawngroupOptions: []
       }
     case SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS:
       return {

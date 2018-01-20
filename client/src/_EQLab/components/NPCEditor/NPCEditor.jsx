@@ -109,7 +109,7 @@ class NPCEditor extends React.Component {
     this.searchFactions = debounce((input) => {
       let options;
       if (input.length > 2) {
-        api.npc.searchFactions(input ? input : this.props.faction.id)
+        api.npc.searchFactionOptions(input ? input : this.props.faction.id)
           .then(results => {
             options = results.map(faction => {
               return {
@@ -136,7 +136,7 @@ class NPCEditor extends React.Component {
     this.searchTints = debounce((input) => {
       let options;
       if (input.length > 2) {
-        api.npc.searchTints(input ? input : this.props.tint.id)
+        api.npc.searchTintOptions(input ? input : this.props.tint.id)
           .then(results => {
             options = results.map(tint => {
               return {
@@ -163,7 +163,7 @@ class NPCEditor extends React.Component {
     this.searchSpellSets = debounce((input) => {
       let options;
       if (input.length > 2) {
-        api.npc.searchSpellSets(input ? input : this.props.spells.id)
+        api.npc.searchSpellSetOptions(input ? input : this.props.spells.id)
           .then(results => {
             options = results.map(spellset => {
               return {
@@ -190,7 +190,7 @@ class NPCEditor extends React.Component {
     this.searchEffectSets = debounce((input) => {
       let options;
       if (input.length > 2) {
-        api.npc.searchEffectSets(input ? input : this.props.effects.id)
+        api.npc.searchEffectSetOptions(input ? input : this.props.effects.id)
           .then(results => {
             options = results.map(effectset => {
               return {
@@ -217,7 +217,7 @@ class NPCEditor extends React.Component {
     this.searchLootTables = debounce((input) => {
       let options;
       if (input.length > 2) {
-        api.item.searchLootTables(input ? input : this.props.loot.id)
+        api.item.searchLootTableOptions(input ? input : this.props.loot.id)
           .then(results => {
             options = results.map(loottable => {
               return {

@@ -1,14 +1,16 @@
 import {
   ZONEAPP_UNLOAD,
   ZONEAPP_SET_ZONELIST,
-  ZONEAPP_SELECT_PANE,
+  ZONEAPP_SET_PANE,
   ZONEAPP_SET_ZONE,
-  ZONEAPP_SET_SPAWNS_MODE,
-  ZONEAPP_BUILD_SPAWNTREE,
-  ZONEAPP_CLEAR_SPAWNTREE,
-  ZONEAPP_ADD_SPAWN2,
-  ZONEAPP_REFRESH_SPAWN2,
-  ZONEAPP_REMOVE_SPAWN2
+  ZONEAPP_SPAWNS_SET_MODE,
+  ZONEAPP_SPAWNS_BUILD_SPAWNTREE,
+  ZONEAPP_SPAWNS_CLEAR_SPAWNTREE,
+  ZONEAPP_SPAWNS_ADD_SPAWN2,
+  ZONEAPP_SPAWNS_REFRESH_SPAWN2,
+  ZONEAPP_SPAWNS_REFRESH_SPAWNGROUP,
+  ZONEAPP_SPAWNS_REMOVE_SPAWN2,
+  ZONEAPP_SPAWNS_REMOVE_SPAWNGROUP
 } from '../constants/actionTypes';
 
 function get_INITIAL_STATE() {
@@ -21,13 +23,6 @@ function get_INITIAL_STATE() {
     spawnsID: null
   }
 }
-
-// export default function (state = get_INITIAL_STATE(), action) {
-//   return {
-//       main: todosReducer(state.todos, action),
-//       spawns: visibilityReducer(state.visibilityFilter, action)
-//   };
-// }
 
 export default (state = get_INITIAL_STATE(), action) => {
   switch (action.type) {
@@ -43,33 +38,34 @@ export default (state = get_INITIAL_STATE(), action) => {
         ...state,
         zone: action.zone ? action.zone : ''
       }
-    case ZONEAPP_SELECT_PANE:
+    case ZONEAPP_SET_PANE:
       return {
         ...state,
         pane: action.pane ? action.pane : 'spawns'
       }
-    case ZONEAPP_SET_SPAWNS_MODE:
+    case ZONEAPP_SPAWNS_BUILD_SPAWNTREE:
+      return {
+        ...state,
+        spawnTree: action.spawnTree ? action.spawnTree : []
+      }
+    case ZONEAPP_SPAWNS_CLEAR_SPAWNTREE:
+      return {
+        ...state,
+        spawnTree: []
+      }
+    case ZONEAPP_SPAWNS_SET_MODE:
       return {
         ...state,
         spawnsMode: action.mode ? action.mode : '',
         spawnsID: action.spawnsID ? action.spawnsID : null
       }
-    case ZONEAPP_BUILD_SPAWNTREE:
-      return {
-        ...state,
-        spawnTree: action.spawnTree ? action.spawnTree : []
-      }
-    case ZONEAPP_CLEAR_SPAWNTREE:
-      return {
-        ...state,
-        spawnTree: []
-      }
-    case ZONEAPP_ADD_SPAWN2:
+    case ZONEAPP_SPAWNS_ADD_SPAWN2:
+    console.log(action)
       return {
         ...state,
         spawnTree: action.data ? [...state.spawnTree, action.data] : [...state.spawnTree]
       }
-    case ZONEAPP_REFRESH_SPAWN2:
+    case ZONEAPP_SPAWNS_REFRESH_SPAWN2:
       return {
         ...state,
         spawnTree: state.spawnTree.map(spawn2 => {
@@ -79,10 +75,38 @@ export default (state = get_INITIAL_STATE(), action) => {
           return spawn2
         })
       }
-    case ZONEAPP_REMOVE_SPAWN2:
+    case ZONEAPP_SPAWNS_REMOVE_SPAWN2:
       return {
         ...state,
-        spawnTree: state.spawnTree.filter(spawn2 => spawn2.id !== action.spawn2ID)
+        spawnTree: state.spawnTree.filter(spawn2 => spawn2.id !== action.spawn2ID),
+        spawnsMode: '',
+        spawnsID: null
+      }
+    case ZONEAPP_SPAWNS_REFRESH_SPAWNGROUP:
+      return {
+        ...state,
+        spawnTree: state.spawnTree.map(spawn2 => {
+          if (spawn2.spawngroup) {
+            if (spawn2.spawngroup.id === action.spawngroup.id) {
+              spawn2.spawngroup = action.spawngroup;
+              return spawn2
+            }
+          }
+          return spawn2
+        })
+      }
+    case ZONEAPP_SPAWNS_REMOVE_SPAWNGROUP:
+      return {
+        ...state,
+        spawnTree: state.spawnTree.map(spawn2 => {
+          if (spawn2.spawngroup) {
+            if (spawn2.spawngroup.id === action.spawngroupID) {
+              spawn2.spawngroup = null;
+              return spawn2
+            }
+          }
+          return spawn2
+        })
       }
     default:
       return state;

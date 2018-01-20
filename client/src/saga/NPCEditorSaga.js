@@ -1,7 +1,7 @@
 import { all, call, put, takeLatest } from 'redux-saga/effects';
 import api from '../api.js';
 import {
-  ZONEAPP_REBUILD_SPAWNTREE,
+  ZONEAPP_SPAWNS_REBUILD_SPAWNTREE,
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_LOAD_NPC,
   NPCEDITOR_UNLOAD_NPC,
@@ -30,7 +30,7 @@ function* putNPC(action) {
 function* updateNPC(action) {
   yield all([
     put({ type: NPCEDITOR_FETCH_NPC, npcID: action.npcID }),
-    action.zone && put({ type: ZONEAPP_REBUILD_SPAWNTREE, zone: action.zone })
+    action.zone && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone: action.zone })
   ]);
 }
 
@@ -38,6 +38,6 @@ function* deleteNPC(action) {
   yield call(api.npc.deleteNPC, action.npcID);
   yield all([
     put({ type: NPCEDITOR_UNLOAD_NPC }),
-    action.zone && put({ type: ZONEAPP_REBUILD_SPAWNTREE, zone: action.zone })
+    action.zone && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone: action.zone })
   ]);
 }

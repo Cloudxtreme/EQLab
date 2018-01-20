@@ -9,8 +9,8 @@ import {
   ZONEAPP_LOAD,
   ZONEAPP_UNLOAD,
   ZONEAPP_SELECT_ZONE,
-  ZONEAPP_SELECT_PANE,
-  ZONEAPP_ADD_SPAWN2
+  ZONEAPP_SET_PANE,
+  ZONEAPP_SPAWNS_ADD_SPAWN2
 } from '../../constants/actionTypes';
 import Spawns from './Spawns/Spawns.jsx';
 // import Loot from './Loot/Loot.jsx';
@@ -31,9 +31,9 @@ const mapDispatchToProps = dispatch => ({
   selectZone: zone =>
     dispatch({ type: ZONEAPP_SELECT_ZONE, zone }),
   selectPane: pane =>
-    dispatch({ type: ZONEAPP_SELECT_PANE, pane }),
-  addSpawn2ToState: data =>
-    dispatch({ type: ZONEAPP_ADD_SPAWN2, data })
+    dispatch({ type: ZONEAPP_SET_PANE, pane }),
+  addSpawn2: data =>
+    dispatch({ type: ZONEAPP_SPAWNS_ADD_SPAWN2, data })
 });
 
 class ZoneApp extends React.Component {
@@ -42,7 +42,7 @@ class ZoneApp extends React.Component {
 
     this.props.socket.on('spawn2insert', data => {
       if (data.zone === this.props.zone) {
-        this.props.addSpawn2ToState(data);
+        this.props.addSpawn2(data);
       }
     });
 

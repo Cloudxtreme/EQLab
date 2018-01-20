@@ -8,14 +8,13 @@ import { omit, pick, size } from 'lodash';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
 import {
-  SPAWNEDITOR_FETCH_SPAWN,
   SPAWNEDITOR_UNLOAD_SPAWN,
-  SPAWNEDITOR_UPDATE_SPAWN2,
+  SPAWNEDITOR_GET_SPAWN2,
+  SPAWNEDITOR_REFRESH_SPAWN2,
   SPAWNEDITOR_DELETE_SPAWN2,
   SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS,
   SPAWNEDITOR_CHANGE_SPAWNGROUP,
   SPAWNEDITOR_POST_SPAWNGROUP,
-  SPAWNEDITOR_UPDATE_SPAWNGROUP,
   SPAWNEDITOR_DELETE_SPAWNGROUP,
   SPAWNEDITOR_SET_NPC_OPTIONS,
   SPAWNEDITOR_POST_SPAWNENTRY,
@@ -32,26 +31,24 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   load: spawn2ID =>
-    dispatch({ type: SPAWNEDITOR_FETCH_SPAWN, spawn2ID }),
+    dispatch({ type: SPAWNEDITOR_GET_SPAWN2, spawn2ID }),
   unload: () =>
     dispatch({ type: SPAWNEDITOR_UNLOAD_SPAWN }),
-  updateSpawn2: (spawn2ID, delta, zone) => 
-    dispatch({ type: SPAWNEDITOR_UPDATE_SPAWN2, spawn2ID, delta }),
+  refreshSpawn2: (spawn2ID, spawngroupID = null, delta, zone) => 
+    dispatch({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID, spawngroupID, delta, zone }),
   deleteSpawn2: (spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_DELETE_SPAWN2, spawn2ID, zone }),
   setSpawngroupOptions: (options) => 
     dispatch({ type: SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS, options }),
   changeSpawngroup: (spawn2ID, spawngroupID, zone) => 
     dispatch({ type: SPAWNEDITOR_CHANGE_SPAWNGROUP, spawn2ID, spawngroupID, zone }),
-  newSpawngroup: (spawn2ID, zone) => 
+  postSpawngroup: (spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_POST_SPAWNGROUP, spawn2ID, zone }),
-  updateSpawngroup: (id, delta, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_UPDATE_SPAWNGROUP, id, delta, spawn2ID, zone }),
-  deleteSpawngroup: (id, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNGROUP, id, spawn2ID, zone }),
+  deleteSpawngroup: (spawngroupID, spawn2ID, zone) => 
+    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNGROUP, spawngroupID, spawn2ID, zone }),
   setNPCOptions: (options) => 
     dispatch({ type: SPAWNEDITOR_SET_NPC_OPTIONS, options }),
-  newSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
+  postSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_POST_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone}),
   deleteSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
     dispatch({ type: SPAWNEDITOR_DELETE_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone})
@@ -66,7 +63,7 @@ class SpawnEditor extends React.Component {
         if (props.dirty && props.valid) {
           const delta = diff(props.initialValues, values);
           api.zone.putSpawn2(values.id, delta).then(res => {
-            this.props.updateSpawn2(
+            this.props.refreshSpawn2(
               values.id, 
               delta,
               this.props.zone ? this.props.zone : null
@@ -95,10 +92,10 @@ class SpawnEditor extends React.Component {
               : null
           }
           api.zone.putSpawngroup(values.id, data).then(res => {
-            this.props.updateSpawngroup(
-              values.id, 
+            this.props.refreshSpawn2(
+              this.props.spawn.spawn2.id, 
+              values.id,
               delta,
-              this.props.spawn.spawn2.id,
               this.props.zone ? this.props.zone : null
             );
             resolve();
@@ -112,7 +109,7 @@ class SpawnEditor extends React.Component {
     }
 
     this.newSpawngroup = () => {
-      this.props.newSpawngroup(
+      this.props.postSpawngroup(
         this.props.spawn.spawn2.id, 
         this.props.zone ? this.props.zone : null
       );
@@ -120,7 +117,7 @@ class SpawnEditor extends React.Component {
 
     this.newSpawnentry = (npcID) => {
       if (!this.props.spawn.spawngroup.spawnentries.some(o => o.npcID === npcID)) {
-        this.props.newSpawnentry(
+        this.props.postSpawnentry(
           this.props.spawn.spawngroup.id,
           npcID,
           this.props.spawn.spawn2.id,
@@ -144,7 +141,7 @@ class SpawnEditor extends React.Component {
       let options;
 
       if (input.length > 2) {
-        api.zone.searchSpawngroups(input ? input : this.props.spawn.spawn2.spawngroupID)
+        api.zone.searchSpawngroupOptions(input ? input : this.props.spawn.spawn2.spawngroupID)
           .then(results => {
             options = results.map(spawngroup => {
               return {
@@ -162,7 +159,7 @@ class SpawnEditor extends React.Component {
       let options;
 
       if (input.length > 2) {
-        api.npc.searchNPCs(input ? input : '')
+        api.npc.searchNPCOptions(input ? input : '')
           .then(results => {
             options = results.map(npc => {
               return {

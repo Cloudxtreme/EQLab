@@ -86,9 +86,26 @@ module.exports = {
     `;
 
     let SQLdata = await db.raw(queryStr);
-    let spawntree  = new Treeize();
-    spawntree = spawntree.grow(SQLdata[0]).getData();
-    return spawntree[0];
+    let spawn2tree  = new Treeize();
+    spawn2tree = spawn2tree.grow(SQLdata[0]).getData();
+    return spawn2tree[0];
+  },
+
+  getSingleSpawngroupTree: async (spawngroupID) => {
+    let queryStr = `
+    SELECT spawngroup.id, spawngroup.name, spawnentry.chance AS 'spawnentries:chance', 
+    spawnentry.npcID AS 'spawnentries:npc_id', npc_types.name AS 'spawnentries:npc_name',
+    npc_types.level AS 'spawnentries:npc_level', npc_types.maxlevel AS 'spawnentries:npc_maxlevel'
+    FROM spawngroup
+    LEFT JOIN spawnentry ON spawngroup.id = spawnentry.spawngroupID
+    LEFT JOIN npc_types ON spawnentry.npcID = npc_types.id
+    WHERE spawngroup.id = '${spawngroupID}'
+    `;
+
+    let SQLdata = await db.raw(queryStr);
+    let spawngrouptree  = new Treeize();
+    spawngrouptree = spawngrouptree.grow(SQLdata[0]).getData();
+    return spawngrouptree[0];
   },
 
   getSpawnData: async (spawn2ID) => {
@@ -187,7 +204,7 @@ module.exports = {
     return await db.delete('spawn2', { id });
   },
 
-  searchSpawngroups: async (searchTerm) => {
+  searchSpawngroupOptions: async (searchTerm) => {
     let queryStr=`
     SELECT id, name
     FROM spawngroup

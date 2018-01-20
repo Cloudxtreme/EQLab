@@ -5,11 +5,11 @@ const express    = require('express'),
 
 
 api_router.use('/global', require('./global_router'));
-api_router.use('/zone', require('./zone_router'));
-// api_router.use('/class', require('./class_router'));
-api_router.use('/item', require('./item_router'));
-// api_router.use('/spell', require('./spell_router'));
-api_router.use('/npc', require('./npc_router'));
+api_router.use('/zones', require('./zones_router'));
+// api_router.use('/classes', require('./classes_router'));
+api_router.use('/items', require('./items_router'));
+// api_router.use('/spells', require('./spells_router'));
+api_router.use('/npcs', require('./npcs_router'));
 // api_router.use('/rules', require('./rules_router'));
 
 module.exports = api_router;

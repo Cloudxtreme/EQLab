@@ -5,8 +5,8 @@ const express     = require("express"),
       item        = require("../models/item.js");
 
 
-item_router.get("/loottable/search/:searchTerm", (req, res, next) => {
-  item.searchLootTables(req.params.searchTerm).then(data => {
+item_router.get("/loottable/options/search/:searchTerm", (req, res, next) => {
+  item.searchLootTableOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
   });
 });
