@@ -9,7 +9,6 @@ import {
   ZONEAPP_LOAD,
   ZONEAPP_UNLOAD,
   ZONEAPP_SELECT_ZONE,
-  ZONEAPP_SET_PANE,
   ZONEAPP_SPAWNS_ADD_SPAWN2
 } from '../../constants/actionTypes';
 import Spawns from './Spawns/Spawns.jsx';
@@ -19,7 +18,6 @@ import Spawns from './Spawns/Spawns.jsx';
 const mapStateToProps = state => ({
   zone: state.ZoneApp.zone,
   zoneList: state.ZoneApp.zoneList,
-  pane: state.ZoneApp.pane,
   spawnTree: state.ZoneApp.spawnTree
 });
 
@@ -30,8 +28,6 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: ZONEAPP_UNLOAD }),
   selectZone: zone =>
     dispatch({ type: ZONEAPP_SELECT_ZONE, zone }),
-  selectPane: pane =>
-    dispatch({ type: ZONEAPP_SET_PANE, pane }),
   addSpawn2: data =>
     dispatch({ type: ZONEAPP_SPAWNS_ADD_SPAWN2, data })
 });
@@ -57,10 +53,6 @@ class ZoneApp extends React.Component {
         }
       }
     }
-
-    this.onSelectPane = pane => {
-      this.props.selectPane(pane);
-    }
   }
 
   componentDidMount() {
@@ -85,8 +77,8 @@ class ZoneApp extends React.Component {
       : options = [];
 
     return (
-      <div id="Zone">
-        <Tab.Container id="zone-panel-container" activeKey={this.props.pane} onSelect={this.onSelectPane}>
+      <div id="ZoneApp">
+        <Tab.Container id="zone-panel-container" defaultActiveKey={"spawns"}>
           <Panel id="zone-panel" style={{ height: 1006 }}>
             <Panel.Heading style={{ padding: 0 }}>
               <Row id="zone-panel-header" style={{ height: 45 }}>

@@ -1,7 +1,6 @@
 import { all, call, put, takeLatest } from 'redux-saga/effects';
 import api from '../api.js';
 import {
-  GLOBAL_LOAD,
   ZONEAPP_LOAD,
   ZONEAPP_SET_ZONELIST,
   ZONEAPP_SELECT_ZONE,
@@ -26,14 +25,8 @@ export const ZoneAppSaga = [
 ];
 
 function* load() {
-  const [globalVars, zoneList] = yield all([
-    call(api.global.getGlobalVariables),
-    call(api.zone.getZoneList)
-  ])
-  yield all([
-    put({ type: GLOBAL_LOAD, globalVars }),
-    put({ type: ZONEAPP_SET_ZONELIST, zoneList })
-  ])
+  const zoneList = yield call(api.zone.getZoneList);
+  yield put({ type: ZONEAPP_SET_ZONELIST, zoneList });
 }
 
 function* getSingleSpawn2Tree(action) {

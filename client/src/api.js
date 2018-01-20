@@ -30,7 +30,7 @@ const auth = {
     requests.post('/auth/register', { user: { username, email, password } })
 };
 
-const global = {
+const eqlab = {
   getGlobalVariables: () =>
     requests.get('/global/variables')
 }
@@ -112,7 +112,7 @@ const item = {
 
 export default {
   auth,
-  global,
+  eqlab,
   zone,
   npc,
   item,

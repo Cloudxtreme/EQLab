@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import store from './store';
 import registerServiceWorker from './registerServiceWorker';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import { SocketProvider } from 'socket.io-react';
 import io from 'socket.io-client';
 import './css/bootstrap.css'; // Custom Bootstrap
@@ -19,7 +19,7 @@ ReactDOM.render((
   <Provider store={store}>
     <BrowserRouter basename="/eqlab">
       <SocketProvider socket={socket}>
-        <EQLab />
+        <Route path="/" component={EQLab}/>
       </SocketProvider>
     </BrowserRouter>
   </Provider>

@@ -1,7 +1,6 @@
 import {
   ZONEAPP_UNLOAD,
   ZONEAPP_SET_ZONELIST,
-  ZONEAPP_SET_PANE,
   ZONEAPP_SET_ZONE,
   ZONEAPP_SPAWNS_SET_MODE,
   ZONEAPP_SPAWNS_BUILD_SPAWNTREE,
@@ -17,7 +16,6 @@ function get_INITIAL_STATE() {
   return { 
     zone: '',
     zoneList: [],
-    pane: 'spawns',
     spawnTree: [],
     spawnsMode: '',
     spawnsID: null
@@ -37,11 +35,6 @@ export default (state = get_INITIAL_STATE(), action) => {
       return {
         ...state,
         zone: action.zone ? action.zone : ''
-      }
-    case ZONEAPP_SET_PANE:
-      return {
-        ...state,
-        pane: action.pane ? action.pane : 'spawns'
       }
     case ZONEAPP_SPAWNS_BUILD_SPAWNTREE:
       return {

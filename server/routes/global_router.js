@@ -6,10 +6,9 @@ const express       = require("express"),
       item          = require("../models/item.js");
       
 
-
-
 global_router.get("/variables", async (req, res, next) => {
   res.status(200).type('json').json({
+    "dbName": process.env.DB_DATABASE,
     "altCurrency": await item.getAltCurrencyList()
   })
 });

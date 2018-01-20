@@ -17,7 +17,7 @@ import rootSaga from './saga/rootSaga.js';
 const sagaMiddleware = createSagaMiddleware();
 
 const store = createStore(
-  reducer, 
+  reducer,
   compose(
     applyMiddleware(sagaMiddleware),
     applyMiddleware(promiseMiddleware),

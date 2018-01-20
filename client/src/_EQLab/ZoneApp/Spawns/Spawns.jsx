@@ -157,7 +157,7 @@ class Spawns extends React.Component {
             )
           } else {
             return (
-              <table style={{ float: "right" }}>
+              <table style={{ tableLayout: "fixed", width: "100%", float: "right" }}>
                 <thead>
                   <tr>
                     <th colSpan="3" style={{ borderBottomWidth: 1, borderBottomStyle: "solid", borderBottomColor: "black", textAlign: "center" }}>{row.value.name}</th>
@@ -168,9 +168,9 @@ class Spawns extends React.Component {
                     row.value.spawnentries.map(entry => {
                       return (
                         <tr key={entry.npc_id}>
-                          <td style={{ textAlign: "left" }}>{entry.chance}%</td>
-                          <td><a onClick={this.handleNPC} id={entry.npc_id}>{entry.npc_name}</a></td>
-                          <td>{entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null}</td>
+                          <td style={{ width: 30, textAlign: "left" }}>{entry.chance}%</td>
+                          <td style={{ textAlign: "left" }}><a onClick={this.handleNPC} id={entry.npc_id}>{entry.npc_name}</a></td>
+                          <td style={{ textAlign: "center" }}>{entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null}</td>
                         </tr>
                       )
                     })
