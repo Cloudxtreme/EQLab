@@ -13,6 +13,10 @@ import NPCApp from './NPCApp/NPCApp.jsx';
 import NoMatch from './Errors/NoMatch.jsx';
 
 
+const mapStateToProps = state => ({
+  dbName: state.EQLab.dbName
+});
+
 const mapDispatchToProps = dispatch => ({
   load: () =>
     dispatch({ type: EQLAB_LOAD }),
@@ -44,11 +48,18 @@ class EQLab extends React.Component {
             <Nav>
               <LinkContainer to="/zones"><NavItem eventKey={1}>Zones</NavItem></LinkContainer>
               <LinkContainer to="/npcs"><NavItem eventKey={1}>NPCs</NavItem></LinkContainer>
+              <NavItem eventKey={1}>Spells</NavItem>
+              <NavItem eventKey={1}>Items</NavItem>
+              <NavItem eventKey={1}>Classes</NavItem>
+              <NavItem eventKey={1}>Rules</NavItem>
             </Nav>
-            <Nav pullRight>
-              <NavItem eventKey={1}>Options</NavItem>
-              <NavItem eventKey={2}>Log Out</NavItem>
-            </Nav>
+            <div style={{ float: "right" }}>
+              <Navbar.Text><strong>Database: {this.props.dbName}</strong></Navbar.Text>
+              <Nav>
+                <NavItem eventKey={1}>Options</NavItem>
+                <NavItem eventKey={2}>Log Out</NavItem>
+              </Nav>
+            </div>
           </Navbar.Collapse>
         </Navbar>
         <Grid fluid>
@@ -68,4 +79,4 @@ class EQLab extends React.Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(EQLab);
+export default connect(mapStateToProps, mapDispatchToProps)(EQLab);

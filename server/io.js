@@ -1,7 +1,7 @@
 const sio      = require('socket.io'),
       sqlEvent = require('./db/db.js').sqlEvent,
       zone     = require("./models/zone.js"),
-      dbName   = process.env.DB_DATABASE;
+      dbName   = process.env.DB_EQEMU_DATABASE;
 
 
 // Socket.io

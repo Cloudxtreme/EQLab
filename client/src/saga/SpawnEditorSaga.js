@@ -1,4 +1,4 @@
-import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import api from '../api.js';
 import { 
   ZONEAPP_SPAWNS_GET_SPAWN2TREE,
@@ -15,7 +15,11 @@ import {
   SPAWNEDITOR_DELETE_SPAWNGROUP,
   SPAWNEDITOR_POST_SPAWNENTRY,
   SPAWNEDITOR_DELETE_SPAWNENTRY
-} from '../constants/actionTypes';
+} from '../constants/actionTypes.js';
+import { 
+  getZoneAppStatus,
+  getCurrentZone,
+} from './selectors.js';
 
 
 export const SpawnEditorSaga = [
@@ -39,11 +43,12 @@ function* getSpawn2(action) {
 */
 
 function* refreshSpawn2(action) {
+  const isZoneAppLoaded = yield select(getZoneAppStatus);
   yield all([
     put({ type: SPAWNEDITOR_GET_SPAWN2, spawn2ID: action.spawn2ID }),
-    action.spawngroupID && action.zone
+    action.spawngroupID && isZoneAppLoaded
       ? put({ type: ZONEAPP_SPAWNS_GET_SPAWNGROUPTREE, spawngroupID: action.spawngroupID })
-      : action.zone
+      : isZoneAppLoaded
           ? put({ type: ZONEAPP_SPAWNS_GET_SPAWN2TREE, spawn2ID: action.spawn2ID })
           : null
   ]);
@@ -53,13 +58,13 @@ function* deleteSpawn2(action) {
   yield call(api.zone.deleteSpawn2, action.spawn2ID);
   yield all([
     put({ type: SPAWNEDITOR_UNLOAD_SPAWN }),
-    action.zone && put({ type: ZONEAPP_SPAWNS_REMOVE_SPAWN2, spawn2ID: action.spawn2ID, zone: action.zone })
+    action.zone && put({ type: ZONEAPP_SPAWNS_REMOVE_SPAWN2, spawn2ID: action.spawn2ID })
   ]);
 }
 
 function* changeSpawngroup(action) {
   yield call(api.zone.putSpawn2, action.spawn2ID, { spawngroupID: action.spawngroupID });
-  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID, zone: action.zone });
+  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID });
 }
 
 /*
@@ -67,8 +72,11 @@ function* changeSpawngroup(action) {
 */
 
 function* postSpawngroup(action) {
-  yield call(api.zone.postSpawngroup, action.spawn2ID, action.zone);
-  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID, zone: action.zone });
+  let zone;
+  const isZoneAppLoaded = yield select(getZoneAppStatus);
+  isZoneAppLoaded ? zone = yield select(getCurrentZone) : zone = null;
+  yield call(api.zone.postSpawngroup, action.spawn2ID, zone);
+  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID });
 }
 
 function* deleteSpawngroup(action) {
@@ -85,10 +93,10 @@ function* deleteSpawngroup(action) {
 
 function* postSpawnentry(action) {
   yield call(api.zone.postSpawnentry, action.spawngroupID, action.npcID);
-  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID, spawngroupID: action.spawngroupID, zone: action.zone });
+  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID, spawngroupID: action.spawngroupID });
 }
 
 function* deleteSpawnentry(action) {
   yield call(api.zone.deleteSpawnentry, action.spawngroupID, action.npcID);
-  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID, spawngroupID: action.spawngroupID, zone: action.zone });
+  yield put({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID: action.spawn2ID, spawngroupID: action.spawngroupID });
 }

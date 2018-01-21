@@ -1,8 +1,30 @@
 import React from 'react';
 import { Row, Col, Panel, Tab, Nav, NavItem } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import {
+  NPCAPP_LOAD,
+  NPCAPP_UNLOAD
+} from '../../constants/actionTypes';
+import NPCSearch from './NPCSearch/NPCSearch.jsx';
 
+
+const mapDispatchToProps = dispatch => ({
+  load: () =>
+    dispatch({ type: NPCAPP_LOAD }),
+  unload: () =>
+    dispatch({ type: NPCAPP_UNLOAD })
+});
 
 class NPCApp extends React.Component {
+
+  componentDidMount() {
+    this.props.load();
+  }
+
+  componentWillUnmount() {
+    this.props.unload();
+  }
+
   render() {
     return (
       <div id="NPCApp">
@@ -28,7 +50,7 @@ class NPCApp extends React.Component {
             <Panel.Body collapsible={false}>
               <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
                 <Tab.Pane eventKey="search">
-                  <span>Search</span>
+                  <NPCSearch />
                 </Tab.Pane>
                 <Tab.Pane eventKey="templates">
                   <span>Templates</span>
@@ -42,4 +64,4 @@ class NPCApp extends React.Component {
   }
 }
 
-export default NPCApp;
+export default connect(null, mapDispatchToProps)(NPCApp);

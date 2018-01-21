@@ -7,7 +7,7 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
   const auth_db = new Sequelize({
     "username": process.env.DB_USER,
     "password": process.env.DB_PASSWORD,
-    "database": process.env.DB_AUTH_DATABASE,
+    "database": process.env.DB_EQLAB_DATABASE,
     "host": process.env.DB_HOST,
     "dialect": "mysql"
   });

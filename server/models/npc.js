@@ -5,6 +5,19 @@ const db        = require('../db/db.js').db,
       sanitize  = require('../lib/sanitize.js');
 
 module.exports = {
+
+  search: async (values) => {
+    let queryStr=`
+    SELECT * FROM npc_types
+    WHERE id LIKE '${values.id ? values.id : ''}%'
+    OR name LIKE '%${values.id ? values.id : ''}%'
+    AND level >= '${values.minlevel ? values.minlevel : ''}'
+    AND maxlevel <= '${values.maxlevel ? values.maxlevel : ''}'
+    `
+    
+    let results = await db.raw(queryStr);
+    return results[0];
+  },
   
   select: async (columnsArr = null, whereObj) => {
     return (await db.select('npc_types', columnsArr, whereObj))[0];

@@ -119,6 +119,12 @@ npcs_router.put("/:npcID", (req, res, next) => {
   });
 });
 
+npcs_router.post("/search", (req, res, next) => {
+  npc.search(req.body).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
 // Overking Bathezid 103056
 npcs_router.get("/:npcID", async (req, res, next) => {
   res.status(200).type('json').json({
@@ -133,10 +139,6 @@ npcs_router.get("/:npcID", async (req, res, next) => {
   })
 });
 
-npcs_router.get("/filter", (req, res, next) => {
-  npc.select(req.params.npcID, req.body).then(data => {
-    res.status(200).type('json').json(data)
-  });
-});
+
 
 module.exports = npcs_router;

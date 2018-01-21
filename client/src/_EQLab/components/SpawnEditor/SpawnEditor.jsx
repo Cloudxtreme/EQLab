@@ -34,24 +34,24 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: SPAWNEDITOR_GET_SPAWN2, spawn2ID }),
   unload: () =>
     dispatch({ type: SPAWNEDITOR_UNLOAD_SPAWN }),
-  refreshSpawn2: (spawn2ID, spawngroupID = null, delta, zone) => 
-    dispatch({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID, spawngroupID, delta, zone }),
-  deleteSpawn2: (spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWN2, spawn2ID, zone }),
+  refreshSpawn2: (spawn2ID, spawngroupID = null) => 
+    dispatch({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID, spawngroupID }),
+  deleteSpawn2: (spawn2ID) => 
+    dispatch({ type: SPAWNEDITOR_DELETE_SPAWN2, spawn2ID }),
   setSpawngroupOptions: (options) => 
     dispatch({ type: SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS, options }),
-  changeSpawngroup: (spawn2ID, spawngroupID, zone) => 
-    dispatch({ type: SPAWNEDITOR_CHANGE_SPAWNGROUP, spawn2ID, spawngroupID, zone }),
-  postSpawngroup: (spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_POST_SPAWNGROUP, spawn2ID, zone }),
-  deleteSpawngroup: (spawngroupID, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNGROUP, spawngroupID, spawn2ID, zone }),
+  changeSpawngroup: (spawn2ID, spawngroupID) => 
+    dispatch({ type: SPAWNEDITOR_CHANGE_SPAWNGROUP, spawn2ID, spawngroupID }),
+  postSpawngroup: (spawn2ID) => 
+    dispatch({ type: SPAWNEDITOR_POST_SPAWNGROUP, spawn2ID }),
+  deleteSpawngroup: (spawngroupID, spawn2ID) => 
+    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNGROUP, spawngroupID, spawn2ID }),
   setNPCOptions: (options) => 
     dispatch({ type: SPAWNEDITOR_SET_NPC_OPTIONS, options }),
-  postSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_POST_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone}),
-  deleteSpawnentry: (spawngroupID, npcID, spawn2ID, zone) => 
-    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNENTRY, spawngroupID, npcID, spawn2ID, zone})
+  postSpawnentry: (spawngroupID, npcID, spawn2ID) => 
+    dispatch({ type: SPAWNEDITOR_POST_SPAWNENTRY, spawngroupID, npcID, spawn2ID }),
+  deleteSpawnentry: (spawngroupID, npcID, spawn2ID) => 
+    dispatch({ type: SPAWNEDITOR_DELETE_SPAWNENTRY, spawngroupID, npcID, spawn2ID })
 });
 
 class SpawnEditor extends React.Component {
@@ -64,9 +64,8 @@ class SpawnEditor extends React.Component {
           const delta = diff(props.initialValues, values);
           api.zone.putSpawn2(values.id, delta).then(res => {
             this.props.refreshSpawn2(
-              values.id, 
-              delta,
-              this.props.zone ? this.props.zone : null
+              values.id,
+              null
             );
             resolve();
           }).catch(error => {
@@ -94,9 +93,7 @@ class SpawnEditor extends React.Component {
           api.zone.putSpawngroup(values.id, data).then(res => {
             this.props.refreshSpawn2(
               this.props.spawn.spawn2.id, 
-              values.id,
-              delta,
-              this.props.zone ? this.props.zone : null
+              values.id
             );
             resolve();
           }).catch(error => {
@@ -110,8 +107,7 @@ class SpawnEditor extends React.Component {
 
     this.newSpawngroup = () => {
       this.props.postSpawngroup(
-        this.props.spawn.spawn2.id, 
-        this.props.zone ? this.props.zone : null
+        this.props.spawn.spawn2.id
       );
     }
 
@@ -120,8 +116,7 @@ class SpawnEditor extends React.Component {
         this.props.postSpawnentry(
           this.props.spawn.spawngroup.id,
           npcID,
-          this.props.spawn.spawn2.id,
-          this.props.zone ? this.props.zone : null
+          this.props.spawn.spawn2.id
         );
       }
     }
@@ -131,8 +126,7 @@ class SpawnEditor extends React.Component {
         title: 'Delete Spawn'
       }).then(() => {
         this.props.deleteSpawn2(
-          this.props.spawn.spawn2.id, 
-          this.props.zone ? this.props.zone : null
+          this.props.spawn.spawn2.id
         );
       }, () => {});
     }
@@ -177,8 +171,7 @@ class SpawnEditor extends React.Component {
       if (spawngroup) {
         this.props.changeSpawngroup(
           this.props.spawn.spawn2.id, 
-          spawngroup.id,
-          this.props.zone ? this.props.zone : null
+          spawngroup.id
         );
       }
     }
@@ -189,8 +182,7 @@ class SpawnEditor extends React.Component {
       }).then(() => {
         this.props.changeSpawngroup(
           this.props.spawn.spawn2.id, 
-          0,
-          this.props.zone ? this.props.zone : null
+          0
         );
       }, () => {});
     }
@@ -202,8 +194,7 @@ class SpawnEditor extends React.Component {
       }).then(() => {
         this.props.deleteSpawngroup(
           this.props.spawn.spawngroup.id, 
-          this.props.spawn.spawn2.id, 
-          this.props.zone ? this.props.zone : null
+          this.props.spawn.spawn2.id
         );
       }, () => {});
     }
@@ -218,8 +209,7 @@ class SpawnEditor extends React.Component {
         this.props.deleteSpawnentry(
           this.props.spawn.spawngroup.id,
           npcID,
-          this.props.spawn.spawn2.id,
-          this.props.zone ? this.props.zone : null
+          this.props.spawn.spawn2.id
         );  
       }, () => {});
     }

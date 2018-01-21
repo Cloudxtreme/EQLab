@@ -11,8 +11,8 @@ import {
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SPAWNS_ADD_SPAWN2
 } from '../../constants/actionTypes';
-import Spawns from './Spawns/Spawns.jsx';
-// import Loot from './Loot/Loot.jsx';
+import Spawns from './Spawns.jsx';
+// import Loot from './Loot.jsx';
 
 
 const mapStateToProps = state => ({

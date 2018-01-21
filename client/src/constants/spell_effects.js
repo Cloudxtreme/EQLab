@@ -1,10 +1,10 @@
 export const SPELL_EFFECTS = {
 0: {
-  effect: "SE_CurrentHP",
-  description: "Direct Damage/Healing, duration allows for HoT/DoT",
-  se_base: "Amt (-)DD(+)Heal",
-  se_limit: " Target Restrictions",
-  se_max: "Max Amt"
+    effect: "SE_CurrentHP",
+    description: "Direct Damage/Healing, duration allows for HoT/DoT",
+    se_base: "Amt (-)DD(+)Heal",
+    se_limit: " Target Restrictions",
+    se_max: "Max Amt"
 },
 1: {
   effect: "SE_ArmorClass",

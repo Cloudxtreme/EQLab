@@ -49,8 +49,8 @@ const zone = {
     requests.get(`/zones/spawn/${id}`),
   postSpawn2: zone => 
     requests.post(`/zones/${zone}/spawn/spawn2`),
-  putSpawn2: (id, body) => 
-    requests.put(`/zones/spawn/spawn2/${id}`, body),
+  putSpawn2: (id, values) => 
+    requests.put(`/zones/spawn/spawn2/${id}`, values),
   deleteSpawn2: id => 
     requests.delete(`/zones/spawn/spawn2/${id}`),
         
@@ -60,8 +60,8 @@ const zone = {
     requests.get(`/zones/spawn/spawngroup/${id}`),
   postSpawngroup: (spawn2ID, zone) => 
     requests.post(`/zones/spawn/${spawn2ID}/spawngroup`, { zone }),
-  putSpawngroup: (id, body) => 
-    requests.put(`/zones/spawn/spawngroup/${id}`, body),
+  putSpawngroup: (id, values) => 
+    requests.put(`/zones/spawn/spawngroup/${id}`, values),
   deleteSpawngroup: id => 
     requests.delete(`/zones/spawn/spawngroup/${id}`),
 
@@ -74,10 +74,12 @@ const zone = {
 };
 
 const npc = { 
+  searchNPCs: values =>
+    requests.post(`/npcs/search`, values),
   getNPC: npcID =>
     requests.get(`/npcs/${npcID}`),
-  putNPC: (npcID, body) => 
-    requests.put(`/npcs/${npcID}`, body),
+  putNPC: (npcID, values) => 
+    requests.put(`/npcs/${npcID}`, values),
   deleteNPC: npcID => 
     requests.delete(`/npcs/${npcID}`),
   searchNPCOptions: searchTerm =>

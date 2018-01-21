@@ -7,9 +7,9 @@ import FontAwesome from 'react-fontawesome';
 import {
   ZONEAPP_SPAWNS_SET_MODE, 
   ZONEAPP_SPAWNS_POST_SPAWN2
-} from '../../../constants/actionTypes';
-import SpawnEditor from '../../components/SpawnEditor/SpawnEditor.jsx';
-import NPCEditor from '../../components/NPCEditor/NPCEditor.jsx';
+} from '../../constants/actionTypes';
+import SpawnEditor from '../components/SpawnEditor/SpawnEditor.jsx';
+import NPCEditor from '../components/NPCEditor/NPCEditor.jsx';
 
 const mapStateToProps = state => ({
   mode: state.ZoneApp.spawnsMode,
@@ -120,13 +120,7 @@ class Spawns extends React.Component {
             </select>
           );
         },
-        Cell: row => {
-          if (!row.value) {
-            return null;
-          } else {
-            return <Checkbox disabled={true} checked={row.value === 1 ? true : false} style={{ margin: 0 }}/>
-          }
-        }
+        Cell: row => <Checkbox disabled={true} checked={row.value ? true : false} style={{ margin: 0 }}/>
       }, {
         Header: 'Spawngroup',
         accessor: 'spawngroup',
@@ -146,15 +140,7 @@ class Spawns extends React.Component {
           if (!row.value) {
             return null;
           } else if (!row.value.spawnentries) {
-            return (
-              <table style={{ float: "right" }}>
-                <thead>
-                  <tr>
-                    <th colSpan="4">{row.value.name}</th>
-                  </tr>
-                </thead>
-              </table>
-            )
+            return <center><strong>{row.value.name}</strong></center>
           } else {
             return (
               <table style={{ tableLayout: "fixed", width: "100%", float: "right" }}>
@@ -170,7 +156,7 @@ class Spawns extends React.Component {
                         <tr key={entry.npc_id}>
                           <td style={{ width: 30, textAlign: "left" }}>{entry.chance}%</td>
                           <td style={{ textAlign: "left" }}><a onClick={this.handleNPC} id={entry.npc_id}>{entry.npc_name}</a></td>
-                          <td style={{ textAlign: "center" }}>{entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null}</td>
+                          <td style={{ textAlign: "right" }}>{entry.npc_level}{entry.npc_maxlevel ? `-${entry.npc_maxlevel}` : null}</td>
                         </tr>
                       )
                     })
@@ -207,8 +193,8 @@ class Spawns extends React.Component {
             {
               this.props.mode
                 ? this.props.mode !== 'spawn'
-                    ? <NPCEditor npcID={this.props.id} zone={this.props.zone} />
-                    : <SpawnEditor spawn2ID={this.props.id} zone={this.props.zone} />
+                    ? <NPCEditor npcID={this.props.id} />
+                    : <SpawnEditor spawn2ID={this.props.id} />
                 : null
             }
           </Col>

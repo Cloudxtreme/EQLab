@@ -1,4 +1,4 @@
-import { all, call, put, takeLatest } from 'redux-saga/effects';
+import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import api from '../api.js';
 import {
   ZONEAPP_SPAWNS_REBUILD_SPAWNTREE,
@@ -8,7 +8,11 @@ import {
   NPCEDITOR_PUT_NPC,
   NPCEDITOR_UPDATE_NPC,
   NPCEDITOR_DELETE_NPC
-} from '../constants/actionTypes';
+} from '../constants/actionTypes.js';
+import { 
+  getZoneAppStatus,
+  getCurrentZone,
+} from './selectors.js';
 
 export const NPCEditorSaga = [
   takeLatest(NPCEDITOR_FETCH_NPC, fetchNPC),
@@ -28,16 +32,22 @@ function* putNPC(action) {
 }
 
 function* updateNPC(action) {
+  let zone;
+  const isZoneAppLoaded = yield select(getZoneAppStatus);
+  isZoneAppLoaded ? zone = yield select(getCurrentZone) : zone = null;
   yield all([
     put({ type: NPCEDITOR_FETCH_NPC, npcID: action.npcID }),
-    action.zone && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone: action.zone })
+    isZoneAppLoaded && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone })
   ]);
 }
 
 function* deleteNPC(action) {
+  let zone;
+  const isZoneAppLoaded = yield select(getZoneAppStatus);
+  isZoneAppLoaded ? zone = yield select(getCurrentZone) : zone = null;
   yield call(api.npc.deleteNPC, action.npcID);
   yield all([
     put({ type: NPCEDITOR_UNLOAD_NPC }),
-    action.zone && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone: action.zone })
+    isZoneAppLoaded && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone })
   ]);
 }

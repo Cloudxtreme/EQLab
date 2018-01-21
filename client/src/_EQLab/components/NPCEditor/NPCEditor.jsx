@@ -40,7 +40,7 @@ const mapStateToProps = state => ({
   effects: state.NPCEditor.npc.effects,
   loot: state.NPCEditor.npc.loot,
   merchant: state.NPCEditor.npc.merchant,
-  altCurrency: state.Global.altCurrency
+  altCurrency: state.EQLab.altCurrency
 });
 
 const mapDispatchToProps = dispatch => ({

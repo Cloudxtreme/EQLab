@@ -1,4 +1,5 @@
 import {
+  ZONEAPP_LOAD,
   ZONEAPP_UNLOAD,
   ZONEAPP_SET_ZONELIST,
   ZONEAPP_SET_ZONE,
@@ -14,6 +15,7 @@ import {
 
 function get_INITIAL_STATE() {
   return { 
+    isLoaded: false,
     zone: '',
     zoneList: [],
     spawnTree: [],
@@ -26,6 +28,11 @@ export default (state = get_INITIAL_STATE(), action) => {
   switch (action.type) {
     case ZONEAPP_UNLOAD:
       return get_INITIAL_STATE();
+    case ZONEAPP_LOAD:
+      return {
+        ...state,
+        isLoaded: true
+      }
     case ZONEAPP_SET_ZONELIST:
       return {
         ...state,
@@ -53,7 +60,6 @@ export default (state = get_INITIAL_STATE(), action) => {
         spawnsID: action.spawnsID ? action.spawnsID : null
       }
     case ZONEAPP_SPAWNS_ADD_SPAWN2:
-    console.log(action)
       return {
         ...state,
         spawnTree: action.data ? [...state.spawnTree, action.data] : [...state.spawnTree]
@@ -105,5 +111,3 @@ export default (state = get_INITIAL_STATE(), action) => {
       return state;
   }
 }
-
-
