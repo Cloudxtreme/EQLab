@@ -12,6 +12,7 @@ import SpawnEditor from '../components/SpawnEditor/SpawnEditor.jsx';
 import NPCEditor from '../components/NPCEditor/NPCEditor.jsx';
 
 const mapStateToProps = state => ({
+  spawnTree: state.ZoneApp.spawnTree,
   mode: state.ZoneApp.spawnsMode,
   id: state.ZoneApp.spawnsID
 });
@@ -37,7 +38,7 @@ class Spawns extends React.Component {
       let id = e.target.id;
 
       if (this.props.mode !== 'spawn' || (this.props.mode === 'spawn' && id !== this.props.id)) {
-        this.props.setMode('spawn', id);
+        this.props.setMode('spawn', parseInt(id, 10));
       }
     }
 
@@ -45,7 +46,7 @@ class Spawns extends React.Component {
       let id = e.target.id;
 
       if (this.props.mode !== 'npc' || (this.props.mode === 'npc' && id !== this.props.id)) {
-        this.props.setMode('npc', id);
+        this.props.setMode('npc', parseInt(id, 10));
       }
     }
   }

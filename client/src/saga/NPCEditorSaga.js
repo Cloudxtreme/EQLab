@@ -2,6 +2,8 @@ import { all, call, put, select, takeLatest } from 'redux-saga/effects';
 import api from '../api.js';
 import {
   ZONEAPP_SPAWNS_REBUILD_SPAWNTREE,
+  NPCAPP_SEARCH_REFRESH_NPCLIST,
+  NPCAPP_SEARCH_FILTER_NPCLIST,
   NPCEDITOR_FETCH_NPC,
   NPCEDITOR_LOAD_NPC,
   NPCEDITOR_UNLOAD_NPC,
@@ -12,7 +14,36 @@ import {
 import { 
   getZoneAppStatus,
   getCurrentZone,
+  getNPCAppStatus,
+  getCurrentNPCID
 } from './selectors.js';
+
+
+function* manageSubApps(action) {
+  const ZoneAppLoaded = yield select(getZoneAppStatus);
+  const NPCAppLoaded = yield select(getNPCAppStatus);
+  
+  if (ZoneAppLoaded) {
+    const zone = yield select(getCurrentZone);
+    yield put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone });
+  }
+
+  if (NPCAppLoaded) {
+    const npcID = yield select(getCurrentNPCID);
+
+    switch(action) {
+      case "update":
+        const npc = yield call(api.npc.getNPC, npcID);
+        yield put({ type: NPCAPP_SEARCH_REFRESH_NPCLIST, npc: npc.type });
+        break;
+      case "delete":
+        yield put({ type: NPCAPP_SEARCH_FILTER_NPCLIST, npcID })
+        break;
+      default:
+        break;
+    }
+  }
+}
 
 export const NPCEditorSaga = [
   takeLatest(NPCEDITOR_FETCH_NPC, fetchNPC),
@@ -32,22 +63,16 @@ function* putNPC(action) {
 }
 
 function* updateNPC(action) {
-  let zone;
-  const isZoneAppLoaded = yield select(getZoneAppStatus);
-  isZoneAppLoaded ? zone = yield select(getCurrentZone) : zone = null;
   yield all([
     put({ type: NPCEDITOR_FETCH_NPC, npcID: action.npcID }),
-    isZoneAppLoaded && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone })
+    call(manageSubApps, "update")
   ]);
 }
 
 function* deleteNPC(action) {
-  let zone;
-  const isZoneAppLoaded = yield select(getZoneAppStatus);
-  isZoneAppLoaded ? zone = yield select(getCurrentZone) : zone = null;
   yield call(api.npc.deleteNPC, action.npcID);
   yield all([
     put({ type: NPCEDITOR_UNLOAD_NPC }),
-    isZoneAppLoaded && put({ type: ZONEAPP_SPAWNS_REBUILD_SPAWNTREE, zone })
+    call(manageSubApps, "delete")
   ]);
 }

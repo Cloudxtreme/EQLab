@@ -17,8 +17,7 @@ import Spawns from './Spawns.jsx';
 
 const mapStateToProps = state => ({
   zone: state.ZoneApp.zone,
-  zoneList: state.ZoneApp.zoneList,
-  spawnTree: state.ZoneApp.spawnTree
+  zoneList: state.ZoneApp.zoneList
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -115,10 +114,7 @@ class ZoneApp extends React.Component {
             <Panel.Body collapsible={false}>
               <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
                 <Tab.Pane eventKey="spawns">
-                  <Spawns 
-                    zone={this.props.zone}
-                    spawnTree={this.props.spawnTree}
-                  />
+                  <Spawns zone={this.props.zone} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="loot">
                   {/* <Loot /> */}

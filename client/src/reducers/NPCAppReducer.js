@@ -2,6 +2,8 @@ import {
   NPCAPP_LOAD,
   NPCAPP_UNLOAD,
   NPCAPP_SEARCH_SET_NPCLIST,
+  NPCAPP_SEARCH_REFRESH_NPCLIST,
+  NPCAPP_SEARCH_FILTER_NPCLIST,
   NPCAPP_SEARCH_SET_NPCID
 } from '../constants/actionTypes';
 
@@ -26,6 +28,22 @@ export default (state = get_INITIAL_STATE(), action) => {
       return {
         ...state,
         npcList: action.payload ? action.payload : []
+      }
+    case NPCAPP_SEARCH_REFRESH_NPCLIST:
+      return {
+        ...state,
+        npcList: state.npcList.map(npc => {
+          if (npc.id === action.npc.id) {
+            return action.npc
+          }
+          return npc
+        })
+      }
+    case NPCAPP_SEARCH_FILTER_NPCLIST:
+      return {
+        ...state,
+        npcList: state.npcList.filter(npc => npc.id !== action.npcID),
+        npcID: null
       }
     case NPCAPP_SEARCH_SET_NPCID:
       return {

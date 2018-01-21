@@ -3,8 +3,8 @@ import api from '../api.js';
 import { 
   ZONEAPP_SPAWNS_GET_SPAWN2TREE,
   ZONEAPP_SPAWNS_GET_SPAWNGROUPTREE,
-  ZONEAPP_SPAWNS_REMOVE_SPAWN2,
-  ZONEAPP_SPAWNS_REMOVE_SPAWNGROUP,
+  ZONEAPP_SPAWNS_FILTER_SPAWN2,
+  ZONEAPP_SPAWNS_FILTER_SPAWNGROUP,
   SPAWNEDITOR_LOAD_SPAWN,
   SPAWNEDITOR_UNLOAD_SPAWN,
   SPAWNEDITOR_GET_SPAWN2,
@@ -19,8 +19,29 @@ import {
 import { 
   getZoneAppStatus,
   getCurrentZone,
+  getCurrentSpawnsID
 } from './selectors.js';
 
+
+function* manageSubApps(action) {
+  const ZoneAppLoaded = yield select(getZoneAppStatus);
+ 
+  if (ZoneAppLoaded) {
+    const spawn2ID = yield select(getCurrentSpawnsID);
+
+    switch(action) {
+      // case "update":
+      //   const spawn2 = yield call(api.npc.getNPC, npcID);
+      //   yield put({ type: NPCAPP_SEARCH_REFRESH_NPCLIST, npc: npc.type });
+      //   break;
+      case "delete":
+        yield put({ type: ZONEAPP_SPAWNS_FILTER_SPAWN2, spawn2ID })
+        break;
+      default:
+        break;
+    }
+  }
+}
 
 export const SpawnEditorSaga = [
   takeLatest(SPAWNEDITOR_GET_SPAWN2, getSpawn2),
@@ -32,6 +53,8 @@ export const SpawnEditorSaga = [
   takeLatest(SPAWNEDITOR_POST_SPAWNENTRY, postSpawnentry),
   takeLatest(SPAWNEDITOR_DELETE_SPAWNENTRY, deleteSpawnentry)
 ];
+
+
   
 function* getSpawn2(action) {
   const spawn = yield call(api.zone.getSpawn2, action.spawn2ID);
@@ -54,11 +77,13 @@ function* refreshSpawn2(action) {
   ]);
 }
 
+
+
 function* deleteSpawn2(action) {
   yield call(api.zone.deleteSpawn2, action.spawn2ID);
   yield all([
     put({ type: SPAWNEDITOR_UNLOAD_SPAWN }),
-    action.zone && put({ type: ZONEAPP_SPAWNS_REMOVE_SPAWN2, spawn2ID: action.spawn2ID })
+    call(manageSubApps, "delete")
   ]);
 }
 
@@ -83,7 +108,7 @@ function* deleteSpawngroup(action) {
   yield call(api.zone.deleteSpawngroup, action.spawngroupID);
   yield all([
     put({ type: SPAWNEDITOR_GET_SPAWN2, spawn2ID: action.spawn2ID }),
-    action.zone && put({ type: ZONEAPP_SPAWNS_REMOVE_SPAWNGROUP, spawngroupID: action.spawngroupID })
+    action.zone && put({ type: ZONEAPP_SPAWNS_FILTER_SPAWNGROUP, spawngroupID: action.spawngroupID })
   ]);
 }
 

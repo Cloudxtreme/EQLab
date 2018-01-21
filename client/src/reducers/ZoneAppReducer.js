@@ -9,8 +9,8 @@ import {
   ZONEAPP_SPAWNS_ADD_SPAWN2,
   ZONEAPP_SPAWNS_REFRESH_SPAWN2,
   ZONEAPP_SPAWNS_REFRESH_SPAWNGROUP,
-  ZONEAPP_SPAWNS_REMOVE_SPAWN2,
-  ZONEAPP_SPAWNS_REMOVE_SPAWNGROUP
+  ZONEAPP_SPAWNS_FILTER_SPAWN2,
+  ZONEAPP_SPAWNS_FILTER_SPAWNGROUP
 } from '../constants/actionTypes';
 
 function get_INITIAL_STATE() {
@@ -74,7 +74,7 @@ export default (state = get_INITIAL_STATE(), action) => {
           return spawn2
         })
       }
-    case ZONEAPP_SPAWNS_REMOVE_SPAWN2:
+    case ZONEAPP_SPAWNS_FILTER_SPAWN2:
       return {
         ...state,
         spawnTree: state.spawnTree.filter(spawn2 => spawn2.id !== action.spawn2ID),
@@ -94,7 +94,7 @@ export default (state = get_INITIAL_STATE(), action) => {
           return spawn2
         })
       }
-    case ZONEAPP_SPAWNS_REMOVE_SPAWNGROUP:
+    case ZONEAPP_SPAWNS_FILTER_SPAWNGROUP:
       return {
         ...state,
         spawnTree: state.spawnTree.map(spawn2 => {
