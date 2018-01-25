@@ -23,6 +23,16 @@ module.exports = {
     return (await db.select('npc_types', columnsArr, whereObj))[0];
   },
 
+  insert: async (values) => {
+    return (await db.insert('npc_types', values))[0];
+  },
+
+  copy: async (npcID) => {
+    let npc = (await db.select('npc_types', [], { id: npcID }))[0];
+    npc.id = null;
+    return (await db.insert('npc_types', npc))[0];
+  },
+
   update: async (id, values) => {
     if (id) {
       return await db.update('npc_types', values, { id });

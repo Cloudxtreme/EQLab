@@ -1,15 +1,29 @@
 'use strict';
 
-const express    = require("express"),
-      npcs_router = express.Router(),
-      npc        = require("../models/npc.js");
+const express       = require("express"),
+      npcs_router   = express.Router(),
+      npc           = require("../models/npc.js"),
+      npc_template  = require("../models/sequelize").npc_template;
 
+
+npcs_router.post("/templates", (req, res, next) => {
+  npc_template.create(req.body, {raw: true}).then(data => {
+    // res.status(200).type('json').json(data)
+    console.log(data);
+  })
+});
+
+npcs_router.get("/templates", (req, res, next) => {
+  npc_template.findAll({raw: true}).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
 
 npcs_router.get("/effectset/options/search/:searchTerm", (req, res, next) => {
   npc.searchNPCEffectSetOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
   });
-});     
+});
 
 npcs_router.get("/spellset/options/search/:searchTerm", (req, res, next) => {
   npc.searchNPCSpellSetOptions(req.params.searchTerm).then(data => {
@@ -121,6 +135,18 @@ npcs_router.put("/:npcID", (req, res, next) => {
 
 npcs_router.post("/search", (req, res, next) => {
   npc.search(req.body).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
+npcs_router.post("/copy/:npcID", (req, res, next) => {
+  npc.copy(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  });
+});
+
+npcs_router.post("/", (req, res, next) => {
+  npc.insert(req.body).then(data => {
     res.status(200).type('json').json(data)
   });
 });

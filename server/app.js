@@ -30,8 +30,8 @@ app.use(sanitizer.middleware());
 
 // Authentication
 if (process.env.USE_AUTHENTICATION === 'TRUE') {
-  const auth_db     = require('./auth/auth.js').auth_db,
-        User        = require('./auth/auth.js').User,
+  const passportLocalSequelize = require('passport-local-sequelize'),
+        User        = require('./models/sequelize').User,
         passport    = require('passport'),
         JwtStrategy = require('passport-jwt').Strategy,
         ExtractJwt  = require('passport-jwt').ExtractJwt,
@@ -41,11 +41,8 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
 
   console.log('EQLab: Using Authentication');
 
-  // Sync Authentication Database
-  auth_db.sync().then(() => { 
-    console.log("EQLab: Authentication Database Connection Successful");
-  }).catch(err => {
-    console.error(err, "EQLab: Authentication Database Connection Failed");
+  passportLocalSequelize.attachToUser(User, {
+    usernameField: 'username'
   });
 
   // Passport Middleware (JSON Web Tokens)

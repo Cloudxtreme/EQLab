@@ -1,5 +1,6 @@
 'use strict';
 
+// EQEmu Database
 const knex = require('knex')({
   client: 'mysql',
   connection: {
@@ -90,6 +91,6 @@ const db = {
   
 module.exports = { 
   knex,
-  db, 
+  db,
   sqlEvent 
 };

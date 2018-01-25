@@ -78,6 +78,10 @@ const npc = {
     requests.post(`/npcs/search`, values),
   getNPC: npcID =>
     requests.get(`/npcs/${npcID}`),
+  postNPC: values =>
+    requests.post(`/npcs`, values),
+  copyNPC: npcID =>
+    requests.post(`/npcs/copy/${npcID}`),
   putNPC: (npcID, values) => 
     requests.put(`/npcs/${npcID}`, values),
   deleteNPC: npcID => 
@@ -103,8 +107,11 @@ const npc = {
   getAltCurrencyList: () =>
     requests.get(`/npcs/altcurrency/list`),
   getTintList: () =>
-    requests.get(`/npcs/tint/list`)
-
+    requests.get(`/npcs/tint/list`),
+  getTemplates: () =>
+    requests.get(`/npcs/templates`),
+  postNPCTemplate: values =>
+    requests.post(`/npcs/templates`, values),
 };
 
 const item = {

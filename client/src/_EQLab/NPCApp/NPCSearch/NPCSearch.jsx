@@ -15,7 +15,7 @@ import NPCEditor from '../../components/NPCEditor/NPCEditor.jsx';
 
 const mapStateToProps = state => ({
   npcList: state.NPCApp.npcList,
-  npcID: state.NPCApp.npcID
+  npcID: state.NPCApp.searchnpcID
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -23,6 +23,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCAPP_SEARCH_SET_NPCLIST, payload }),
   setNPCID: (npcID) =>
     dispatch({ type: NPCAPP_SEARCH_SET_NPCID, npcID }),
+
 });
 
 class NPCSearch extends React.Component {

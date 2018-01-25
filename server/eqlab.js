@@ -7,7 +7,7 @@ const app         = require('./app'),
       nodeCleanup = require('node-cleanup'),
       knex        = require('./db/db.js').knex,
       sqlEvent    = require('./db/db.js').sqlEvent,
-      auth_db     = require('./auth/auth.js').auth_db;
+      eqlab_db    = require('./models/sequelize').sequelize;
 
 
 const PORT = normalizePort(process.env.PORT || '3000');
@@ -18,26 +18,32 @@ if (process.env.USE_REVERSE_PROXY === 'TRUE') {
   app.enable('trust proxy');
 }
 
-// Start Express Server
-server.listen(PORT, 'localhost', () => {
-  console.log("EQLab: Launching Server, listening on PORT " + PORT);
+// Sync EQLab Database
+eqlab_db.sync().then(() => { 
+  console.log("EQLab: EQLab Database Connection Successful");
 
-  // Cleanup on Process Exit
-  nodeCleanup((exitCode, signal) => {
-    if (signal) {
-      console.log('EQLab: Cleaning Up Before Process Exit')
-      knex.destroy(() => {
-        sqlEvent.stop();
-        if (process.env.USE_AUTHENTICATION === 'TRUE') {
-          auth_db.close();
-        }
-        process.kill(process.pid, signal); // Calling process.exit() won't inform parent process of signal
-      });
-      nodeCleanup.uninstall(); // Don't Call Cleanup Handler Again 
-      return false;
-    }
+  // Start Express Server
+  server.listen(PORT, 'localhost', () => {
+    console.log("EQLab: Launching Server, listening on PORT " + PORT);
+
+    // Cleanup on Process Exit
+    nodeCleanup((exitCode, signal) => {
+      if (signal) {
+        console.log('EQLab: Cleaning Up Before Process Exit')
+        knex.destroy(() => {
+          sqlEvent.stop();
+          eqlab_db.close();
+          process.kill(process.pid, signal); // Calling process.exit() won't inform parent process of signal
+        });
+        nodeCleanup.uninstall(); // Don't Call Cleanup Handler Again 
+        return false;
+      }
+    });
   });
+}).catch(err => {
+  console.error(err, "EQLab: EQLab Database Connection Failed. Check Configuration Options");
 });
+
 server.on('error', onError);
 server.on('listening', onListening);
 

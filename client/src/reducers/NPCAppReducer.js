@@ -4,14 +4,21 @@ import {
   NPCAPP_SEARCH_SET_NPCLIST,
   NPCAPP_SEARCH_REFRESH_NPCLIST,
   NPCAPP_SEARCH_FILTER_NPCLIST,
-  NPCAPP_SEARCH_SET_NPCID
+  NPCAPP_SEARCH_SET_NPCID,
+  NPCAPP_CREATE_LOAD,
+  NPCAPP_CREATE_UNLOAD,
+  NPCAPP_CREATE_SET_NPC_OPTIONS,
+  NPCAPP_CREATE_SET_NPC
 } from '../constants/actionTypes';
 
 function get_INITIAL_STATE() {
   return {
     isLoaded: false,
     npcList: [],
-    npcID: null
+    searchnpcID: null,
+    npcTemplates: [],
+    npcOptions: [],
+    createnpcID: null
   }
 }
 
@@ -43,13 +50,34 @@ export default (state = get_INITIAL_STATE(), action) => {
       return {
         ...state,
         npcList: state.npcList.filter(npc => npc.id !== action.npcID),
-        npcID: null
+        searchnpcID: null
       }
     case NPCAPP_SEARCH_SET_NPCID:
       return {
         ...state,
-        npcID: action.npcID ? action.npcID : null
-      }   
+        searchnpcID: action.npcID ? action.npcID : null
+      }
+    case NPCAPP_CREATE_LOAD:
+      return {
+        ...state,
+        npcTemplates: action.npcTemplates ? action.npcTemplates : []
+      } 
+    case NPCAPP_CREATE_UNLOAD:
+      return {
+        ...state,
+        npcTemplates: [],
+        npcOptions: []
+      } 
+    case NPCAPP_CREATE_SET_NPC_OPTIONS:
+      return {
+        ...state,
+        npcOptions: action.options ? action.options : []
+      }
+    case NPCAPP_CREATE_SET_NPC:
+      return {
+        ...state,
+        createnpcID: action.npcID ? action.npcID : null
+      } 
     default:
       return state;
   }

@@ -10,7 +10,7 @@ import { debounce } from 'lodash';
 import {
   SPAWNEDITOR_UNLOAD_SPAWN,
   SPAWNEDITOR_GET_SPAWN2,
-  SPAWNEDITOR_REFRESH_SPAWN2,
+  SPAWNEDITOR_UPDATE_SPAWN2,
   SPAWNEDITOR_DELETE_SPAWN2,
   SPAWNEDITOR_SET_SPAWNGROUP_OPTIONS,
   SPAWNEDITOR_CHANGE_SPAWNGROUP,
@@ -34,8 +34,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: SPAWNEDITOR_GET_SPAWN2, spawn2ID }),
   unload: () =>
     dispatch({ type: SPAWNEDITOR_UNLOAD_SPAWN }),
-  refreshSpawn2: (spawn2ID, spawngroupID = null) => 
-    dispatch({ type: SPAWNEDITOR_REFRESH_SPAWN2, spawn2ID, spawngroupID }),
+  updateSpawn2: (spawn2ID, spawngroupID) => 
+    dispatch({ type: SPAWNEDITOR_UPDATE_SPAWN2, spawn2ID, spawngroupID }),
   deleteSpawn2: (spawn2ID) => 
     dispatch({ type: SPAWNEDITOR_DELETE_SPAWN2, spawn2ID }),
   setSpawngroupOptions: (options) => 
@@ -63,7 +63,7 @@ class SpawnEditor extends React.Component {
         if (props.dirty && props.valid) {
           const delta = diff(props.initialValues, values);
           api.zone.putSpawn2(values.id, delta).then(res => {
-            this.props.refreshSpawn2(
+            this.props.updateSpawn2(
               values.id,
               null
             );
@@ -91,7 +91,7 @@ class SpawnEditor extends React.Component {
               : null
           }
           api.zone.putSpawngroup(values.id, data).then(res => {
-            this.props.refreshSpawn2(
+            this.props.updateSpawn2(
               this.props.spawn.spawn2.id, 
               values.id
             );

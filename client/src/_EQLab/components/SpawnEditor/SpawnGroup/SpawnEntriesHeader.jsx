@@ -34,7 +34,6 @@ class SpawnEntriesHeader extends React.Component {
           <FormGroup> 
             <Select
               name="selectnpc"
-              ref="selectnpc"
               valueKey="id"
               placeholder="Search NPCs"
               searchPromptText="Minimum of 3 characters to search"
@@ -50,7 +49,7 @@ class SpawnEntriesHeader extends React.Component {
               onInputChange={this.props.searchNPCs}
               onChange={this.selectNPC}
               className="input-sm"
-              style={{ borderRadius: 0}}
+              style={{ borderRadius: 0 }}
             />
           </FormGroup>
         </Col>

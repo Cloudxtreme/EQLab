@@ -6,6 +6,7 @@ import {
   NPCAPP_UNLOAD
 } from '../../constants/actionTypes';
 import NPCSearch from './NPCSearch/NPCSearch.jsx';
+import NPCCreate from './NPCCreate.jsx';
 
 
 const mapDispatchToProps = dispatch => ({
@@ -35,7 +36,7 @@ class NPCApp extends React.Component {
                 <Col md={24}>
                   <Nav bsStyle="tabs" style={{ marginTop: 7, borderBottom: "none" }}>
                     <NavItem eventKey="search">Search</NavItem>
-                    <NavItem eventKey="templates">Templates</NavItem>
+                    <NavItem eventKey="create">Create</NavItem>
                     <NavItem eventKey="spellsets">Spell Sets</NavItem>
                     <NavItem eventKey="passivesets">Passive Sets</NavItem>
                     <NavItem eventKey="loottables">Loot Tables</NavItem>
@@ -52,8 +53,8 @@ class NPCApp extends React.Component {
                 <Tab.Pane eventKey="search">
                   <NPCSearch />
                 </Tab.Pane>
-                <Tab.Pane eventKey="templates">
-                  <span>Templates</span>
+                <Tab.Pane eventKey="create">
+                  <NPCCreate />
                 </Tab.Pane>
               </Tab.Content>
             </Panel.Body>
