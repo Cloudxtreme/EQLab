@@ -86,6 +86,20 @@ const npc = {
     requests.put(`/npcs/${npcID}`, values),
   deleteNPC: npcID => 
     requests.delete(`/npcs/${npcID}`),
+
+  getTemplates: () =>
+    requests.get(`/npcs/templates`),
+  getNPCTemplate: templateID =>
+    requests.get(`/npcs/templates/${templateID}`),
+  postNPCTemplate: () =>
+    requests.post(`/npcs/templates`),
+  copyNPCTemplate: templateID =>
+    requests.post(`/npcs/templates/${templateID}`),
+  putNPCTemplate: (templateID, values) =>
+    requests.put(`/npcs/templates/${templateID}`, values),
+  deleteNPCTemplate: (templateID) =>
+    requests.delete(`/npcs/templates/${templateID}`),
+
   searchNPCOptions: searchTerm =>
     requests.get(`/npcs/options/search/${searchTerm}`),
   searchFactionOptions: searchTerm =>
@@ -96,6 +110,7 @@ const npc = {
     requests.get(`/npcs/spellset/options/search/${searchTerm}`),
   searchEffectSetOptions: searchTerm =>
     requests.get(`/npcs/effectset/options/search/${searchTerm}`),
+    
   getSpellList: () =>
     requests.get(`/npcs/spellset/list`),
   getPassiveList: () =>
@@ -107,11 +122,7 @@ const npc = {
   getAltCurrencyList: () =>
     requests.get(`/npcs/altcurrency/list`),
   getTintList: () =>
-    requests.get(`/npcs/tint/list`),
-  getTemplates: () =>
-    requests.get(`/npcs/templates`),
-  postNPCTemplate: values =>
-    requests.post(`/npcs/templates`, values),
+    requests.get(`/npcs/tint/list`)
 };
 
 const item = {

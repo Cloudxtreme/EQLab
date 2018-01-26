@@ -4,22 +4,29 @@ import {
   ZONEAPP_SPAWNS_REBUILD_SPAWNTREE,
   NPCAPP_SEARCH_REFRESH_NPCLIST,
   NPCAPP_SEARCH_FILTER_NPCLIST,
-  NPCEDITOR_FETCH_NPC,
+  NPCAPP_CREATE_REFRESH_NPCLIST,
+  NPCAPP_CREATE_FILTER_NPCLIST,
+  NPCAPP_CREATE_REFRESH_NPCTEMPLATE_LIST,
+  NPCAPP_CREATE_FILTER_NPCTEMPLATE_LIST,
+  NPCEDITOR_GET_NPC,
+  NPCEDITOR_GET_NPCTEMPLATE,
   NPCEDITOR_LOAD_NPC,
   NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_PUT_NPC,
+  NPCEDITOR_PUT_NPCTEMPLATE,
   NPCEDITOR_UPDATE_NPC,
-  NPCEDITOR_DELETE_NPC
+  NPCEDITOR_UPDATE_NPCTEMPLATE,
+  NPCEDITOR_DELETE_NPC,
+  NPCEDITOR_DELETE_NPCTEMPLATE
 } from '../constants/actionTypes.js';
 import { 
   getZoneAppStatus,
   getCurrentZone,
-  getNPCAppStatus,
-  getCurrentNPCID
+  getNPCAppStatus
 } from './selectors.js';
 
 
-function* manageSubApps(action) {
+function* manageSubApps(action, data) {
   const ZoneAppLoaded = yield select(getZoneAppStatus);
   const NPCAppLoaded = yield select(getNPCAppStatus);
   
@@ -29,15 +36,24 @@ function* manageSubApps(action) {
   }
 
   if (NPCAppLoaded) {
-    const npcID = yield select(getCurrentNPCID);
-
     switch(action) {
-      case "update":
-        const npc = yield call(api.npc.getNPC, npcID);
-        yield put({ type: NPCAPP_SEARCH_REFRESH_NPCLIST, npc: npc.type });
+      case "update-npc":
+        yield all([
+          put({ type: NPCAPP_SEARCH_REFRESH_NPCLIST, npc: data.type }),
+          put({ type: NPCAPP_CREATE_REFRESH_NPCLIST, npc: data.type })
+        ]);
         break;
-      case "delete":
-        yield put({ type: NPCAPP_SEARCH_FILTER_NPCLIST, npcID })
+      case "update-template":
+        yield put({ type: NPCAPP_CREATE_REFRESH_NPCTEMPLATE_LIST, template: data.type });
+        break;
+      case "delete-npc":
+        yield all([
+          put({ type: NPCAPP_SEARCH_FILTER_NPCLIST, npcID: data }),
+          put({ type: NPCAPP_CREATE_FILTER_NPCLIST, npcID: data })
+        ]);
+        break;
+      case "delete-template":
+        yield put({ type: NPCAPP_CREATE_FILTER_NPCTEMPLATE_LIST, templateID: data })
         break;
       default:
         break;
@@ -46,33 +62,62 @@ function* manageSubApps(action) {
 }
 
 export const NPCEditorSaga = [
-  takeLatest(NPCEDITOR_FETCH_NPC, fetchNPC),
+  takeLatest(NPCEDITOR_GET_NPC, getNPC),
+  takeLatest(NPCEDITOR_GET_NPCTEMPLATE, getNPCTemplate),
   takeLatest(NPCEDITOR_PUT_NPC, putNPC),
+  takeLatest(NPCEDITOR_PUT_NPCTEMPLATE, putNPCTemplate),
   takeLatest(NPCEDITOR_UPDATE_NPC, updateNPC),
-  takeLatest(NPCEDITOR_DELETE_NPC, deleteNPC)
+  takeLatest(NPCEDITOR_UPDATE_NPCTEMPLATE, updateNPCTemplate),
+  takeLatest(NPCEDITOR_DELETE_NPC, deleteNPC),
+  takeLatest(NPCEDITOR_DELETE_NPCTEMPLATE, deleteNPCTemplate)
 ];
 
-function* fetchNPC(action) {
+function* getNPC(action) {
   const npc = yield call(api.npc.getNPC, action.npcID);
-  yield put({ type: NPCEDITOR_LOAD_NPC, payload: npc });
+  yield all([
+    put({ type: NPCEDITOR_LOAD_NPC, isTemplate: false, payload: npc }),
+    call(manageSubApps, action.subAppAction, npc)
+  ]);
+}
+
+function* getNPCTemplate(action) {
+  const template = yield call(api.npc.getNPCTemplate, action.templateID);
+  yield all([
+    put({ type: NPCEDITOR_LOAD_NPC, isTemplate: true, payload: template }),
+    call(manageSubApps, action.subAppAction, template)
+  ]);
 }
 
 function* putNPC(action) {
   yield call(api.npc.putNPC, action.npcID, action.values);
-  yield put({ type: NPCEDITOR_FETCH_NPC, npcID: action.npcID });
+  yield put({ type: NPCEDITOR_GET_NPC, npcID: action.npcID, subAppAction: "update-npc" });
+}
+
+function* putNPCTemplate(action) {
+  yield call(api.npc.putNPCTemplate, action.templateID, action.values);
+  yield put({ type: NPCEDITOR_GET_NPCTEMPLATE, templateID: action.templateID, subAppAction: "update-template" });
 }
 
 function* updateNPC(action) {
-  yield all([
-    put({ type: NPCEDITOR_FETCH_NPC, npcID: action.npcID }),
-    call(manageSubApps, "update")
-  ]);
+  yield put({ type: NPCEDITOR_GET_NPC, npcID: action.npcID, subAppAction: "update-npc" });
+}
+
+function* updateNPCTemplate(action) {
+  yield put({ type: NPCEDITOR_GET_NPCTEMPLATE, templateID: action.templateID, subAppAction: "update-template" });
 }
 
 function* deleteNPC(action) {
   yield call(api.npc.deleteNPC, action.npcID);
   yield all([
     put({ type: NPCEDITOR_UNLOAD_NPC }),
-    call(manageSubApps, "delete")
+    call(manageSubApps, "delete-npc", action.npcID)
+  ]);
+}
+
+function* deleteNPCTemplate(action) {
+  yield call(api.npc.deleteNPCTemplate, action.templateID);
+  yield all([
+    put({ type: NPCEDITOR_UNLOAD_NPC }),
+    call(manageSubApps, "delete-template", action.templateID)
   ]);
 }

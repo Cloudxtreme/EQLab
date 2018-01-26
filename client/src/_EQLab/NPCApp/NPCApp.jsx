@@ -3,20 +3,34 @@ import { Row, Col, Panel, Tab, Nav, NavItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import {
   NPCAPP_LOAD,
-  NPCAPP_UNLOAD
+  NPCAPP_UNLOAD,
+  NPCAPP_SET_PANE
 } from '../../constants/actionTypes';
 import NPCSearch from './NPCSearch/NPCSearch.jsx';
 import NPCCreate from './NPCCreate.jsx';
 
 
+const mapStateToProps = state => ({
+  pane: state.NPCApp.pane
+});
+
 const mapDispatchToProps = dispatch => ({
   load: () =>
     dispatch({ type: NPCAPP_LOAD }),
   unload: () =>
-    dispatch({ type: NPCAPP_UNLOAD })
+    dispatch({ type: NPCAPP_UNLOAD }),
+  setPane: (pane) =>
+    dispatch({ type: NPCAPP_SET_PANE, pane })
 });
 
 class NPCApp extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.handlePaneSelect = (pane) => {
+      this.props.setPane(pane)
+    }
+  }
 
   componentDidMount() {
     this.props.load();
@@ -29,7 +43,7 @@ class NPCApp extends React.Component {
   render() {
     return (
       <div id="NPCApp">
-        <Tab.Container id="npc-panel-container" defaultActiveKey={"search"}>
+        <Tab.Container id="npc-panel-container" activeKey={this.props.pane} onSelect={this.handlePaneSelect}>
           <Panel id="npc-panel" style={{ height: 1006 }}>
             <Panel.Heading style={{ padding: 0 }}>
               <Row id="npc-panel-header" style={{ height: 45 }}>
@@ -65,4 +79,4 @@ class NPCApp extends React.Component {
   }
 }
 
-export default connect(null, mapDispatchToProps)(NPCApp);
+export default connect(mapStateToProps, mapDispatchToProps)(NPCApp);

@@ -9,7 +9,11 @@ class NPCEditorHeader extends React.PureComponent {
     return (
       <Row id="Spawn2Header">
         <Col md={6}>
-          <span className="panel-title">NPC: {this.props.input.value}</span>
+        {
+          this.props.isTemplate
+            ? <span className="panel-title">NPC Template: {this.props.input.value}</span>
+            : <span className="panel-title">NPC: {this.props.input.value}</span>
+        }
         </Col>
         <Col md={12}>
         </Col>

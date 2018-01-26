@@ -51,68 +51,13 @@ module.exports = {
     }
   },
 
-  getFactions: async (npcID) => {
-    let queryStr = `
-    SELECT npc_types.npc_faction_id AS 'id', npc_faction.name, npc_faction.primaryfaction AS 'primaryfaction_id', 
-    parentFaction.name AS 'primaryfaction_name', npc_faction.ignore_primary_assist, npc_faction_entries.value AS 'entries:value', 
-    npc_faction_entries.npc_value AS 'entries:npc_value', npc_faction_entries.temp AS 'entries:temp', 
-    faction_list.id AS 'entries:faction_id', faction_list.name AS 'entries:name'
-    FROM npc_types
-    LEFT JOIN npc_faction ON npc_types.npc_faction_id = npc_faction.id
-    LEFT JOIN faction_list AS parentFaction ON npc_faction.primaryfaction = parentFaction.id
-    LEFT JOIN npc_faction_entries ON npc_faction.id = npc_faction_entries.npc_faction_id
-    LEFT JOIN faction_list ON npc_faction_entries.faction_id = faction_list.id
-    WHERE npc_types.id = '${npcID}'
-    `;
-
-    let SQLdata = await db.raw(queryStr);
-    let factions = new Treeize;
-    SQLdata[0] = sanitize(SQLdata[0]);
-    factions = factions.grow(SQLdata[0]).getData();
-    return factions[0];
-  },
-
-  getTints: async (npcID) => {
-    let queryStr = `
-    SELECT npc_types.armortint_id AS 'id', npc_types_tint.tint_set_name, npc_types_tint.red1h, npc_types_tint.grn1h, 
-    npc_types_tint.blu1h, npc_types_tint.red2c, npc_types_tint.grn2c, npc_types_tint.blu2c, npc_types_tint.red3a, npc_types_tint.grn3a, 
-    npc_types_tint.blu3a, npc_types_tint.red4b, npc_types_tint.grn4b, npc_types_tint.blu4b,npc_types_tint.red5g, npc_types_tint.grn5g, 
-    npc_types_tint.blu5g, npc_types_tint.red6l, npc_types_tint.grn6l, npc_types_tint.blu6l, npc_types_tint.red7f, npc_types_tint.grn7f,
-    npc_types_tint.blu7f, npc_types_tint.red8x, npc_types_tint.grn8x, npc_types_tint.blu8x, npc_types_tint.red9x, npc_types_tint.grn9x, 
-    npc_types_tint.blu9x
-    FROM npc_types
-    LEFT JOIN npc_types_tint ON npc_types_tint.id = npc_types.armortint_id
-    WHERE npc_types.id = '${npcID}'
-    `;
-
-    let tints = await db.raw(queryStr);
-
-    if (!tints[0][0].id) {
+  getSpells: async (spellsetID) => {
+    if (spellsetID == 0) {
       return null;
-    } else {
-      return tints[0][0];
     }
-  },
 
-  getEmotes: async (npcID) => {
     let queryStr = `
-    SELECT npc_types.emoteid AS 'emoteid', npc_emotes.id AS 'entries:id', npc_emotes.event_ AS 'entries:event_', 
-    npc_emotes.type AS 'entries:type', npc_emotes.text AS 'entries:text'
-    FROM npc_types
-    LEFT JOIN npc_emotes ON npc_emotes.emoteid = npc_types.emoteid
-    WHERE npc_types.id = '${npcID}'
-    `;
-
-    let SQLdata = await db.raw(queryStr);
-    let emotes = new Treeize;
-    SQLdata[0] = sanitize(SQLdata[0]);
-    emotes = emotes.grow(SQLdata[0]).getData();
-    return emotes[0];
-  },
-
-  getSpells: async (npcID) => {
-    let queryStr = `
-    SELECT npc_types.npc_spells_id AS 'id',  npc_spells.name AS 'name', npc_spells.parent_list,
+    SELECT npc_spells.id, npc_spells.name AS 'name', npc_spells.parent_list,
     npc_spells.attack_proc, aproc.name AS 'proc_name', npc_spells.proc_chance, npc_spells.range_proc, 
     rproc.name AS 'rproc_name', npc_spells.rproc_chance, npc_spells.defensive_proc, dproc.name AS 'dproc_name', 
     npc_spells.dproc_chance, npc_spells_entries.id AS 'entries:id', npc_spells_entries.spellid AS 'entries:spell_id', 
@@ -120,14 +65,13 @@ module.exports = {
     npc_spells_entries.maxlevel AS 'entries:maxlevel', npc_spells_entries.recast_delay AS 'entries:recast_delay', 
     npc_spells_entries.priority AS 'entries:priority', npc_spells_entries.resist_adjust AS 'entries:resist_adjust', 
     spells_new.name AS 'entries:name'
-    FROM npc_types
-    LEFT JOIN npc_spells ON npc_types.npc_spells_id = npc_spells.id
+    FROM npc_spells
     LEFT JOIN npc_spells_entries ON npc_spells.id = npc_spells_entries.npc_spells_id
     LEFT JOIN spells_new aproc ON npc_spells.attack_proc = aproc.id
     LEFT JOIN spells_new rproc ON npc_spells.range_proc = rproc.id
     LEFT JOIN spells_new dproc ON npc_spells.defensive_proc = dproc.id
     LEFT JOIN spells_new ON npc_spells_entries.spellid = spells_new.id
-    WHERE npc_types.id = '${npcID}'
+    WHERE npc_spells.id = '${spellsetID}'
     `;
 
     let SQLdata = await db.raw(queryStr);
@@ -172,17 +116,20 @@ module.exports = {
     }
   },
 
-  getEffects: async (npcID) => {
+  getEffects: async (effectsetID) => {
+    if (effectsetID == 0) {
+      return null;
+    }
+
     let queryStr = `
-    SELECT npc_types.npc_spells_effects_id AS 'id',  npc_spells_effects.name AS 'name', npc_spells_effects.parent_list, 
+    SELECT npc_spells_effects.id, npc_spells_effects.name AS 'name', npc_spells_effects.parent_list, 
     npc_spells_effects_entries.id AS 'entries:id',npc_spells_effects_entries.spell_effect_id AS 'entries:spell_effect_id', 
     npc_spells_effects_entries.minlevel AS 'entries:minlevel', npc_spells_effects_entries.maxlevel AS 'entries:maxlevel', 
     npc_spells_effects_entries.se_base AS 'entries:se_base', npc_spells_effects_entries.se_limit AS 'entries:se_limit', 
     npc_spells_effects_entries.se_max AS 'entries:se_max'
-    FROM npc_types
-    LEFT JOIN npc_spells_effects ON npc_types.npc_spells_effects_id = npc_spells_effects.id
+    FROM npc_spells_effects
     LEFT JOIN npc_spells_effects_entries ON npc_spells_effects.id = npc_spells_effects_entries.npc_spells_effects_id
-    WHERE npc_types.id = '${npcID}'
+    WHERE npc_spells_effects.id = '${effectsetID}'
     `;
 
     let SQLdata = await db.raw(queryStr);
@@ -221,22 +168,25 @@ module.exports = {
     }
   },
   
-  getLoot: async (npcID) => {
+  getLoot: async (loottableID) => {
+    if (loottableID == 0) {
+      return null;
+    }
+
     let queryStr = `
-    SELECT npc_types.loottable_id AS 'id', loottable.name, loottable.mincash, loottable.maxcash, loottable.avgcoin, 
+    SELECT loottable.id, loottable.name, loottable.mincash, loottable.maxcash, loottable.avgcoin, 
     loottable_entries.lootdrop_id AS 'lootdrops:id', lootdrop.name AS 'lootdrops:name', loottable_entries.multiplier AS 'lootdrops:multiplier', 
     loottable_entries.droplimit AS 'lootdrops:droplimit', loottable_entries.mindrop AS 'lootdrops:mindrop', 
     loottable_entries.probability AS 'lootdrops:probability', lootdrop_entries.item_id AS 'lootdrops:entries:id', items.Name AS 'lootdrops:entries:name', 
     lootdrop_entries.item_charges AS 'lootdrops:entries:item_charges', lootdrop_entries.equip_item AS 'lootdrops:entries:equip_item',
     lootdrop_entries.chance AS 'lootdrops:entries:chance', lootdrop_entries.minlevel AS 'lootdrops:entries:minlevel', 
     lootdrop_entries.maxlevel AS 'lootdrops:entries:maxlevel',lootdrop_entries.multiplier AS 'lootdrops:entries:multiplier'
-    FROM npc_types
-    LEFT JOIN loottable ON npc_types.loottable_id = loottable.id
+    FROM loottable
     LEFT JOIN loottable_entries ON loottable.id = loottable_entries.loottable_id
     LEFT JOIN lootdrop ON loottable_entries.lootdrop_id = lootdrop.id
     LEFT JOIN lootdrop_entries ON lootdrop.id = lootdrop_entries.lootdrop_id
     LEFT JOIN items ON lootdrop_entries.item_id = items.id
-    WHERE npc_types.id = '${npcID}'
+    WHERE loottable.id = '${loottableID}'
     `;
 
     let SQLdata = await db.raw(queryStr);
@@ -252,16 +202,19 @@ module.exports = {
     }
   },
 
-  getMerchantTable: async (npcID) => {
+  getMerchantTable: async (merchanttableID) => {
+    if (merchanttableID == 0) {
+      return null;
+    }
+
     let queryStr = `
-    SELECT npc_types.merchant_id AS 'id', merchantlist.slot AS 'items:slot', merchantlist.item AS 'items:id', 
+    SELECT merchantlist.merchantid AS 'id', merchantlist.slot AS 'items:slot', merchantlist.item AS 'items:id', 
     items.Name AS 'items:name', merchantlist.faction_required AS 'items:faction_required', 
     merchantlist.level_required AS 'items:level_required', merchantlist.alt_currency_cost AS 'items:alt_currency_cost', 
     merchantlist.classes_required AS 'items:classes_required', merchantlist.probability AS 'items:probability'
-    FROM npc_types
-    LEFT JOIN merchantlist ON merchantlist.merchantid = npc_types.merchant_id
+    FROM merchantlist
     LEFT JOIN items ON items.id = merchantlist.item
-    WHERE npc_types.id = '${npcID}'
+    WHERE merchantlist.merchantid = '${merchanttableID}'
     `;
 
     let SQLdata = await db.raw(queryStr);
@@ -275,6 +228,67 @@ module.exports = {
       
       return merchantTable;
     } 
+  },
+
+  getFactions: async (factionID) => {
+    if (factionID == 0) {
+      return null;
+    }
+
+    let queryStr = `
+    SELECT npc_faction.id, npc_faction.name, npc_faction.primaryfaction AS 'primaryfaction_id', 
+    parentFaction.name AS 'primaryfaction_name', npc_faction.ignore_primary_assist, npc_faction_entries.value AS 'entries:value', 
+    npc_faction_entries.npc_value AS 'entries:npc_value', npc_faction_entries.temp AS 'entries:temp', 
+    faction_list.id AS 'entries:faction_id', faction_list.name AS 'entries:name'
+    FROM npc_faction
+    LEFT JOIN faction_list AS parentFaction ON npc_faction.primaryfaction = parentFaction.id
+    LEFT JOIN npc_faction_entries ON npc_faction.id = npc_faction_entries.npc_faction_id
+    LEFT JOIN faction_list ON npc_faction_entries.faction_id = faction_list.id
+    WHERE npc_faction.id = '${factionID}'
+    `;
+
+    let SQLdata = await db.raw(queryStr);
+    let factions = new Treeize;
+    SQLdata[0] = sanitize(SQLdata[0]);
+    factions = factions.grow(SQLdata[0]).getData();
+    return factions[0];
+  },
+
+  getEmotes: async (emoteID) => {
+    if (emoteID == 0) {
+      return null;
+    }
+
+    let queryStr = `
+    SELECT npc_emotes.emoteid, npc_emotes.id AS 'entries:id', npc_emotes.event_ AS 'entries:event_', 
+    npc_emotes.type AS 'entries:type', npc_emotes.text AS 'entries:text'
+    FROM npc_emotes
+    WHERE npc_emotes.emoteid = '${emoteID}'
+    `;
+
+    let SQLdata = await db.raw(queryStr);
+    let emotes = new Treeize;
+    SQLdata[0] = sanitize(SQLdata[0]);
+    emotes = emotes.grow(SQLdata[0]).getData();
+    return emotes[0];
+  },
+
+  getTints: async (tintID) => {
+    if (tintID == 0) {
+      return null;
+    }
+
+    let queryStr = `
+    SELECT * FROM npc_types_tint WHERE npc_types_tint.id = '${tintID}'
+    `;
+
+    let tints = await db.raw(queryStr);
+
+    if (!tints[0][0].id) {
+      return null;
+    } else {
+      return tints[0][0];
+    }
   },
 
   searchNPCOptions: async (searchTerm) => {
@@ -356,5 +370,6 @@ module.exports = {
   getNPCEffectSetList: async () => {
     return await db.select('npc_spells_effects', ['id', 'name'], {});
   }
+
 
 }

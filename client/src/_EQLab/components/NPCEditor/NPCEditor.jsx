@@ -7,7 +7,8 @@ import diff from 'object-diff';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
 import {
-  NPCEDITOR_FETCH_NPC,
+  NPCEDITOR_GET_NPC,
+  NPCEDITOR_GET_NPCTEMPLATE,
   NPCEDITOR_UNLOAD_NPC,
   NPCEDITOR_SET_FACTION_OPTIONS,
   NPCEDITOR_SET_TINT_OPTIONS,
@@ -15,8 +16,11 @@ import {
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_SET_LOOTTABLE_OPTIONS,
   NPCEDITOR_PUT_NPC,
+  NPCEDITOR_PUT_NPCTEMPLATE,
   NPCEDITOR_UPDATE_NPC,
-  NPCEDITOR_DELETE_NPC
+  NPCEDITOR_UPDATE_NPCTEMPLATE,
+  NPCEDITOR_DELETE_NPC,
+  NPCEDITOR_DELETE_NPCTEMPLATE
 } from '../../../constants/actionTypes.js';
 import NPCEditorHeader from './NPCEditorHeader.jsx';
 import NPCType from './NPCType.jsx';
@@ -32,6 +36,7 @@ import NPCMerchantTable from './NPCMerchantTable.jsx';
 
 const mapStateToProps = state => ({
   isLoaded: state.NPCEditor.isLoaded,
+  isTemplate: state.NPCEditor.isTemplate,
   initialValues: state.NPCEditor.npc,
   faction: state.NPCEditor.npc.faction,
   emotes: state.NPCEditor.npc.emotes,
@@ -44,8 +49,10 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  load: npcID =>
-    dispatch({ type: NPCEDITOR_FETCH_NPC, npcID }),
+  loadNPC: npcID =>
+    dispatch({ type: NPCEDITOR_GET_NPC, npcID }),
+  loadTemplate: templateID =>
+    dispatch({ type: NPCEDITOR_GET_NPCTEMPLATE, templateID }),
   unload: () =>
     dispatch({ type: NPCEDITOR_UNLOAD_NPC }),
   setFactionOptions: (options) => 
@@ -58,12 +65,18 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_SET_EFFECTSET_OPTIONS, options }),
   setLootTableOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_LOOTTABLE_OPTIONS, options }),
-  putNPC: (npcID, values, zone) => 
-    dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values, zone}),
-  updateNPC: (npcID, values, zone) => 
-    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID, values, zone}),
-  deleteNPC: (npcID, zone) => 
-    dispatch({ type: NPCEDITOR_DELETE_NPC, npcID, zone})
+  putNPC: (npcID, values) => 
+    dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values }),
+  putNPCTemplate: (templateID, values) => 
+    dispatch({ type: NPCEDITOR_PUT_NPCTEMPLATE, templateID, values }),
+  updateNPC: (npcID, values) => 
+    dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID }),
+  updateNPCTemplate: (templateID) => 
+    dispatch({ type: NPCEDITOR_UPDATE_NPCTEMPLATE, templateID }),
+  deleteNPC: (npcID) => 
+    dispatch({ type: NPCEDITOR_DELETE_NPC, npcID }),
+  deleteNPCTemplate: (templateID) => 
+    dispatch({ type: NPCEDITOR_DELETE_NPCTEMPLATE, templateID })
 });
 
 const NPCEditorOptions = {
@@ -76,32 +89,45 @@ class NPCEditor extends React.Component {
     super(props);
 
     this.deleteNPC = () => {
-      confirm('Are you sure you want to delete this NPC?', {
-        title: 'Delete NPC'
-      }).then(() => {
-        this.props.deleteNPC(
-          this.props.npcID, 
-          this.props.zone ? this.props.zone : null
-        );
-      }, () => {});
+      if (this.props.isTemplate) {
+        confirm('Are you sure you want to delete this template?', {
+          title: 'Delete NPC Template'
+        }).then(() => {
+          this.props.deleteNPCTemplate(this.props.templateID);
+        }, () => {});
+      } else {
+        confirm('Are you sure you want to delete this NPC?', {
+          title: 'Delete NPC'
+        }).then(() => {
+          this.props.deleteNPC(this.props.npcID);
+        }, () => {});
+      }
     }
 
     this.submitNPCForm = (values, dispatch, props) => {
       return new Promise((resolve, reject) => {
         if (props.dirty && props.valid) {
           const delta = diff(props.initialValues.type, values.type);
-          api.npc.putNPC(values.type.id, delta).then(res => {
-            this.props.updateNPC(
-              values.type.id, 
-              delta,
-              this.props.zone ? this.props.zone : null
-            );
-            resolve();
-          }).catch(error => {
-            if (error.validationErrors) {
-              reject(new SubmissionError(error.validationErrors));
-            } 
-          });
+
+          if (this.props.isTemplate) {
+            api.npc.putNPCTemplate(values.type.id, delta).then(res => {
+              this.props.updateNPCTemplate(values.type.id);
+              resolve();
+            }).catch(error => {
+              if (error.validationErrors) {
+                reject(new SubmissionError(error.validationErrors));
+              } 
+            });
+          } else {
+            api.npc.putNPC(values.type.id, delta).then(res => {
+              this.props.updateNPC(values.type.id);
+              resolve();
+            }).catch(error => {
+              if (error.validationErrors) {
+                reject(new SubmissionError(error.validationErrors));
+              } 
+            });
+          }
         }
       });
     }
@@ -127,8 +153,7 @@ class NPCEditor extends React.Component {
       if (faction) {
         this.props.putNPC(
           this.props.npcID, 
-          {npc_faction_id: faction.id},
-          this.props.zone
+          {npc_faction_id: faction.id}
         );
       }
     }
@@ -152,11 +177,11 @@ class NPCEditor extends React.Component {
 
     this.changeTint = (tint) => {
       if (tint) {
-        this.props.putNPC(
-          this.props.npcID, 
-          {armortint_id: tint.id},
-          this.props.zone
-        );
+        if (this.props.isTemplate) {
+          this.props.putNPCTemplate(this.props.templateID, {armortint_id: tint.id});
+        } else {
+          this.props.putNPC(this.props.npcID, {armortint_id: tint.id});
+        }  
       }
     }
 
@@ -179,11 +204,11 @@ class NPCEditor extends React.Component {
 
     this.changeSpellSet = (spellset) => {
       if (spellset) {
-        this.props.putNPC(
-          this.props.npcID, 
-          {npc_spells_id: spellset.id},
-          this.props.zone
-        );
+        if (this.props.isTemplate) {
+          this.props.putNPCTemplate(this.props.templateID, {npc_spells_id: spellset.id});
+        } else {
+          this.props.putNPC(this.props.npcID, {npc_spells_id: spellset.id});
+        }
       }
     }
 
@@ -206,11 +231,11 @@ class NPCEditor extends React.Component {
 
     this.changeEffectSet = (effectset) => {
       if (effectset) {
-        this.props.putNPC(
-          this.props.npcID, 
-          {npc_spells_effects_id: effectset.id},
-          this.props.zone
-        );
+        if (this.props.isTemplate) {
+          this.props.putNPCTemplate(this.props.templateID, {npc_spells_effects_id: effectset.id});
+        } else {
+          this.props.putNPC(this.props.npcID, {npc_spells_effects_id: effectset.id});
+        }
       }
     }
 
@@ -233,23 +258,29 @@ class NPCEditor extends React.Component {
 
     this.changeLootTable = (loottable) => {
       if (loottable) {
-        this.props.putNPC(
-          this.props.npcID, 
-          {loottable_id: loottable.id},
-          this.props.zone
-        );
+        if (this.props.isTemplate) {
+          this.props.putNPCTemplate(this.props.templateID, {loottable_id: loottable.id});
+        } else {
+          this.props.putNPC(this.props.npcID, {loottable_id: loottable.id});
+        }
       }
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.isLoaded && (nextProps.npcID !== this.props.npcID)) {
-      this.props.load(nextProps.npcID);
+    if (this.props.isLoaded && nextProps.npcID && (nextProps.npcID !== this.props.npcID)) {
+      this.props.loadNPC(nextProps.npcID);
+    } else if (this.props.isLoaded && nextProps.templateID && (nextProps.templateID !== this.props.templateID)) {
+      this.props.loadTemplate(nextProps.templateID);
     }
   }
 
   componentDidMount() {
-    this.props.load(this.props.npcID)
+    if (this.props.npcID){
+      this.props.loadNPC(this.props.npcID)
+    } else if (this.props.templateID) {
+      this.props.loadTemplate(this.props.templateID)
+    }
   }
 
   componentWillUnmount() {
@@ -267,6 +298,7 @@ class NPCEditor extends React.Component {
               <Field
                 name="type.id"
                 component={NPCEditorHeader}
+                isTemplate={this.props.isTemplate}
                 formPristine={this.props.pristine}
                 formSubmitting={this.props.submitting}
                 deleteNPC={this.deleteNPC}

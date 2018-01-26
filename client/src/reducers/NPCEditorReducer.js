@@ -12,6 +12,7 @@ import {
 function get_INITIAL_STATE() {
   return {
     isLoaded: false,
+    isTemplate: undefined,
     npc: {},
     factionOptions: [],
     tintOptions: [],
@@ -29,6 +30,7 @@ export default (state = get_INITIAL_STATE(), action) => {
       return {
         ...state,
         isLoaded: true,
+        isTemplate: action.isTemplate,
         npc: action.payload ? action.payload : {},
         factionOptions: action.payload.faction ? [{ id: action.payload.faction.id, label: `${action.payload.faction.name} (${action.payload.faction.id})` }] : [],
         tintOptions: action.payload.tint ? [{ id: action.payload.tint.id, label: `${action.payload.tint.tint_set_name} (${action.payload.tint.id})` }] : [],

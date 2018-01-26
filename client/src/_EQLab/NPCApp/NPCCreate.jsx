@@ -10,18 +10,22 @@ import FontAwesome from 'react-fontawesome';
 import {
   NPCAPP_CREATE_LOAD,
   NPCAPP_CREATE_UNLOAD,
+  NPCAPP_CREATE_SET_NPC,
   NPCAPP_CREATE_POST_NPC,
   NPCAPP_CREATE_COPY_NPC,
   NPCAPP_CREATE_SET_NPC_OPTIONS,
+  NPCAPP_CREATE_SET_NPCTEMPLATE,
   NPCAPP_CREATE_POST_NPCTEMPLATE,
   NPCAPP_CREATE_COPY_NPCTEMPLATE
 } from '../../constants/actionTypes';
 import NPCEditor from '../components/NPCEditor/NPCEditor.jsx';
 
 const mapStateToProps = state => ({
+  newNPCs: state.NPCApp.newNPCs,
   npcTemplates: state.NPCApp.npcTemplates,
   options: state.NPCApp.npcOptions,
-  npcID: state.NPCApp.createnpcID
+  npcID: state.NPCApp.createnpcID,
+  templateID: state.NPCApp.createTemplateID
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -29,12 +33,16 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCAPP_CREATE_LOAD, npcTemplates }),
   unload: () =>
     dispatch({ type: NPCAPP_CREATE_UNLOAD }),
+  setNPCID: (npcID) =>
+    dispatch({ type: NPCAPP_CREATE_SET_NPC, npcID }),
   postNPC: () =>
     dispatch({ type: NPCAPP_CREATE_POST_NPC }),
   copyNPC: (npcID) =>
     dispatch({ type: NPCAPP_CREATE_COPY_NPC, npcID }),
   setNPCOptions: (options) =>
     dispatch({ type: NPCAPP_CREATE_SET_NPC_OPTIONS, options }),
+  setTemplateID: (templateID) =>
+    dispatch({ type: NPCAPP_CREATE_SET_NPCTEMPLATE, templateID }),
   postNPCTemplate: () =>
     dispatch({ type: NPCAPP_CREATE_POST_NPCTEMPLATE }),
   copyNPCTemplate: (templateID) =>
@@ -56,11 +64,17 @@ class NPCCreate extends React.Component {
       this.setState({ selectednpcID: npc.id })
     }
 
-    this.copyNPC = () => {
-      if (this.state.selectednpcID) {
+    this.copyNPC = (e) => {
+      if (e.currentTarget.id) {
+        this.props.copyNPC(e.currentTarget.id);
+      } else if (this.state.selectednpcID) {
         this.props.copyNPC(this.state.selectednpcID)
         // this.setState({ npcID: null })
-      }   
+      }
+    }
+
+    this.copyTemplate = (e) => {
+      this.props.copyNPCTemplate(e.currentTarget.id)
     }
 
     this.searchNPCs = debounce((input) => {
@@ -103,32 +117,84 @@ class NPCCreate extends React.Component {
 
   render() {
 
-    const columns = [{
-      Header: "ID",
-      accessor: "id",
-      width: 80
+    const npcColumns = [{
+      Header: 'ID',
+      accessor: 'id',
+      width: 40
     }, {
-      Header: "Name",
-      accessor: "name",
-      width: 120
+      Header: 'Name',
+      accessor: 'name',
+      width: 160,
     }, {
-      Header: "MinLvl",
-      accessor: "level",
-      width: 50,
-      style: { textAlign: "center"}
-    }, {
-      Header: "MaxLvl",
-      accessor: "maxlevel",
-      width: 50,
-      style: { textAlign: "center"}
-    }, {
-      Header: "Copy",
-      accessor: "id",
-      width: 50,
-      style: { textAlign: "center"},
+      Header: 'Copy',
+      id: 'copy',
+      accessor: 'id',
+      style: { textAlign: "center" },
       Cell: row => {
-
+        return (
+          <Button 
+            bsStyle="primary" 
+            bsSize="xs"
+            id={row.value}
+            onClick={this.copyNPC}
+          >
+            <FontAwesome name="clone" />&nbsp;Copy
+          </Button>
+        )
       }
+    }]
+
+    const templateColumns = [{
+      Header: row => {
+        return (
+          <Button 
+            bsStyle="primary" 
+            bsSize="xs"
+            onClick={this.newNPCTemplate}
+            style={{ textAlign: "center" }}
+          >
+            <FontAwesome name="plus" />&nbsp;New NPC Template
+          </Button>
+        )
+      },
+      columns: [{
+        Header: "ID",
+        accessor: "id",
+        width: 80
+      }, {
+        Header: "Name",
+        accessor: "name",
+        width: 120
+      }, {
+        Header: "MinLvl",
+        accessor: "level",
+        width: 50,
+        style: { textAlign: "center"}
+      }, {
+        Header: "MaxLvl",
+        accessor: "maxlevel",
+        width: 50,
+        style: { textAlign: "center"}
+      }, {
+        Header: "Clone",
+        id: "clone",
+        accessor: "id",
+        filterable: false,
+        width: 50,
+        style: { textAlign: "center"},
+        Cell: row => {
+          return (
+            <Button 
+              bsStyle="primary" 
+              bsSize="xs"
+              id={row.value}
+              onClick={this.copyTemplate}
+            >
+              <FontAwesome name="clone" />&nbsp;Clone
+            </Button>
+          )
+        }
+      }]
     }];
 
     return (
@@ -194,22 +260,55 @@ class NPCCreate extends React.Component {
                 <Row>
                   <Col md={24} style={{ padding: 0 }}>
                     <ReactTable
+                      data={this.props.newNPCs}
+                      columns={npcColumns}
+                      defaultSorted={[
+                        {
+                          id: "id",
+                          desc: true
+                        }
+                      ]}
+                      filterable={false}
+                      className="-striped -highlight"
+                      style={{ height: 250, overflowY: "auto", fontSize: 12 }}
+                      showPagination={false}
+                      pageSize={50}
+                      noDataText='No New NPCs'
+                      getTdProps={(state, row, column, instance) => {
+                        return { onClick: e => {
+                            if (column.id !== 'copy') {
+                              this.props.setNPCID(row.original.id)
+                            } 
+                          } 
+                        }
+                      }}
+                    />
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={24} style={{ padding: 0 }}>
+                    <ReactTable
                       data={this.props.npcTemplates}
-                      columns={columns}
+                      columns={templateColumns}
                       defaultSorted={[
                         {
                           id: "id",
                           desc: false
                         }
                       ]}
-                      filterable={false}
+                      filterable={true}
                       className="-striped -highlight"
-                      style={{ height: 860, overflowY: "auto", fontSize: 12 }}
+                      style={{ height: 600, overflowY: "auto", fontSize: 12 }}
                       showPagination={true}
                       pageSize={50}
-                      // getTdProps={(state, row, column, instance) => {
-                      //   return { onClick: e => {this.props.setNPCID(row.original.id)} }
-                      // }}
+                      getTdProps={(state, row, column, instance) => {
+                        return { onClick: e => {
+                            if (column.id !== 'clone') {
+                              this.props.setTemplateID(row.original.id)
+                            } 
+                          } 
+                        }
+                      }}
                     />
                   </Col>
                 </Row>
@@ -218,9 +317,11 @@ class NPCCreate extends React.Component {
           </Col>
           <Col md={19}>
           {
-            !this.props.npcID
-              ? null
-              : <NPCEditor npcID={this.props.npcID} />
+            this.props.npcID
+              ? <NPCEditor npcID={this.props.npcID} />
+              : this.props.templateID
+                  ? <NPCEditor templateID={this.props.templateID} />
+                  : null
           }
           </Col>
         </Row>

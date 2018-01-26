@@ -22,8 +22,7 @@ const mapDispatchToProps = dispatch => ({
   setNPCList: (payload) =>
     dispatch({ type: NPCAPP_SEARCH_SET_NPCLIST, payload }),
   setNPCID: (npcID) =>
-    dispatch({ type: NPCAPP_SEARCH_SET_NPCID, npcID }),
-
+    dispatch({ type: NPCAPP_SEARCH_SET_NPCID, npcID })
 });
 
 class NPCSearch extends React.Component {
