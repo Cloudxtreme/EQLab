@@ -46,7 +46,12 @@ import SpellEditorHeader from './SpellEditorHeader.jsx';
 const mapStateToProps = state => ({
   isLoaded: state.SpellEditor.isLoaded,
   isTemplate: state.SpellEditor.isTemplate,
-  initialValues: state.SpellEditor.spell
+  initialValues: state.SpellEditor.spell.data,
+  recourse: state.SpellEditor.spell.recourse,
+  components: state.SpellEditor.spell.components,
+  noexpendreagents: state.SpellEditor.spell.noexpendreagents,
+  scrolls: state.SpellEditor.spell.scrolls,
+  procitems: state.SpellEditor.spell.procitems
 });
 
 const mapDispatchToProps = dispatch => ({
