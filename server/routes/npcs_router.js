@@ -6,35 +6,7 @@ const express       = require("express"),
       npc_template  = require("../models/sequelize").npc_template;
 
 
-npcs_router.get("/effectset/options/search/:searchTerm", (req, res, next) => {
-  npc.searchNPCEffectSetOptions(req.params.searchTerm).then(data => {
-    res.status(200).type('json').json(data)
-  });
-});
-
-npcs_router.get("/spellset/options/search/:searchTerm", (req, res, next) => {
-  npc.searchNPCSpellSetOptions(req.params.searchTerm).then(data => {
-    res.status(200).type('json').json(data)
-  });
-});
-
-npcs_router.get("/tint/options/search/:searchTerm", (req, res, next) => {
-  npc.searchNPCTintOptions(req.params.searchTerm).then(data => {
-    res.status(200).type('json').json(data)
-  });
-});
-
-npcs_router.get("/faction/options/search/:searchTerm", (req, res, next) => {
-  npc.searchNPCFactionOptions(req.params.searchTerm).then(data => {
-    res.status(200).type('json').json(data)
-  });
-});
-
-npcs_router.get("/options/search/:searchTerm", (req, res, next) => {
-  npc.searchNPCOptions(req.params.searchTerm).then(data => {
-    res.status(200).type('json').json(data)
-  });
-});
+/*******************************************************************************/   
 
 npcs_router.get("/tint/list", (req, res, next) => {
   npc.getTintList().then(data => {
@@ -66,47 +38,39 @@ npcs_router.get("/effectset/list", (req, res, next) => {
   })
 });
 
-npcs_router.get("/:npcID/merchanttable", (req, res, next) => {
-  npc.getMerchantTable(req.params.npcID).then(data => {
+/**************************** OPTIONS **********************************/
+
+npcs_router.get("/effectset/options/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCEffectSetOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
-  })
+  });
 });
 
-npcs_router.get("/:npcID/factions", (req, res, next) => {
-  npc.getFactions(req.params.npcID).then(data => {
+npcs_router.get("/spellset/options/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCSpellSetOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
-  })
+  });
 });
 
-npcs_router.get("/:npcID/emotes", (req, res, next) => {
-  npc.getEmotes(req.params.npcID).then(data => {
+npcs_router.get("/tint/options/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCTintOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
-  })
+  });
 });
 
-npcs_router.get("/:npcID/tints", (req, res, next) => {
-  npc.getTints(req.params.npcID).then(data => {
+npcs_router.get("/faction/options/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCFactionOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
-  })
+  });
 });
 
-npcs_router.get("/:npcID/effects", (req, res, next) => {
-  npc.getEffects(req.params.npcID).then(data => {
+npcs_router.get("/options/search/:searchTerm", (req, res, next) => {
+  npc.searchNPCOptions(req.params.searchTerm).then(data => {
     res.status(200).type('json').json(data)
-  })
-});    
-
-npcs_router.get("/:npcID/spells", (req, res, next) => {
-  npc.getSpells(req.params.npcID).then(data => {
-    res.status(200).type('json').json(data)
-  })
-});      
- 
-npcs_router.get("/:npcID/loot", (req, res, next) => {
-  npc.getLoot(req.params.npcID).then(data => {
-    res.status(200).type('json').json(data)
-  })
+  });
 });
+
+/**************************** TEMPLATES **********************************/
 
 npcs_router.delete("/templates/:templateID", async (req, res, next) => {
   npc_template.destroy({where: {id: req.params.templateID}}).then(data => {
@@ -150,6 +114,50 @@ npcs_router.get("/templates/:templateID", async (req, res, next) => {
 
 npcs_router.get("/templates", (req, res, next) => {
   npc_template.findAll({raw: true}).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
+
+/**************************** NPC **********************************/
+
+npcs_router.get("/:npcID/merchanttable", (req, res, next) => {
+  npc.getMerchantTable(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
+
+npcs_router.get("/:npcID/factions", (req, res, next) => {
+  npc.getFactions(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
+
+npcs_router.get("/:npcID/emotes", (req, res, next) => {
+  npc.getEmotes(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
+
+npcs_router.get("/:npcID/tints", (req, res, next) => {
+  npc.getTints(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});
+
+npcs_router.get("/:npcID/effects", (req, res, next) => {
+  npc.getEffects(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});    
+
+npcs_router.get("/:npcID/spells", (req, res, next) => {
+  npc.getSpells(req.params.npcID).then(data => {
+    res.status(200).type('json').json(data)
+  })
+});      
+ 
+npcs_router.get("/:npcID/loot", (req, res, next) => {
+  npc.getLoot(req.params.npcID).then(data => {
     res.status(200).type('json').json(data)
   })
 });

@@ -8,6 +8,9 @@ export const getCurrentSearchNPCID = (state) => state.NPCApp.searchnpcID;
 export const getCurrentCreateNPCID = (state) => state.NPCApp.createnpcID;
 export const getCurrentCreateNPCTemplateID = (state) => state.NPCApp.createTemplateID;
 
+// SPELL APP
+export const getSpellAppStatus = (state) => state.SpellApp.isLoaded;
+
 // SPAWN EDITOR
 export const getCurrentSpawn2ID = (state) => state.SpawnEditor.spawn.spawn2.id;
 export const getCurrentSpawngroupID = (state) => state.SpawnEditor.spawn.spawngroup.id;

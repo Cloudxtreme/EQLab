@@ -213,6 +213,218 @@ export const RANGE_ATTACK_SKILLS = [
   {value: 51, label: "Throwing"}
 ];
 
+export const SPELL_SKILLS = [
+  {value: 4, label: "Abjuration"},
+  {value: 5, label: "Alteration"},
+  {value: 12, label: "Brass Instruments"},
+  {value: 13, label: "Channeling"},
+  {value: 14, label: "Conjuration"},
+  {value: 18, label: "Divination"},
+  {value: 24, label: "Evocation"},
+  {value: 41, label: "Singing"},
+  {value: 49, label: "Stringed Instruments"},
+  {value: 54, label: "Wind Instruments"},
+  {value: 70, label: "Percussion Instruments"}
+];
+
+export const SPELL_BUFFDURATION_FORMULAS = [
+  {value: 0, label: ""},
+  {value: 1, label: "Level / 2"},
+  {value: 2, label: "(Level / 2) + 5"},
+  {value: 3, label: "Level * 30"},
+  {value: 4, label: "Flat 50sec"},
+  {value: 5, label: "Bard Song"},
+  {value: 6, label: "(Level / 2) + 2"},
+  {value: 7, label: "Level"},
+  {value: 8, label: "Level + 10"},
+  {value: 9, label: "(Level * 2) + 10"},
+  {value: 10, label: "(Level * 3) + 10"},
+  {value: 11, label: "(Level + 3) * 30"},
+  {value: 12, label: "Level / 4"},
+  {value: 13, label: "(Level * 4) + 10"},
+  {value: 14, label: "(Level + 2) * 5"},
+  {value: 15, label: "(Level + 10) * 10"},
+  {value: 50, label: "Permanent (canceled by some actions)"},
+  {value: 51, label: "Permanent (canceled when out of range of aura)"}
+];
+
+export const SPELL_FORMULAS = [
+  {value: 1, label: "Effect Base + Level * Multiplier"},
+  {value: 60, label: "Effect Base / 100"},
+  {value: 100, label: "Effect Base Value"},
+  {value: 101, label: "Effect Base + Level / 2"},
+  {value: 102, label: "Effect Base + Level"},
+  {value: 103, label: "Effect Base + Level * 2"},
+  {value: 104, label: "Effect Base + Level * 3"},
+  {value: 105, label: "Effect Base + Level * 4"},
+  {value: 107, label: "Effect Base + Level / 2"},
+  {value: 108, label: "Effect Base + Level / 3"},
+  {value: 109, label: "Effect Base + Level / 4"},
+  {value: 110, label: "Effect Base + Level / 5"},
+  {value: 111, label: "Effect Base + 6 * (Level - Spell Level)"},
+  {value: 112, label: "Effect Base + 8 * (Level - Spell Level)"},
+  {value: 113, label: "Effect Base + 10 * (Level - Spell Level)"},
+  {value: 114, label: "Effect Base + 15 * (Level - Spell Level)"},
+  {value: 115, label: "Effect Base + 6 * (Level - Spell Level)"},
+  {value: 116, label: "Effect Base + 8 * (Level - Spell Level)"},
+  {value: 117, label: "Effect Base + 12 * (Level - Spell Level)"},
+  {value: 118, label: "Effect Base + 20 * (Level - Spell Level)"},
+  {value: 119, label: "Effect Base + Level / 8,"},
+  {value: 121, label: "Effect Base + Level / 3"},
+  {value: 122, label: "Splurt"},
+  {value: 123, label: "Random (Effect Base, Effect Max)"},
+  {value: 203, label: "Effect Max"}
+];
+
+export const SPELL_GOODEFFECT = [
+  {value: 0, label: "Detrimental"},
+  {value: 1, label: "Beneficial"},
+  {value: 2, label: "Beneficial, Group Only"}
+];
+
+export const SPELL_RESIST_TYPES = [
+  {value: 0, label: "Unresistable"},
+  {value: 1, label: "Magic"},
+  {value: 2, label: "Fire"},
+  {value: 3, label: "Cold"},
+  {value: 4, label: "Poison"},
+  {value: 5, label: "Disease"},
+  {value: 6, label: "Chromatic (Average)"},
+  {value: 7, label: "Prismatic (Lowest)"},
+  {value: 8, label: "Physical"},
+  {value: 9, label: "Corruption"}
+];
+
+export const SPELL_DEITIES = [
+  {value: 1, label: "Bertoxxulous"},
+  {value: 2, label: "Brell Serilis"},
+  {value: 3, label: "Cazic-Thule"},
+  {value: 4, label: "Erollisi Marr"},
+  {value: 5, label: "Bristlebane"},
+  {value: 6, label: "Innoruuk"},
+  {value: 7, label: "Karana"},
+  {value: 8, label: "Mithaniel Marr"},
+  {value: 9, label: "Prexus"},
+  {value: 10, label: "Quellious"},
+  {value: 11, label: "Rallos Zek"},
+  {value: 12, label: "Rodcet Nife"},
+  {value: 13, label: "Solusek Ro"},
+  {value: 14, label: "The Tribunal"},
+  {value: 15, label: "Tunare"},
+  {value: 16, label: "Veeshan"}
+];
+
+export const SPELL_ZONE_TYPES = [
+  {value: -1, label: "Any"},
+  {value: 0, label: "Indoor Only"},
+  {value: 1, label: "Outdoor Only"},
+  {value: 2, label: "Dungeon Only"},
+  {value: 255, label: "Any"}
+];
+
+export const SPELL_ENVIRONMENT_TYPES = [
+  {value: 0, label: "Everywhere"},
+  {value: 12, label: "Cities Only"},
+  {value: 24, label: "Planes Only"}
+];
+
+export const SPELL_TIME_OF_DAY = [
+  {value: 0, label: "Any"},
+  {value: 1, label: "Day Only"},
+  {value: 2, label: "Night Only"}
+];
+
+export const SPELL_DISPEL_TYPES = [
+  {value: -1, label: "Cannot be dispelled"},
+  {value: 0, label: "Can be dispelled"},
+  {value: 1, label: "Can be cancelled with a cure, but not dispelled"}
+];
+
+export const SPELL_NUMHIT_TYPES = [
+  {value: 0, label: ""},
+  {value: 1, label: "Attempted incoming melee attacks (hit or miss) on YOU"},
+  {value: 2, label: "Attempted outgoing melee attacks (hit or miss) on YOUR TARGET"},
+  {value: 3, label: "Incoming detrimental spells"},
+  {value: 4, label: "Outgoing deterimental spells"},
+  {value: 5, label: "Successful outgoing melee attack HIT on YOUR TARGET"},
+  {value: 6, label: "Successful incoming melee attack HIT on YOU"},
+  {value: 7, label: "Any casted spell matching/triggering a focus effect"},
+  {value: 8, label: "Successful incoming spell or melee dmg attack on YOU"},
+  {value: 9, label: "Incoming Reflected spells"},
+  {value: 10, label: "Defensive spell buff procs"},
+  {value: 11, label: "Offensive spell buff procs"}
+];
+
+export const SPELL_NPC_CATEGORIES = [
+  {value: 0, label: "Non NPC Spell"},
+  {value: 1, label: "Area of Effect Detrimental"},
+  {value: 2, label: "Single Target Detrimental"},
+  {value: 3, label: "Buffs"},
+  {value: 4, label: "Pet Spells"},
+  {value: 5, label: "Healing Spells"},
+  {value: 6, label: "Gate or last cast"},
+  {value: 7, label: "Debuffs"},
+  {value: 8, label: "Dispells"}
+];
+
+export const SPELL_PCNPC_ONLY_FLAG = [
+  {value: 0, label: "Any"},
+  {value: 1, label: "PCs/Mercs Only"},
+  {value: 2, label: "NPCs Only"}
+];
+
+export const SPELL_AFFECT_INDEX = [
+  {value: -1, label: "Summon Mount/None"},
+  {value: 0, label: "Direct Damage"},
+  {value: 1, label: "Heal/Cure"},
+  {value: 2, label: "AC Buff"},
+  {value: 3, label: "AE Damage"},
+  {value: 4, label: "Summon Pet/Item"},
+  {value: 5, label: "Sight"},
+  {value: 6, label: "HP/MP/Resist Song"},
+  {value: 7, label: "Stat Buff"},
+  {value: 9, label: "Invis/Gate"},
+  {value: 10, label: "Illusion/Size"},
+  {value: 11, label: "Enchanter Pet"},
+  {value: 12, label: "Lull (Spell)"},
+  {value: 13, label: "Fear"},
+  {value: 14, label: "Dispel/Sight"},
+  {value: 15, label: "Stun"},
+  {value: 16, label: "Haste/Runspeed"},
+  {value: 17, label: "Combat Slow"},
+  {value: 18, label: "Damage Shield"},
+  {value: 19, label: "Cannibalize"},
+  {value: 20, label: "Weaken"},
+  {value: 21, label: "Banish"},
+  {value: 22, label: "Blind/Poison"},
+  {value: 23, label: "Cold DD"},
+  {value: 24, label: "Poison/Disease DD"},
+  {value: 25, label: "Fire DD"},
+  {value: 27, label: "Memory Blur"},
+  {value: 28, label: "Gravity Fling"},
+  {value: 29, label: "Suffocate"},
+  {value: 30, label: "Lifetap Over Time"},
+  {value: 31, label: "Fire AE"},
+  {value: 33, label: "Cold AE"},
+  {value: 34, label: "Poison/Disease AE"},
+  {value: 40, label: "Teleport"},
+  {value: 41, label: "Direct Damage Song"},
+  {value: 42, label: "Combat/Buff Song"},
+  {value: 43, label: "Lull (Song)"},
+  {value: 45, label: "Firework"},
+  {value: 46, label: "Firework AE"},
+  {value: 47, label: "Weather Rocket"},
+  {value: 50, label: "Convert Vitals"},
+  {value: 60, label: "NPC Special 60"},
+  {value: 61, label: "NPC Special 61"},
+  {value: 62, label: "NPC Special 62"},
+  {value: 63, label: "NPC Special 63"},
+  {value: 70, label: "NPC Special 70"},
+  {value: 71, label: "NPC Special 71"},
+  {value: 80, label: "NPC Special 80"},
+  {value: 88, label: "Trap/Lock"}
+];
+
 export const NPC_SPELL_TYPES = {
   1: "Nuke",
   2: "Heal",

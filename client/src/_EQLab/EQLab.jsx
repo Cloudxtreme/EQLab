@@ -10,6 +10,7 @@ import {
 import Home from './Home/Home.jsx';
 import ZoneApp from './ZoneApp/ZoneApp.jsx';
 import NPCApp from './NPCApp/NPCApp.jsx';
+import SpellApp from './SpellApp/SpellApp.jsx';
 import NoMatch from './Errors/NoMatch.jsx';
 
 
@@ -47,11 +48,11 @@ class EQLab extends React.Component {
           <Navbar.Collapse>
             <Nav>
               <LinkContainer to="/zones"><NavItem eventKey={1}>Zones</NavItem></LinkContainer>
-              <LinkContainer to="/npcs"><NavItem eventKey={1}>NPCs</NavItem></LinkContainer>
-              <NavItem eventKey={1}>Spells</NavItem>
-              <NavItem eventKey={1}>Items</NavItem>
-              <NavItem eventKey={1}>Classes</NavItem>
-              <NavItem eventKey={1}>Rules</NavItem>
+              <LinkContainer to="/npcs"><NavItem eventKey={2}>NPCs</NavItem></LinkContainer>
+              <LinkContainer to="/spells"><NavItem eventKey={3}>Spells</NavItem></LinkContainer>
+              <NavItem eventKey={4}>Items</NavItem>
+              <NavItem eventKey={5}>Classes</NavItem>
+              <NavItem eventKey={6}>Rules</NavItem>
             </Nav>
             <div style={{ float: "right" }}>
               <Navbar.Text><strong>Database: {this.props.dbName}</strong></Navbar.Text>
@@ -69,6 +70,7 @@ class EQLab extends React.Component {
                 <Route exact path='/' component={Home} />
                 <Route exact path='/zones' component={ZoneApp} />
                 <Route exact path='/npcs' component={NPCApp} />
+                <Route exact path='/spells' component={SpellApp} />
                 <Route component={NoMatch}/>
               </Switch>
             </Col>

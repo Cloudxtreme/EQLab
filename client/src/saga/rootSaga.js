@@ -4,6 +4,7 @@ import { ZoneAppSaga } from './ZoneAppSaga.js';
 import { NPCAppSaga } from './NPCAppSaga.js';
 import { SpawnEditorSaga } from './SpawnEditorSaga.js';
 import { NPCEditorSaga } from './NPCEditorSaga.js';
+import { SpellEditorSaga } from './SpellEditorSaga.js';
 
 
 export default function* rootSaga() {
@@ -12,6 +13,7 @@ export default function* rootSaga() {
     ...ZoneAppSaga,
     ...NPCAppSaga,
     ...SpawnEditorSaga,
-    ...NPCEditorSaga
+    ...NPCEditorSaga,
+    ...SpellEditorSaga
   ]);
 }

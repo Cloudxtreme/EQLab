@@ -21,14 +21,14 @@ const requests = {
     superagent.put(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody),
   delete: url =>
     superagent.del(`${API_ROOT}${url}`).use(tokenPlugin).then(responseBody)
-};
+}
 
 const auth = {
   logIn: (username, password) =>
     requests.post('/auth/login', { user: { username, password } }),
   register: (username, email, password) =>
     requests.post('/auth/register', { user: { username, email, password } })
-};
+}
 
 const eqlab = {
   getGlobalVariables: () =>
@@ -71,7 +71,7 @@ const zone = {
     requests.put(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`),
   deleteSpawnentry: (spawngroupID, npcID) => 
     requests.delete(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`)
-};
+}
 
 const npc = { 
   searchNPCs: values =>
@@ -123,7 +123,35 @@ const npc = {
     requests.get(`/npcs/altcurrency/list`),
   getTintList: () =>
     requests.get(`/npcs/tint/list`)
-};
+}
+
+const spell = {
+  searchSpells: values =>
+    requests.post(`/spells/search`, values),
+  getSpell: spellID =>
+    requests.get(`/spells/${spellID}`),
+  postSpell: values =>
+    requests.post(`/spells`, values),
+  copySpell: spellID =>
+    requests.post(`/spells/copy/${spellID}`),
+  putSpell: (spellID, values) => 
+    requests.put(`/spells/${spellID}`, values),
+  deleteSpell: spellID => 
+    requests.delete(`/spells/${spellID}`),
+
+  getTemplates: () =>
+    requests.get(`/spells/templates`),
+  getSpellTemplate: templateID =>
+    requests.get(`/spells/templates/${templateID}`),
+  postSpellTemplate: () =>
+    requests.post(`/spells/templates`),
+  copySpellTemplate: templateID =>
+    requests.post(`/spells/templates/${templateID}`),
+  putSpellTemplate: (templateID, values) =>
+    requests.put(`/spells/templates/${templateID}`, values),
+  deleteSpellTemplate: (templateID) =>
+    requests.delete(`/spells/templates/${templateID}`),
+}
 
 const item = {
   searchLootTableOptions: searchTerm =>
@@ -135,6 +163,7 @@ export default {
   eqlab,
   zone,
   npc,
+  spell,
   item,
   setToken: (_token) => { token = _token; }
 };

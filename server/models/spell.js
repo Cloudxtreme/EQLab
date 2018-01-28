@@ -6,6 +6,19 @@ const db        = require('../db/db.js').db,
 
 module.exports = {
   
+  search: async (values) => {
+    let queryStr=`
+    SELECT * FROM spells_new
+    WHERE (id LIKE '${values.id ? values.id : ''}%' OR name LIKE '%${values.id ? values.id : ''}%')
+    `
+    values.class ? queryStr += ` AND classes${values.class} BETWEEN ${values.minlevel ? values.minlevel : '0'} AND ${values.maxlevel ? values.maxlevel : '254'}` : null
+    values.spell_category ? queryStr += ` AND spell_category='${values.spell_category}'` : null
+    // values.deity ? queryStr += `` : null
+
+    let results = await db.raw(queryStr);
+    return results[0];
+  },
+
   select: async (columnsArr = null, whereObj) => {
     return (await db.select('spells_new', columnsArr, whereObj))[0];
   },
