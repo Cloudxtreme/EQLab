@@ -61,7 +61,10 @@ spells_router.post("/search", (req, res, next) => {
 spells_router.get("/:spellID", async (req, res, next) => {
   const data = await spell.select([], { id: req.params.spellID });
   res.status(200).type('json').json({
-    "data": data,
+    "spell": {
+      "data": data,
+      "descriptions": process.env.USE_FILE_IO === 'TRUE' ? await spell.readSpellDescriptions(req.params.spellID, data.typedescnum) : null
+    },
     "recourse": data.RecourseLink > 0 ? (await spell.select([], { id: data.RecourseLink })) : null,
     "components": {
       "1": data.components1 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components1 }) : null,
@@ -75,7 +78,7 @@ spells_router.get("/:spellID", async (req, res, next) => {
       "3": data.NoexpendReagent3 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent3 }) : null,
       "4": data.NoexpendReagent4 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent4 }) : null
     },
-    "descriptions": await spell.getSpellDescriptions(req.params.spellID, data.typedescnum),
+    
     "scrolls": await item.select(
       ["id", "name", "scrollname", "scrolltype", "scrolllevel", "scrolllevel2", "nodrop", "price"], 
       { scrolleffect: req.params.spellID }

@@ -49,7 +49,7 @@ module.exports = {
     }
   },
 
-  getSpellDescriptions: async (spellID = null, typeID = null) => {
+  readSpellDescriptions: async (spellID = null, typeID = null) => {
     try {
       const data = await fs.readFileAsync('../files/dbstr_us.txt');
       let descriptions = {
