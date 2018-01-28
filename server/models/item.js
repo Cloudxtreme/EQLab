@@ -7,7 +7,7 @@ const db        = require('../db/db.js').db,
 module.exports = {
   
   select: async (columnsArr = null, whereObj) => {
-    return (await db.select('items', columnsArr, whereObj))[0];
+    return await db.select('items', columnsArr, whereObj);
   },
 
   update: async (id, values) => {

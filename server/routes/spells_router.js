@@ -2,8 +2,9 @@
 
 const express       = require("express"),
       spells_router = express.Router(),
-      spell         = require("../models/spell.js");
-
+      spell         = require("../models/spell.js"),
+      item          = require("../models/item.js");
+      
 
 /*******************************************************************/
 
@@ -37,6 +38,12 @@ spells_router.post("/", (req, res, next) => {
   });
 });
 
+spells_router.get("/search/:searchTerm", (req, res, next) => {
+  spell.simpleSearch(req.params.searchTerm).then(data => {
+    res.status(200).type('json').json(data);
+  });
+});
+
 spells_router.post("/search", (req, res, next) => {
   spell.search(req.body).then(data => {
     res.status(200).type('json').json(data);
@@ -44,24 +51,35 @@ spells_router.post("/search", (req, res, next) => {
 });
 
 // 114 - Shock of Swords
-spells_router.get("/:spellID", (req, res, next) => {
-  spell.select([], {id: req.params.spellID}).then(spell => {
-    res.status(200).type('json').json(spell);
-  });
-});
+// spells_router.get("/:spellID", (req, res, next) => {
+//   spell.select([], {id: req.params.spellID}).then(spell => {
+//     res.status(200).type('json').json(spell);
+//   });
+// });
 
-// 114 - Shock of Swords
+// 2550 - Zevfeer's Theft of Vitae
 spells_router.get("/:spellID", async (req, res, next) => {
-  const spell = await spell.select([], { id: req.params.spellID });
+  const data = await spell.select([], { id: req.params.spellID });
   res.status(200).type('json').json({
-    "spell": spell
-    // "recourse": await spell.select([], { id: spell.RecourseLink }),
-    // "effects": await npc.getEffects(type.npc_spells_effects_id),
-    // "loot": await npc.getLoot(type.loottable_id),
-    // "merchant": await npc.getMerchantTable(type.merchant_id),
-    // "faction": await npc.getFactions(type.npc_faction_id),
-    // "emotes": await npc.getEmotes(type.emoteid),
-    // "tint": await npc.getTints(type.armortint_id)
+    "spell": data,
+    "recourse": data.RecourseLink > 0 ? (await spell.select([], { id: data.RecourseLink })) : null,
+    "components": {
+      "1": data.components1 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components1 }) : null,
+      "2": data.components2 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components2 }) : null,
+      "3": data.components3 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components3 }) : null,
+      "4": data.components4 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components4 }) : null
+    },
+    "noexpendreagents": {
+      "1": data.NoexpendReagent1 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent1 }) : null,
+      "2": data.NoexpendReagent2 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent2 }) : null,
+      "3": data.NoexpendReagent3 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent3 }) : null,
+      "4": data.NoexpendReagent4 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent4 }) : null
+    },
+    "scrolls": await item.select(
+      ["id", "name", "scrollname", "scrolltype", "scrolllevel", "scrolllevel2", "nodrop", "price"], 
+      { scrolleffect: req.params.spellID }
+    ),
+    "procitems": await item.select(["id", "name", "procname", "proctype", "proclevel", "proclevel2"], { proceffect: req.params.spellID })
   });
 });
 
