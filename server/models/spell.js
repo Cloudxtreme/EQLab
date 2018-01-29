@@ -3,7 +3,8 @@
 const db        = require('../db/db.js').db,
       Treeize   = require('treeize'),
       sanitize  = require('../lib/sanitize.js'),
-      fs        = require('fs-extra-promise');
+      fs        = require('fs-extra-promise'),
+      escape    = require('../lib/regexpEscape.js');
 
 
 module.exports = {
@@ -49,42 +50,53 @@ module.exports = {
     }
   },
 
-  readSpellDescriptions: async (spellID = null, typeID = null) => {
-    try {
-      const data = await fs.readFileAsync('../files/dbstr_us.txt');
+  readSpellDescriptions: (spellID = null, typeID = null) => {
+    return new Promise((resolve, reject) =>{
       let descriptions = {
-        type: '',
-        effect: ''
+        type: null,
+        effect: null
       }
+  
+      let typeFound = false;
+      const typeRegExpString = `\\b${typeID}\\^5\\^(.+)`;
+      const typeRegExp = new RegExp(typeRegExpString, "g");
+  
+      let effectFound = false;
+      const effectRegExpString = `\\b${spellID}\\^6\\^(.+)`;
+      const effectRegExp = new RegExp(effectRegExpString, "g");
+  
+      let fileStream = fs.createReadStream('../files/dbstr_us.txt', { encoding: 'utf8' });
 
-      if (typeID && data.indexOf(`${typeID}^5^`) >= 0) {
-        let startPos1, endPos1, typedesc;
+      fileStream
+        .on('data', chunk => {
   
-        startPos1 = data.indexOf(`${typeID}^5^`);
-        endPos1 = data.indexOf("\n", startPos1);
-        typedesc = data.slice(startPos1, endPos1).toString().trim().replace(`${typeID}^5^`, "");
+          if ((typeID && !typeFound) || (spellID && !effectFound)) {
   
-        descriptions.type = typedesc;
-      } else {
-        descriptions.type = null;
-      }
+            if (typeID && !typeFound) {
+              typeFound = !!chunk.match(typeRegExp);
+              typeFound ? descriptions.type = typeRegExp.exec(chunk)[1] : null; 
+            }
+            
+            if (spellID && !effectFound) {
+              effectFound = !!chunk.match(effectRegExp);
+              effectFound ? descriptions.effect = effectRegExp.exec(chunk)[1] : null; 
+            }
+  
+          } else {
+            fileStream.destroy();
+          }
+        })
+        .on('close', error => {
+          resolve(descriptions);
+        })
+        .on('error', error => {
+          reject(new Error('Error Reading dbstr_us.txt: ' + error));
+        });
+    });
+  },
 
-      if (spellID && data.indexOf(`${spellID}^6^`) >= 0) {
-        let startPos2, endPos2, effectdesc;
-  
-        startPos2 = data.indexOf(`${spellID}^6^`);
-        endPos2 = data.indexOf("\n", startPos2);
-        effectdesc = data.slice(startPos2, endPos2).toString().trim().replace(`${spellID}^6^`, "");
-  
-        descriptions.effect = effectdesc;
-      } else {
-        descriptions.effect = null;
-      }
-
-      return descriptions;
-    } catch(error) {
-      throw new Error('Error Reading dbstr_us.txt: ' + error);
-    }
+  writeSpellDescriptions: () => {
+ 
   }
 
   // getScrollItems: async (spellID) => {

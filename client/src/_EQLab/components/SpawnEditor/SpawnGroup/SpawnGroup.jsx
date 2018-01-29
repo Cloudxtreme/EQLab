@@ -3,7 +3,7 @@ import { Row, Col, Panel } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { reduxForm, FieldArray, Field } from 'redux-form';
 import Input from '../../form/Input.jsx';
-import SpawnGroupHeader from './SpawnGroupHeader.jsx';
+import FormHeader from '../../form/FormHeader.jsx';
 import SpawnEntries from './SpawnEntries.jsx';
 
 const mapStateToProps = state => ({
@@ -23,10 +23,13 @@ class SpawnGroup extends React.PureComponent {
           <Panel.Heading>
             <Field 
               name="id"
-              component={SpawnGroupHeader} 
+              component={FormHeader}
+              title="Spawngroup"
+              titleName={this.props.initialValues.name}
               formPristine={this.props.pristine}
               formSubmitting={this.props.submitting}
-              deleteSpawngroup={this.props.deleteSpawngroup}
+              submitSucceeded={this.props.submitSucceeded}
+              delete={this.props.deleteSpawngroup}
               reset={this.props.reset}
               handleSubmit={this.props.handleSubmit}
             />

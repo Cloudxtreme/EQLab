@@ -53,11 +53,12 @@ class EQLab extends React.Component {
               <NavItem eventKey={4}>Items</NavItem>
               <NavItem eventKey={5}>Classes</NavItem>
               <NavItem eventKey={6}>Rules</NavItem>
+              <NavItem eventKey={7}>Files</NavItem>
             </Nav>
             <div style={{ float: "right" }}>
               <Navbar.Text><strong>Database: {this.props.dbName}</strong></Navbar.Text>
               <Nav>
-                <NavItem eventKey={1}>Options</NavItem>
+                <NavItem eventKey={1}>Admin</NavItem>
                 <NavItem eventKey={2}>Log Out</NavItem>
               </Nav>
             </div>

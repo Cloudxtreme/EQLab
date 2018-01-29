@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import Input from '../../form/Input.jsx';
 import Checkbox from '../../form/Checkbox.jsx';
-import Spawn2Header from './Spawn2Header.jsx';
+import FormHeader from '../../form/FormHeader.jsx';
 import Spawn2Footer from './Spawn2Footer.jsx';
 
 const mapStateToProps = state => ({
@@ -24,10 +24,12 @@ class Spawn2 extends React.PureComponent {
           <Panel.Heading>
             <Field 
               name="id" 
-              component={Spawn2Header} 
-              deleteSpawn2={this.props.deleteSpawn2}
+              component={FormHeader}
+              title="Spawn2"
               formPristine={this.props.pristine}
               formSubmitting={this.props.submitting}
+              submitSucceeded={this.props.submitSucceeded}
+              delete={this.props.deleteSpawn2}
               reset={this.props.reset}
               handleSubmit={this.props.handleSubmit}
             />

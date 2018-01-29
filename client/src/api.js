@@ -3,8 +3,6 @@ import superagent from 'superagent';
 
 const API_ROOT = '/eqlab/api';
 
-const responseBody = res => res.body;
-
 let token = null;
 const tokenPlugin = req => {
   if (token) {
@@ -14,13 +12,29 @@ const tokenPlugin = req => {
 
 const requests = {
   get: url =>
-    superagent.get(`${API_ROOT}${url}`).use(tokenPlugin).then(responseBody),
+    superagent
+      .get(`${API_ROOT}${url}`)
+      .use(tokenPlugin)
+      .on('error', error => error)
+      .then(res => res.body),
   post: (url, body) =>
-    superagent.post(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody),
+    superagent
+      .post(`${API_ROOT}${url}`, body)
+      .use(tokenPlugin)
+      .on('error', error => error)
+      .then(res => res.body),
   put: (url, body) =>
-    superagent.put(`${API_ROOT}${url}`, body).use(tokenPlugin).then(responseBody),
+    superagent
+      .put(`${API_ROOT}${url}`, body)
+      .use(tokenPlugin)
+      .on('error', error => error)
+      .then(res => res.body),
   delete: url =>
-    superagent.del(`${API_ROOT}${url}`).use(tokenPlugin).then(responseBody)
+    superagent
+      .del(`${API_ROOT}${url}`)
+      .use(tokenPlugin)
+      .on('error', error => error)
+      .then(res => res.body)
 }
 
 const auth = {

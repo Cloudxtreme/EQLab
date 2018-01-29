@@ -72,8 +72,8 @@ class NPCMerchantTable extends React.PureComponent {
                     <Input
                       type="text"
                       label="merchant_id"
-                      input={this.props.type.merchant_id.input}
-                      meta={this.props.type.alt_currency_id.meta}
+                      input={this.props.merchant_id.input}
+                      meta={this.props.alt_currency_id.meta}
                       bsSize="sm"
                     />
                   </Col>
@@ -83,8 +83,8 @@ class NPCMerchantTable extends React.PureComponent {
                       label="alt_currency_id"
                       options={this.props.altCurrency}
                       usePlaceholder={true}
-                      input={this.props.type.alt_currency_id.input}
-                      meta={this.props.type.alt_currency_id.meta}
+                      input={this.props.alt_currency_id.input}
+                      meta={this.props.alt_currency_id.meta}
                       bsSize="sm"
                     />
                   </Col>

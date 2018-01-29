@@ -4,8 +4,6 @@ require('dotenv').config();
 
 const express     = require('express'),
       app         = express(),
-      bodyParser  = require('body-parser'),
-      sanitizer   = require('express-sanitize-escape'),
       exphbs      = require('express-handlebars'),
       logger      = require('morgan'),
       // path        = require('path'),
@@ -24,12 +22,10 @@ app.engine('hbs', exphbs({extname: '.hbs', defaultLayout: 'main'}));
 app.set('view engine', 'hbs');
 app.set('view cache', false);
 
-// Body Parser and Sanitizer
-app.use(bodyParser.json());
-app.use(sanitizer.middleware());
-
 // Authentication
 if (process.env.USE_AUTHENTICATION === 'TRUE') {
+  console.log('EQLab: Using Authentication');
+  
   const passportLocalSequelize = require('passport-local-sequelize'),
         User        = require('./models/sequelize').User,
         passport    = require('passport'),
@@ -39,7 +35,6 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
         flash       = require('connect-flash'),
         auth_router = require('./auth/auth_router').auth_router;
 
-  console.log('EQLab: Using Authentication');
 
   passportLocalSequelize.attachToUser(User, {
     usernameField: 'username'
@@ -103,11 +98,12 @@ app.use((err, req, res, next) => {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   res.status(err.status || 500);
-  res.render('error', {
-    title: err.status,
-    errorstatus: err.status,
-    errormessage: err.message
-  });
+  // res.render('error', {
+  //   title: err.status,
+  //   errorstatus: err.status,
+  //   errormessage: err.message
+  // });
+  res.type('json').json({ errorstatus: err.status, errormessage: err.message });
 });
 
 module.exports = app;

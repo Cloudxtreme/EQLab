@@ -87,8 +87,8 @@ class NPCSpells extends React.PureComponent {
               onCloseResetsInput={false}
               backspaceRemoves={false}
               deleteRemoves={false}
-              value={this.props.type.npc_spells_id.input.value}
-              resetValue={this.props.type.npc_spells_id.input.value}
+              value={this.props.npc_spells_id.input.value}
+              resetValue={this.props.npc_spells_id.input.value}
               options={this.props.options}
               onInputChange={this.props.searchSpellSets}
               onChange={this.props.changeSpellSet}

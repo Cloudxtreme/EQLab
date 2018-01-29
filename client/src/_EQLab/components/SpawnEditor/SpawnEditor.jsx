@@ -62,18 +62,20 @@ class SpawnEditor extends React.Component {
       return new Promise((resolve, reject) => {
         if (props.dirty && props.valid) {
           const delta = diff(props.initialValues, values);
-          api.zone.putSpawn2(values.id, delta).then(res => {
-            this.props.updateSpawn2(
-              values.id,
-              null
-            );
-            resolve();
-          }).catch(error => {
-            if (error.validationErrors) {
-              reject(new SubmissionError(error.validationErrors));
-            } 
-          });
-        }
+          api.zone.putSpawn2(values.id, delta)
+            .then(res => {
+              this.props.updateSpawn2(
+                values.id,
+                null
+              );
+              resolve();
+            })
+            .catch(error => {
+              if (error.response.body.validationErrors) {
+                reject(new SubmissionError(error.response.body.validationErrors));
+              } 
+            });
+          }
       });
     }
 
@@ -97,8 +99,8 @@ class SpawnEditor extends React.Component {
             );
             resolve();
           }).catch(error => {
-            if (error.validationErrors) {
-              reject(new SubmissionError(error.validationErrors));
+            if (error.response.body.validationErrors) {
+              reject(new SubmissionError(error.response.body.validationErrors));
             } 
           });
         }

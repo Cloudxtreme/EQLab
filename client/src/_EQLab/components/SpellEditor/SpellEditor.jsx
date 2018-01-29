@@ -3,14 +3,11 @@ import { Row, Col, Panel } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 // import ReactTable from 'react-table';
-import 'react-table/react-table.css';
+// import 'react-table/react-table.css';
 import { confirm } from '../form/confirm/confirm.js';
 import diff from 'object-diff';
 import api from '../../../api.js';
 // import { debounce } from 'lodash';
-import Input from '../form/Input.jsx';
-import Checkbox from '../form/Checkbox.jsx';
-import Select from '../form/Select.jsx';
 import {
   SPELL_BUFFDURATION_FORMULAS,
   SPELL_FORMULAS,
@@ -40,7 +37,10 @@ import {
   SPELLEDITOR_DELETE_SPELL,
   SPELLEDITOR_DELETE_SPELLTEMPLATE
 } from '../../../constants/actionTypes.js';
-import SpellEditorHeader from './SpellEditorHeader.jsx';
+import Input from '../form/Input.jsx';
+import Checkbox from '../form/Checkbox.jsx';
+import Select from '../form/Select.jsx';
+import FormHeader from '../form/FormHeader.jsx';
 
 
 const mapStateToProps = state => ({
@@ -158,12 +158,15 @@ class SpellEditor extends React.Component {
           <Panel style={{ height: 945 }}>
             <Panel.Heading>
               <Field
-                name="id"
-                component={SpellEditorHeader}
+                name="data.id"
+                component={FormHeader}
+                title="Spell"
+                titleName={this.props.initialValues.data.name}
                 isTemplate={this.props.isTemplate}
                 formPristine={this.props.pristine}
                 formSubmitting={this.props.submitting}
-                deleteSpell={this.deleteSpell}
+                submitSucceeded={this.props.submitSucceeded}
+                delete={this.deleteSpell}
                 reset={this.props.reset}
                 handleSubmit={this.props.handleSubmit(this.submitSpellForm)}
               />
@@ -462,9 +465,9 @@ class SpellEditor extends React.Component {
                       <Col md={6}><Field component={Input} bsSize="sm" type="text" name="data.player_1" label="player_1"/></Col>
                     </Row>
                     <Row>
-                      <Col md={3}><Field component={Checkbox} bsSize="sm" name="data.not_extendable" label="not_extendable"/></Col>
-                      <Col md={3}><Field component={Checkbox} bsSize="sm" name="data.suspendable" label="suspendable"/></Col>
-                      <Col md={3}><Field component={Checkbox} bsSize="sm" name="data.persistdeath" label="persistdeath"/></Col>
+                      <Col md={4}><Field component={Checkbox} bsSize="sm" name="data.not_extendable" label="not_extendable"/></Col>
+                      <Col md={4}><Field component={Checkbox} bsSize="sm" name="data.suspendable" label="suspendable"/></Col>
+                      <Col md={4}><Field component={Checkbox} bsSize="sm" name="data.persistdeath" label="persistdeath"/></Col>
                       <Col md={3}><Field component={Checkbox} bsSize="sm" name="data.deleteable" label="deleteable"/></Col>
                       <Col md={3}><Field component={Checkbox} bsSize="sm" name="data.ldon_trap" label="ldon_trap"/></Col>
                       <Col md={3}><Field component={Checkbox} bsSize="sm" name="data.no_block" label="no_block"/></Col>

@@ -1,11 +1,19 @@
 import React from 'react';
 import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { reduxForm, SubmissionError, FormSection, Field, Fields } from 'redux-form';
+import { reduxForm, SubmissionError, Field, Fields } from 'redux-form';
 import { confirm } from '../form/confirm/confirm.js';
 import diff from 'object-diff';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
+import {
+  GENDERS,
+  NPC_CLASSES,
+  BODY_TYPES,
+  MELEE_ATTACK_SKILLS,
+  RANGE_ATTACK_SKILLS
+} from '../../../constants/constants.js';
+import { RACES } from '../../../constants/races.js';
 import {
   NPCEDITOR_GET_NPC,
   NPCEDITOR_GET_NPCTEMPLATE,
@@ -22,8 +30,10 @@ import {
   NPCEDITOR_DELETE_NPC,
   NPCEDITOR_DELETE_NPCTEMPLATE
 } from '../../../constants/actionTypes.js';
-import NPCEditorHeader from './NPCEditorHeader.jsx';
-import NPCType from './NPCType.jsx';
+import Input from '../form/Input.jsx';
+import Checkbox from '../form/Checkbox.jsx';
+import Select from '../form/Select.jsx';
+import FormHeader from '../form/FormHeader.jsx';
 import NPCSpecialAbilities from './NPCSpecialAbilities.jsx';
 import NPCFaction from './NPCFaction.jsx';
 import NPCEmotes from './NPCEmotes.jsx';
@@ -37,7 +47,7 @@ import NPCMerchantTable from './NPCMerchantTable.jsx';
 const mapStateToProps = state => ({
   isLoaded: state.NPCEditor.isLoaded,
   isTemplate: state.NPCEditor.isTemplate,
-  initialValues: state.NPCEditor.npc,
+  initialValues: state.NPCEditor.npc.type,
   faction: state.NPCEditor.npc.faction,
   emotes: state.NPCEditor.npc.emotes,
   tint: state.NPCEditor.npc.tint,
@@ -107,26 +117,30 @@ class NPCEditor extends React.Component {
     this.submitNPCForm = (values, dispatch, props) => {
       return new Promise((resolve, reject) => {
         if (props.dirty && props.valid) {
-          const delta = diff(props.initialValues.type, values.type);
+          const delta = diff(props.initialValues, values);
 
           if (this.props.isTemplate) {
-            api.npc.putNPCTemplate(values.type.id, delta).then(res => {
-              this.props.updateNPCTemplate(values.type.id);
-              resolve();
-            }).catch(error => {
-              if (error.validationErrors) {
-                reject(new SubmissionError(error.validationErrors));
-              } 
-            });
+            api.npc.putNPCTemplate(values.id, delta)
+              .then(res => {
+                this.props.updateNPCTemplate(values.id);
+                resolve();
+              })
+              .catch(error => {
+                if (error.response.body.validationErrors) {
+                  reject(new SubmissionError(error.response.body.validationErrors));
+                } 
+              });
           } else {
-            api.npc.putNPC(values.type.id, delta).then(res => {
-              this.props.updateNPC(values.type.id);
-              resolve();
-            }).catch(error => {
-              if (error.validationErrors) {
-                reject(new SubmissionError(error.validationErrors));
-              } 
-            });
+            api.npc.putNPC(values.id, delta)
+              .then(res => {
+                this.props.updateNPC(values.id);
+                resolve();
+              })
+              .catch(error => {
+                if (error.response.body.validationErrors) {
+                  reject(new SubmissionError(error.response.body.validationErrors));
+                } 
+              });
           }
         }
       });
@@ -296,12 +310,15 @@ class NPCEditor extends React.Component {
           <Panel style={{ height: 945 }}>
             <Panel.Heading>
               <Field
-                name="type.id"
-                component={NPCEditorHeader}
+                name="id"
+                component={FormHeader}
+                title="NPC"
+                titleName={this.props.initialValues.name}
                 isTemplate={this.props.isTemplate}
                 formPristine={this.props.pristine}
                 formSubmitting={this.props.submitting}
-                deleteNPC={this.deleteNPC}
+                submitSucceeded={this.props.submitSucceeded}
+                delete={this.deleteNPC}
                 reset={this.props.reset}
                 handleSubmit={this.props.handleSubmit(this.submitNPCForm)}
               />
@@ -312,9 +329,161 @@ class NPCEditor extends React.Component {
                   <Row>
                     <Col md={24}>
                       <Panel style={{ height: 449, overflowY: "scroll", padding: 5, marginBottom: 5 }}>
-                        <FormSection name="type">
-                          <NPCType />
-                        </FormSection>
+                        <Row>
+                          <Col md={4}><Field component={Input} bsSize="sm" type="text" name="name" label="name"/></Col>
+                          <Col md={4}><Field component={Input} type="text" name="lastname" label="lastname" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Input} type="text" name="level" label="level" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Input} type="text" name="maxlevel" label="maxlevel" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Input} type="text" name="scalerate" label="scalerate" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Select} options={NPC_CLASSES} name="class" label="class" bsSize="sm"/></Col>
+                        </Row>
+                        <Row>
+                          <Col md={4}><Field component={Select} options={RACES} name="race" label="race" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Select} options={GENDERS} name="gender" label="gender" bsSize="sm"/></Col>
+                          <Col md={2}><Field component={Select} options={BODY_TYPES} name="bodytype" label="bodytype" bsSize="sm"/></Col>
+                          <Col md={2}><Field component={Input} type="text" name="texture" label="texture" bsSize="sm"/></Col>
+                          <Col md={2}><Field component={Input} type="text" name="runspeed" label="runspeed" bsSize="sm"/></Col>
+                          <Col md={2}><Field component={Input} type="text" name="walkspeed" label="walkspeed" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Input} type="text" name="aggroradius" label="aggroradius" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Input} type="text" name="assistradius" label="assistradius" bsSize="sm"/></Col>
+                        </Row>
+                        <Row>
+                          <Col md={4}><Field component={Checkbox} type="text" name="see_invis" label="see_invis" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Checkbox} type="text" name="see_invis_undead" label="see_invis_undead" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Checkbox} type="text" name="see_hide" label="see_hide" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Checkbox} type="text" name="see_improved_hide" label="see_improved_hide" bsSize="sm"/></Col>
+                          <Col md={4}><Field component={Checkbox} type="text" name="trackable" label="trackable" bsSize="sm"/></Col>
+                          <Col md={4}>{/* Empty */}</Col>
+                        </Row>
+                        <Row>
+                          <Col md={24}>
+                            <fieldset className="form-border">
+                            <legend className="form-border">Combat</legend>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="hp" label="hp" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="hp_regen_rate" label="hp_regen_rate" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="mana" label="mana"  bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="mana_regen_rate" label="mana_regen_rate" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="AC" label="AC" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="Avoidance" label="Avoidance" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="ATK" label="ATK" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="Accuracy" label="Accuracy" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="mindmg" label="mindmg" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="maxdmg" label="maxdmg" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="attack_delay" label="attack_delay" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="slow_mitigation" label="slow_mitigation" bsSize="sm"/></Col>
+                              </Row>
+                            </fieldset>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={24}>
+                            <fieldset className="form-border">
+                            <legend className="form-border">Stats</legend>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="STR" label="STR" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="STA" label="STA" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="DEX" label="DEX" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="AGI" label="AGI" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="_INT" label="_INT" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="WIS" label="WIS" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="CHA" label="CHA" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="MR" label="MR" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="CR" label="CR" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="DR" label="DR" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="FR" label="FR" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="PR" label="PR" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="Corrup" label="Corrup" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="PhR" label="PhR" bsSize="sm"/></Col>
+                                <Col md={16}>{/* Empty */}</Col>
+                              </Row>
+                            </fieldset>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={24}>
+                            <fieldset className="form-border">
+                            <legend className="form-border">Appearance</legend>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="size" label="size" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="face" label="face" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="herosforgemodel" label="herosforgemodel" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="drakkin_heritage" label="drakkin_heritage" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="drakkin_tattoo" label="drakkin_tattoo" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="drakkin_details" label="drakkin_details" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="helmtexture" label="helmtexture" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="armtexture" label="armtexture" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="bracertexture" label="bracertexture" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="handtexture" label="handtexture"bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="legtexture" label="legtexture" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="feettexture" label="feettexture" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="d_melee_texture1" label="d_melee_texture1" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="d_melee_texture2" label="d_melee_texture2" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Select} options={MELEE_ATTACK_SKILLS} name="prim_melee_type" label="prim_melee_type" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Select} options={MELEE_ATTACK_SKILLS} name="sec_melee_type" label="sec_melee_type" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="ammo_idfile" label="ammo_idfile" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Select} options={RANGE_ATTACK_SKILLS} name="ranged_type" label="ranged_type" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="luclin_hairstyle" label="luclin_hairstyle" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="luclin_haircolor" label="luclin_haircolor" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="luclin_eyecolor" label="luclin_eyecolor" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="luclin_eyecolor2" label="luclin_eyecolor2" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="luclin_beardcolor" label="luclin_beardcolor" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="luclin_beard" label="luclin_beard" bsSize="sm"/></Col>
+                              </Row>
+                            </fieldset>
+                          </Col>
+                        </Row>
+                        <Row>
+                          <Col md={24}>
+                            <fieldset className="form-border">
+                            <legend className="form-border">Misc</legend>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="version" label="version" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="npc_aggro" label="npc_aggro" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="spawn_limit" label="spawn_limit" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="unique_spawn_by_name" label="unique_spawn_by_name" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="qlobal" label="qlobal" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="isquest" label="isquest" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Checkbox} type="text" name="findable" label="findable" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="isbot" label="isbot" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="private_corpse" label="private_corpse" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="underwater" label="underwater" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Checkbox} type="text" name="no_target_hotkey" label="no_target_hotkey" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="adventure_template_id" label="adventure_template" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Input} type="text" name="trap_template" label="trap_template" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="attack_count" label="attack_count" bsSize="sm"/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="npcspecialattks" label="npcspecialattks" bsSize="sm" readOnly/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="attack_speed" label="attack_speed" bsSize="sm" readOnly/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="exclude" label="exclude" bsSize="sm" readOnly/></Col>
+                                <Col md={4}><Field component={Input} type="text" name="light" label="light" bsSize="sm"/></Col>
+                              </Row>
+                              <Row>
+                                <Col md={4}><Field component={Checkbox} bsSize="sm"type="text" name="raid_target" label="raid_target"/></Col>
+                                <Col md={4}><Field component={Checkbox} bsSize="sm" type="text" name="unique_" label="unique_"/></Col>
+                                <Col md={4}><Field component={Checkbox} bsSize="sm" type="text" name="ignore_despawn" label="ignore_despawn"/></Col>
+                                <Col md={4}><Field component={Checkbox} bsSize="sm" type="text" name="fixed" label="fixed"/></Col>
+                                <Col md={4}><Field component={Input} bsSize="sm" type="text" name="peqid" label="peqid"/></Col>
+                                <Col md={4}>{/* Empty */}</Col>
+                              </Row>
+                            </fieldset>
+                          </Col>
+                        </Row>
                       </Panel>
                     </Col>
                   </Row>
@@ -335,13 +504,13 @@ class NPCEditor extends React.Component {
                               <Tab.Pane eventKey="npcspecialabilities">
                                 <Field 
                                   component={NPCSpecialAbilities} 
-                                  name="type.special_abilities"
+                                  name="special_abilities"
                                 />
                               </Tab.Pane>
                               <Tab.Pane eventKey="npcfaction">
                                 <Field
                                   component={NPCFaction} 
-                                  name="type.npc_faction_id"
+                                  name="npc_faction_id"
                                   faction={this.props.faction}
                                   searchFactions={this.searchFactions}
                                   changeFaction={this.changeFaction}
@@ -350,14 +519,14 @@ class NPCEditor extends React.Component {
                               <Tab.Pane eventKey="npcemotes">
                                 <Field
                                   component={NPCEmotes} 
-                                  name="type.emoteid"
+                                  name="emoteid"
                                   emotes={this.props.emotes}
                                 />
                               </Tab.Pane>
                               <Tab.Pane eventKey="npctint">
                                 <Field
                                   component={NPCTint} 
-                                  name="type.armortint_id" // Possibly need to add more: armortint_red, armortint_green, armortint_blue
+                                  name="armortint_id" // Possibly need to add more: armortint_red, armortint_green, armortint_blue
                                   tint={this.props.tint}
                                   searchTints={this.searchTints}
                                   changeTint={this.changeTint}
@@ -386,7 +555,7 @@ class NPCEditor extends React.Component {
                           <Tab.Pane eventKey="npcspells">
                             <Fields
                               component={NPCSpells} 
-                              names={[ 'type.npc_spells_id', 'type.spellscale', 'type.healscale' ]}
+                              names={[ 'npc_spells_id', 'spellscale', 'healscale' ]}
                               spells={this.props.spells}
                               searchSpellSets={this.searchSpellSets}
                               changeSpellSet={this.changeSpellSet}
@@ -395,7 +564,7 @@ class NPCEditor extends React.Component {
                           <Tab.Pane eventKey="npceffects">
                             <Field
                               component={NPCEffects} 
-                              name="type.npc_spells_effects_id"
+                              name="npc_spells_effects_id"
                               effects={this.props.effects}
                               searchEffectSets={this.searchEffectSets}
                               changeEffectSet={this.changeEffectSet}
@@ -404,7 +573,7 @@ class NPCEditor extends React.Component {
                           <Tab.Pane eventKey="npcloot">
                             <Field
                               component={NPCLoot} 
-                              name="type.loottable_id"
+                              name="loottable_id"
                               loot={this.props.loot}
                               searchLootTables={this.searchLootTables}
                               changeLootTable={this.changeLootTable}
@@ -413,7 +582,7 @@ class NPCEditor extends React.Component {
                           <Tab.Pane eventKey="npcmerchant">
                             <Fields
                               component={NPCMerchantTable}
-                              names={[ 'type.merchant_id', 'type.alt_currency_id' ]}
+                              names={[ 'merchant_id', 'alt_currency_id' ]}
                               merchant={this.props.merchant}
                               altCurrency={this.props.altCurrency}
                             />

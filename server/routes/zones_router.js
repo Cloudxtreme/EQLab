@@ -1,14 +1,20 @@
 'use strict';
 
 const zone_router = require("express").Router(),
+      jsonParser  = require('body-parser').json(),
+      sanitizer   = require('express-sanitize-escape').middleware(),
+      validate    = require('./validation/validate.js'),
+      vResult     = require('express-validator/check').validationResult,
       zone        = require("../models/zone.js"),
       npc         = require("../models/npc.js");
 
 
 zone_router.delete("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, res, next) => {
-  zone.deleteSpawnentry(req.params.spawngroupID, req.params.npcID).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.deleteSpawnentry(req.params.spawngroupID, req.params.npcID)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 // zone_router.put("/spawn/spawngroup/spawnentries", (req, res, next) => {
@@ -18,91 +24,117 @@ zone_router.delete("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, re
 // });
 
 zone_router.put("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, res, next) => {
-  zone.updateSpawnentry(req.params.spawngroupID, req.params.npcID).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.updateSpawnentry(req.params.spawngroupID, req.params.npcID)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.post("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, res, next) => {
-  zone.insertSpawnentry(req.params.spawngroupID, req.params.npcID).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.insertSpawnentry(req.params.spawngroupID, req.params.npcID)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn/spawngroup/:spawngroupID/spawnentry", (req, res, next) => {
-  zone.getSpawnentries(req.params.spawngroupID).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.getSpawnentries(req.params.spawngroupID)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.delete("/spawn/spawngroup/:id", (req, res, next) => {
-  zone.deleteSpawngroup(req.params.id).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.deleteSpawngroup(req.params.id)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
-zone_router.put("/spawn/spawngroup/:id", async (req, res, next) => {
-  const responses = [];
-  if (req.body.spawngroup) {
-    responses[0] = await zone.updateSpawngroup(req.params.id, req.body.spawngroup);
-  } else {
-    responses[0] = null;
-  }
-  if (req.body.spawnentries) {
-    const entries = req.body.spawnentries;
-    for (let i = 0, len = entries.length; i < len; i++) {
-      responses[i + 1] = await zone.updateSpawnentry(entries[i].spawngroupID, entries[i].npcID, entries[i].chance);
+zone_router.put("/spawn/spawngroup/:id", jsonParser, sanitizer, validate.spawngroup, async (req, res, next) => {
+  const errors = vResult(req);
+  if (errors.isEmpty()) {
+    const responses = [];
+    if (req.body.spawngroup) {
+      responses[0] = await zone.updateSpawngroup(req.params.id, req.body.spawngroup);
+    } else {
+      responses[0] = null;
     }
+    if (req.body.spawnentries) {
+      const entries = req.body.spawnentries;
+      for (let i = 0, len = entries.length; i < len; i++) {
+        responses[i + 1] = await zone.updateSpawnentry(entries[i].spawngroupID, entries[i].npcID, entries[i].chance);
+      }
+    }
+    res.status(200).type('json').json(responses);
+  } else {
+    res.status(400).type('json').json({ validationErrors: errors.formatWith(error => error.msg).mapped() });
   }
-  res.status(200).type('json').json(responses);
 });
 
-zone_router.post("/spawn/:spawn2ID/spawngroup", (req, res, next) => {
-  zone.insertSpawngroup(req.params.spawn2ID, req.body.zone).then(data => {
-    res.status(200).type('json').json(data);
-  }).catch(error => {
-    
-  });
+zone_router.post("/spawn/:spawn2ID/spawngroup", jsonParser, sanitizer, (req, res, next) => {
+  zone.insertSpawngroup(req.params.spawn2ID, req.body.zone)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn/spawngroup/:id", (req, res, next) => {
-  zone.selectSpawngroup(req.params.id).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.selectSpawngroup(req.params.id)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn/spawngroup/options/search/:searchTerm", (req, res, next) => {
-  zone.searchSpawngroupOptions(req.params.searchTerm).then(data => {
-    res.status(200).type('json').json(data)
-  }).catch(error => {
-
-  });
+  zone.searchSpawngroupOptions(req.params.searchTerm)
+    .then(data => {
+      res.status(200).type('json').json(data)
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.delete("/spawn/spawn2/:id", (req, res, next) => {
-  zone.deleteSpawn2(req.params.id).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.deleteSpawn2(req.params.id)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
-zone_router.put("/spawn/spawn2/:id", (req, res, next) => {
-  zone.updateSpawn2(req.params.id, req.body).then(data => {
-    res.status(200).type('json').json(data);
-  }).catch(error => {
-    
-  });
+zone_router.put("/spawn/spawn2/:id", jsonParser, sanitizer, validate.spawn2, (req, res, next) => {
+  const errors = vResult(req);
+  if (errors.isEmpty()) {
+    zone.updateSpawn2(req.params.id, req.body)
+      .then(data => {
+        res.status(200).type('json').json(data);
+      })
+      .catch(error => { next(); });
+  } else {
+    res.status(400).type('json').json({ validationErrors: errors.formatWith(error => error.msg).mapped() });
+  }
 });
 
 zone_router.post("/:zoneName/spawn/spawn2/", (req, res, next) => {
-  zone.insertSpawn2(req.params.zoneName).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.insertSpawn2(req.params.zoneName)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn/spawn2/:id", (req, res, next) => {
-  zone.selectSpawn2(req.params.id).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.selectSpawn2(req.params.id)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn/:spawn2ID", async (req, res, next) => {
@@ -121,39 +153,51 @@ zone_router.get("/spawn/:spawn2ID", async (req, res, next) => {
 });
 
 zone_router.get("/spawngroup/tree/:spawngroupID", (req, res, next) => {
-  zone.getSingleSpawngroupTree(req.params.spawngroupID).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.getSingleSpawngroupTree(req.params.spawngroupID)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn2/tree/:spawn2ID", (req, res, next) => {
-  zone.getSingleSpawn2Tree(req.params.spawn2ID).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.getSingleSpawn2Tree(req.params.spawn2ID)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/spawn/tree/:zoneName", (req, res, next) => {
-  zone.getSpawnTree(req.params.zoneName).then(data => {
-    res.status(200).type('json').json(data);
-  });
+  zone.getSpawnTree(req.params.zoneName)
+    .then(data => {
+      res.status(200).type('json').json(data);
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/fishing/:zoneName", (req, res, next) => {
-  zone.getFishingTable(req.params.zoneName).then(data => {
-    res.status(200).type('json').json(data)
-  });
+  zone.getFishingTable(req.params.zoneName)
+    .then(data => {
+      res.status(200).type('json').json(data)
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/forage/:zoneName", (req, res, next) => {
-  zone.getForageTable(req.params.zoneName).then(data => {
-    res.status(200).type('json').json(data)
-  });
+  zone.getForageTable(req.params.zoneName)
+    .then(data => {
+      res.status(200).type('json').json(data)
+    })
+    .catch(error => { next(); });
 });
 
 zone_router.get("/list", (req, res, next) => {
-  zone.getZoneList().then(data => {
-    res.status(200).type('json').json(data)
-  });
+  zone.getZoneList()
+    .then(data => {
+      res.status(200).type('json').json(data)
+    })
+    .catch(error => { next(); });
 });
 
 module.exports = zone_router;
