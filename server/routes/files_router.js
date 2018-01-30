@@ -35,12 +35,22 @@ files_router.get("/build", (req, res, next) => {
     .catch(error => { next(); });
 });
 
-files_router.get("/models/:zoneName", (req, res, next) => {
-  file.addModelToZone(req.params.zoneName, 'TEST,TEST')
+files_router.post("/addmodels/all/", jsonParser, sanitizer, (req, res, next) => {
+  file.addModelToAllZones(req.body)
     .then(data => {
       res.status(200).type('json').json({ status: 'ok' });
     })
     .catch(error => { next(); });
 });
+
+files_router.post("/addmodel", jsonParser, sanitizer, (req, res, next) => {
+  file.addModelToZone(req.params.zoneName, req.body)
+    .then(data => {
+      res.status(200).type('json').json({ status: 'ok' });
+    })
+    .catch(error => { next(); });
+});
+
+
 
 module.exports = files_router;

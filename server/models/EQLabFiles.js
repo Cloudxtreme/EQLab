@@ -14,11 +14,7 @@ class EQLabFiles {
 
   addModelToZone(zoneName, model) {
     return new Promise((resolve, reject) => {
-      console.log(zoneName)
-      const zoneName = zoneName;
-      const model = model;
       const filename = path.resolve(__dirname + `/../../files/chr/${zoneName}_chr.txt`);
-
       fs.readFile(filename)
         .then(data => {
           if (!data.includes(model)) {
@@ -39,7 +35,6 @@ class EQLabFiles {
               })
 
           }
-          
         })
         .catch(error => {
           reject(error);
@@ -49,9 +44,6 @@ class EQLabFiles {
 
   addModelToAllZones(model) {
     return new Promise((resolve, reject) => {
-
-      const model = model;
-
       fs.readdir(path.resolve(__dirname + '/../../files/chr/'))
         .then(files => {
           let count = 0;
