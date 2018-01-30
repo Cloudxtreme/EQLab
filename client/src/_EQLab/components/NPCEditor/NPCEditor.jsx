@@ -23,8 +23,8 @@ import {
   NPCEDITOR_SET_SPELLSET_OPTIONS,
   NPCEDITOR_SET_EFFECTSET_OPTIONS,
   NPCEDITOR_SET_LOOTTABLE_OPTIONS,
-  NPCEDITOR_PUT_NPC,
-  NPCEDITOR_PUT_NPCTEMPLATE,
+  NPCEDITOR_PATCH_NPC,
+  NPCEDITOR_PATCH_NPCTEMPLATE,
   NPCEDITOR_UPDATE_NPC,
   NPCEDITOR_UPDATE_NPCTEMPLATE,
   NPCEDITOR_DELETE_NPC,
@@ -75,10 +75,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: NPCEDITOR_SET_EFFECTSET_OPTIONS, options }),
   setLootTableOptions: (options) => 
     dispatch({ type: NPCEDITOR_SET_LOOTTABLE_OPTIONS, options }),
-  putNPC: (npcID, values) => 
-    dispatch({ type: NPCEDITOR_PUT_NPC, npcID, values }),
-  putNPCTemplate: (templateID, values) => 
-    dispatch({ type: NPCEDITOR_PUT_NPCTEMPLATE, templateID, values }),
+  patchNPC: (npcID, values) => 
+    dispatch({ type: NPCEDITOR_PATCH_NPC, npcID, values }),
+  patchNPCTemplate: (templateID, values) => 
+    dispatch({ type: NPCEDITOR_PATCH_NPCTEMPLATE, templateID, values }),
   updateNPC: (npcID, values) => 
     dispatch({ type: NPCEDITOR_UPDATE_NPC, npcID }),
   updateNPCTemplate: (templateID) => 
@@ -120,7 +120,7 @@ class NPCEditor extends React.Component {
           const delta = diff(props.initialValues, values);
 
           if (this.props.isTemplate) {
-            api.npc.putNPCTemplate(values.id, delta)
+            api.npc.patchNPCTemplate(values.id, delta)
               .then(res => {
                 this.props.updateNPCTemplate(values.id);
                 resolve();
@@ -131,7 +131,7 @@ class NPCEditor extends React.Component {
                 } 
               });
           } else {
-            api.npc.putNPC(values.id, delta)
+            api.npc.patchNPC(values.id, delta)
               .then(res => {
                 this.props.updateNPC(values.id);
                 resolve();
@@ -165,7 +165,7 @@ class NPCEditor extends React.Component {
 
     this.changeFaction = (faction) => {
       if (faction) {
-        this.props.putNPC(
+        this.props.patchNPC(
           this.props.npcID, 
           {npc_faction_id: faction.id}
         );
@@ -192,9 +192,9 @@ class NPCEditor extends React.Component {
     this.changeTint = (tint) => {
       if (tint) {
         if (this.props.isTemplate) {
-          this.props.putNPCTemplate(this.props.templateID, {armortint_id: tint.id});
+          this.props.patchNPCTemplate(this.props.templateID, {armortint_id: tint.id});
         } else {
-          this.props.putNPC(this.props.npcID, {armortint_id: tint.id});
+          this.props.patchNPC(this.props.npcID, {armortint_id: tint.id});
         }  
       }
     }
@@ -219,9 +219,9 @@ class NPCEditor extends React.Component {
     this.changeSpellSet = (spellset) => {
       if (spellset) {
         if (this.props.isTemplate) {
-          this.props.putNPCTemplate(this.props.templateID, {npc_spells_id: spellset.id});
+          this.props.patchNPCTemplate(this.props.templateID, {npc_spells_id: spellset.id});
         } else {
-          this.props.putNPC(this.props.npcID, {npc_spells_id: spellset.id});
+          this.props.patchNPC(this.props.npcID, {npc_spells_id: spellset.id});
         }
       }
     }
@@ -246,9 +246,9 @@ class NPCEditor extends React.Component {
     this.changeEffectSet = (effectset) => {
       if (effectset) {
         if (this.props.isTemplate) {
-          this.props.putNPCTemplate(this.props.templateID, {npc_spells_effects_id: effectset.id});
+          this.props.patchNPCTemplate(this.props.templateID, {npc_spells_effects_id: effectset.id});
         } else {
-          this.props.putNPC(this.props.npcID, {npc_spells_effects_id: effectset.id});
+          this.props.patchNPC(this.props.npcID, {npc_spells_effects_id: effectset.id});
         }
       }
     }
@@ -273,9 +273,9 @@ class NPCEditor extends React.Component {
     this.changeLootTable = (loottable) => {
       if (loottable) {
         if (this.props.isTemplate) {
-          this.props.putNPCTemplate(this.props.templateID, {loottable_id: loottable.id});
+          this.props.patchNPCTemplate(this.props.templateID, {loottable_id: loottable.id});
         } else {
-          this.props.putNPC(this.props.npcID, {loottable_id: loottable.id});
+          this.props.patchNPC(this.props.npcID, {loottable_id: loottable.id});
         }
       }
     }

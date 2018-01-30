@@ -12,8 +12,8 @@ import {
   NPCEDITOR_GET_NPCTEMPLATE,
   NPCEDITOR_LOAD_NPC,
   NPCEDITOR_UNLOAD_NPC,
-  NPCEDITOR_PUT_NPC,
-  NPCEDITOR_PUT_NPCTEMPLATE,
+  NPCEDITOR_PATCH_NPC,
+  NPCEDITOR_PATCH_NPCTEMPLATE,
   NPCEDITOR_UPDATE_NPC,
   NPCEDITOR_UPDATE_NPCTEMPLATE,
   NPCEDITOR_DELETE_NPC,
@@ -64,8 +64,8 @@ function* manageSubApps(action, data) {
 export const NPCEditorSaga = [
   takeLatest(NPCEDITOR_GET_NPC, getNPC),
   takeLatest(NPCEDITOR_GET_NPCTEMPLATE, getNPCTemplate),
-  takeLatest(NPCEDITOR_PUT_NPC, putNPC),
-  takeLatest(NPCEDITOR_PUT_NPCTEMPLATE, putNPCTemplate),
+  takeLatest(NPCEDITOR_PATCH_NPC, patchNPC),
+  takeLatest(NPCEDITOR_PATCH_NPCTEMPLATE, patchNPCTemplate),
   takeLatest(NPCEDITOR_UPDATE_NPC, updateNPC),
   takeLatest(NPCEDITOR_UPDATE_NPCTEMPLATE, updateNPCTemplate),
   takeLatest(NPCEDITOR_DELETE_NPC, deleteNPC),
@@ -88,13 +88,13 @@ function* getNPCTemplate(action) {
   ]);
 }
 
-function* putNPC(action) {
-  yield call(api.npc.putNPC, action.npcID, action.values);
+function* patchNPC(action) {
+  yield call(api.npc.patchNPC, action.npcID, action.values);
   yield put({ type: NPCEDITOR_GET_NPC, npcID: action.npcID, subAppAction: "update-npc" });
 }
 
-function* putNPCTemplate(action) {
-  yield call(api.npc.putNPCTemplate, action.templateID, action.values);
+function* patchNPCTemplate(action) {
+  yield call(api.npc.patchNPCTemplate, action.templateID, action.values);
   yield put({ type: NPCEDITOR_GET_NPCTEMPLATE, templateID: action.templateID, subAppAction: "update-template" });
 }
 

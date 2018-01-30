@@ -17,13 +17,13 @@ zone_router.delete("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, re
     .catch(error => { next(); });
 });
 
-// zone_router.put("/spawn/spawngroup/spawnentries", (req, res, next) => {
+// zone_router.patch("/spawn/spawngroup/spawnentries", (req, res, next) => {
 //   zone.updateSpawnentries(req.params.spawngroupID, req.params.npcID).then(data => {
 //     res.status(200).type('json').json(data);
 //   });
 // });
 
-zone_router.put("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, res, next) => {
+zone_router.patch("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, res, next) => {
   zone.updateSpawnentry(req.params.spawngroupID, req.params.npcID)
     .then(data => {
       res.status(200).type('json').json(data);
@@ -55,7 +55,7 @@ zone_router.delete("/spawn/spawngroup/:id", (req, res, next) => {
     .catch(error => { next(); });
 });
 
-zone_router.put("/spawn/spawngroup/:id", jsonParser, sanitizer, validate.spawngroup, async (req, res, next) => {
+zone_router.patch("/spawn/spawngroup/:id", jsonParser, sanitizer, validate.spawngroup, async (req, res, next) => {
   const errors = vResult(req);
   if (errors.isEmpty()) {
     const responses = [];
@@ -108,7 +108,7 @@ zone_router.delete("/spawn/spawn2/:id", (req, res, next) => {
     .catch(error => { next(); });
 });
 
-zone_router.put("/spawn/spawn2/:id", jsonParser, sanitizer, validate.spawn2, (req, res, next) => {
+zone_router.patch("/spawn/spawn2/:id", jsonParser, sanitizer, validate.spawn2, (req, res, next) => {
   const errors = vResult(req);
   if (errors.isEmpty()) {
     zone.updateSpawn2(req.params.id, req.body)

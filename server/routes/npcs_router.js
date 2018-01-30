@@ -103,7 +103,7 @@ npcs_router.delete("/templates/:templateID", async (req, res, next) => {
     .catch(error => { next(); });
 });
 
-npcs_router.put("/templates/:templateID", jsonParser, sanitizer, validate.npc_type, async (req, res, next) => {
+npcs_router.patch("/templates/:templateID", jsonParser, sanitizer, validate.npc_type, async (req, res, next) => {
   const errors = vResult(req);
   if (errors.isEmpty()) {
     npc_template.update(req.body, {where: {id: req.params.templateID}})
@@ -225,7 +225,7 @@ npcs_router.delete("/:npcID", (req, res, next) => {
     .catch(error => { next(); });
 });
 
-npcs_router.put("/:npcID", jsonParser, sanitizer, validate.npc_type, (req, res, next) => {
+npcs_router.patch("/:npcID", jsonParser, sanitizer, validate.npc_type, (req, res, next) => {
   const errors = vResult(req);
   if (errors.isEmpty()) {
     npc.update(req.params.npcID, req.body)

@@ -62,7 +62,7 @@ class SpawnEditor extends React.Component {
       return new Promise((resolve, reject) => {
         if (props.dirty && props.valid) {
           const delta = diff(props.initialValues, values);
-          api.zone.putSpawn2(values.id, delta)
+          api.zone.patchSpawn2(values.id, delta)
             .then(res => {
               this.props.updateSpawn2(
                 values.id,
@@ -92,7 +92,7 @@ class SpawnEditor extends React.Component {
               })
               : null
           }
-          api.zone.putSpawngroup(values.id, data).then(res => {
+          api.zone.patchSpawngroup(values.id, data).then(res => {
             this.props.updateSpawn2(
               this.props.spawn.spawn2.id, 
               values.id

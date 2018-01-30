@@ -1,6 +1,7 @@
 'use strict';
 
 require('dotenv').config();
+global.__basedir = __dirname;
 
 const express     = require('express'),
       app         = express(),

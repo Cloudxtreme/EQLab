@@ -7,8 +7,8 @@ import {
   SPELLEDITOR_GET_SPELLTEMPLATE,
   SPELLEDITOR_LOAD_SPELL,
   SPELLEDITOR_UNLOAD_SPELL,
-  SPELLEDITOR_PUT_SPELL,
-  SPELLEDITOR_PUT_SPELLTEMPLATE,
+  SPELLEDITOR_PATCH_SPELL,
+  SPELLEDITOR_PATCH_SPELLTEMPLATE,
   SPELLEDITOR_UPDATE_SPELL,
   SPELLEDITOR_UPDATE_SPELLTEMPLATE,
   SPELLEDITOR_DELETE_SPELL,
@@ -51,8 +51,8 @@ function* manageSubApps(action, data) {
 export const SpellEditorSaga = [
   takeLatest(SPELLEDITOR_GET_SPELL, getSpell),
   takeLatest(SPELLEDITOR_GET_SPELLTEMPLATE, getSpellTemplate),
-  takeLatest(SPELLEDITOR_PUT_SPELL, putSpell),
-  takeLatest(SPELLEDITOR_PUT_SPELLTEMPLATE, putSpellTemplate),
+  takeLatest(SPELLEDITOR_PATCH_SPELL, patchSpell),
+  takeLatest(SPELLEDITOR_PATCH_SPELLTEMPLATE, patchSpellTemplate),
   takeLatest(SPELLEDITOR_UPDATE_SPELL, updateSpell),
   takeLatest(SPELLEDITOR_UPDATE_SPELLTEMPLATE, updateSpellTemplate),
   takeLatest(SPELLEDITOR_DELETE_SPELL, deleteSpell),
@@ -75,13 +75,13 @@ function* getSpellTemplate(action) {
   ]);
 }
 
-function* putSpell(action) {
-  yield call(api.spell.putSpell, action.spellID, action.values);
+function* patchSpell(action) {
+  yield call(api.spell.patchSpell, action.spellID, action.values);
   yield put({ type: SPELLEDITOR_GET_SPELL, spellID: action.spellID, subAppAction: "update-spell" });
 }
 
-function* putSpellTemplate(action) {
-  yield call(api.spell.putSpellTemplate, action.templateID, action.values);
+function* patchSpellTemplate(action) {
+  yield call(api.spell.patchSpellTemplate, action.templateID, action.values);
   yield put({ type: SPELLEDITOR_GET_SPELLTEMPLATE, templateID: action.templateID, subAppAction: "update-template" });
 }
 

@@ -30,8 +30,8 @@ import {
   SPELLEDITOR_GET_SPELL,
   SPELLEDITOR_GET_SPELLTEMPLATE,
   SPELLEDITOR_UNLOAD_SPELL,
-  SPELLEDITOR_PUT_SPELL,
-  SPELLEDITOR_PUT_SPELLTEMPLATE,
+  SPELLEDITOR_PATCH_SPELL,
+  SPELLEDITOR_PATCH_SPELLTEMPLATE,
   SPELLEDITOR_UPDATE_SPELL,
   SPELLEDITOR_UPDATE_SPELLTEMPLATE,
   SPELLEDITOR_DELETE_SPELL,
@@ -61,10 +61,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: SPELLEDITOR_GET_SPELLTEMPLATE, templateID }),
   unload: () =>
     dispatch({ type: SPELLEDITOR_UNLOAD_SPELL }),
-  putSpell: (spellID, values) => 
-    dispatch({ type: SPELLEDITOR_PUT_SPELL, spellID, values }),
-  putTemplate: (templateID, values) => 
-    dispatch({ type: SPELLEDITOR_PUT_SPELLTEMPLATE, templateID, values }),
+  patchSpell: (spellID, values) => 
+    dispatch({ type: SPELLEDITOR_PATCH_SPELL, spellID, values }),
+  patchTemplate: (templateID, values) => 
+    dispatch({ type: SPELLEDITOR_PATCH_SPELLTEMPLATE, templateID, values }),
   updateSpell: (spellID, values) => 
     dispatch({ type: SPELLEDITOR_UPDATE_SPELL, spellID }),
   updateTemplate: (templateID) => 
@@ -106,7 +106,7 @@ class SpellEditor extends React.Component {
           const delta = diff(props.initialValues.type, values.type);
 
           if (this.props.isTemplate) {
-            api.spell.putTemplate(values.type.id, delta).then(res => {
+            api.spell.patchTemplate(values.type.id, delta).then(res => {
               this.props.updateTemplate(values.type.id);
               resolve();
             }).catch(error => {
@@ -115,7 +115,7 @@ class SpellEditor extends React.Component {
               } 
             });
           } else {
-            api.spell.putSpell(values.type.id, delta).then(res => {
+            api.spell.patchSpell(values.type.id, delta).then(res => {
               this.props.updateSpell(values.type.id);
               resolve();
             }).catch(error => {

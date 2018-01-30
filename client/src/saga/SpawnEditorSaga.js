@@ -75,7 +75,7 @@ function* updateSpawn2(action) {
 }
 
 function* changeSpawngroup(action) {
-  yield call(api.zone.putSpawn2, action.spawn2ID, { spawngroupID: action.spawngroupID });
+  yield call(api.zone.patchSpawn2, action.spawn2ID, { spawngroupID: action.spawngroupID });
   yield all([
     put({ type: SPAWNEDITOR_GET_SPAWN2, spawn2ID: action.spawn2ID }),
     call(manageSubApps, "update-spawn2")

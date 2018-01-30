@@ -23,9 +23,9 @@ const requests = {
       .use(tokenPlugin)
       .on('error', error => error)
       .then(res => res.body),
-  put: (url, body) =>
+  patch: (url, body) =>
     superagent
-      .put(`${API_ROOT}${url}`, body)
+      .patch(`${API_ROOT}${url}`, body)
       .use(tokenPlugin)
       .on('error', error => error)
       .then(res => res.body),
@@ -63,8 +63,8 @@ const zone = {
     requests.get(`/zones/spawn/${id}`),
   postSpawn2: zone => 
     requests.post(`/zones/${zone}/spawn/spawn2`),
-  putSpawn2: (id, values) => 
-    requests.put(`/zones/spawn/spawn2/${id}`, values),
+  patchSpawn2: (id, values) => 
+    requests.patch(`/zones/spawn/spawn2/${id}`, values),
   deleteSpawn2: id => 
     requests.delete(`/zones/spawn/spawn2/${id}`),
         
@@ -74,15 +74,15 @@ const zone = {
     requests.get(`/zones/spawn/spawngroup/${id}`),
   postSpawngroup: (spawn2ID, zone) => 
     requests.post(`/zones/spawn/${spawn2ID}/spawngroup`, { zone }),
-  putSpawngroup: (id, values) => 
-    requests.put(`/zones/spawn/spawngroup/${id}`, values),
+  patchSpawngroup: (id, values) => 
+    requests.patch(`/zones/spawn/spawngroup/${id}`, values),
   deleteSpawngroup: id => 
     requests.delete(`/zones/spawn/spawngroup/${id}`),
 
   postSpawnentry: (spawngroupID, npcID) => 
     requests.post(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`),
-  putSpawnentry: (spawngroupID, npcID, values) => 
-    requests.put(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`),
+  patchSpawnentry: (spawngroupID, npcID, values) => 
+    requests.patch(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`),
   deleteSpawnentry: (spawngroupID, npcID) => 
     requests.delete(`/zones/spawn/spawngroup/${spawngroupID}/spawnentry/${npcID}`)
 }
@@ -96,8 +96,8 @@ const npc = {
     requests.post(`/npcs`, values),
   copyNPC: npcID =>
     requests.post(`/npcs/copy/${npcID}`),
-  putNPC: (npcID, values) => 
-    requests.put(`/npcs/${npcID}`, values),
+  patchNPC: (npcID, values) => 
+    requests.patch(`/npcs/${npcID}`, values),
   deleteNPC: npcID => 
     requests.delete(`/npcs/${npcID}`),
 
@@ -109,8 +109,8 @@ const npc = {
     requests.post(`/npcs/templates`),
   copyNPCTemplate: templateID =>
     requests.post(`/npcs/templates/${templateID}`),
-  putNPCTemplate: (templateID, values) =>
-    requests.put(`/npcs/templates/${templateID}`, values),
+  patchNPCTemplate: (templateID, values) =>
+    requests.patch(`/npcs/templates/${templateID}`, values),
   deleteNPCTemplate: (templateID) =>
     requests.delete(`/npcs/templates/${templateID}`),
 
@@ -148,8 +148,8 @@ const spell = {
     requests.post(`/spells`, values),
   copySpell: spellID =>
     requests.post(`/spells/copy/${spellID}`),
-  putSpell: (spellID, values) => 
-    requests.put(`/spells/${spellID}`, values),
+  patchSpell: (spellID, values) => 
+    requests.patch(`/spells/${spellID}`, values),
   deleteSpell: spellID => 
     requests.delete(`/spells/${spellID}`),
 
@@ -161,8 +161,8 @@ const spell = {
     requests.post(`/spells/templates`),
   copySpellTemplate: templateID =>
     requests.post(`/spells/templates/${templateID}`),
-  putSpellTemplate: (templateID, values) =>
-    requests.put(`/spells/templates/${templateID}`, values),
+  patchSpellTemplate: (templateID, values) =>
+    requests.patch(`/spells/templates/${templateID}`, values),
   deleteSpellTemplate: (templateID) =>
     requests.delete(`/spells/templates/${templateID}`),
 }

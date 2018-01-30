@@ -11,5 +11,6 @@ api_router.use('/spells', require('./spells_router'));
 api_router.use('/items', require('./items_router'));
 // api_router.use('/classes', require('./classes_router'));
 // api_router.use('/rules', require('./rules_router'));
+api_router.use('/files', require('./files_router'));
 
 module.exports = api_router;

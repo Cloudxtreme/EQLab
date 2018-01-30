@@ -19,7 +19,7 @@ spells_router.delete("/:spellID", (req, res, next) => {
     .catch(error => { next(); });
 });
 
-spells_router.put("/:spellID", jsonParser, sanitizer, (req, res, next) => {
+spells_router.patch("/:spellID", jsonParser, sanitizer, (req, res, next) => {
   spell.update(req.params.spellID, req.body)
     .then(data => {
       res.status(200).type('json').json(data);
