@@ -1,8 +1,7 @@
 const knex               = require(__basedir + '/db/db.js').knex,
       mysqlDump          = require(__basedir + '/db/mysqldump.js'),
-      // AdmZip             = require("adm-zip"),
-      // JSZip              = require("jszip"),
       archiver           = require('archiver'),
+      os                 = require("os"),
       fs                 = require('fs-extra'),
       moment             = require('moment'),
       path               = require('path'),
@@ -13,7 +12,92 @@ const knex               = require(__basedir + '/db/db.js').knex,
 
 class EQLabFiles {
 
-  
+  addModelToZone(zoneName, model) {
+    return new Promise((resolve, reject) => {
+      console.log(zoneName)
+      const zoneName = zoneName;
+      const model = model;
+      const filename = path.resolve(__dirname + `/../../files/chr/${zoneName}_chr.txt`);
+
+      fs.readFile(filename)
+        .then(data => {
+          if (!data.includes(model)) {
+
+            data = data.toString();
+            let oldNumber = data.match(/\b\d+\b/);
+            let newNumber = (parseInt(oldNumber[0], 10) + 1).toString();
+            let newData = data.replace(oldNumber, newNumber);
+            newData = newData.trim();
+            newData = newData.concat(os.EOL + model);
+
+            fs.writeFile(filename, newData)
+              .then(() => {
+                resolve();
+              })
+              .catch(error => {
+                reject(error);
+              })
+
+          }
+          
+        })
+        .catch(error => {
+          reject(error);
+        });
+    });
+  }
+
+  addModelToAllZones(model) {
+    return new Promise((resolve, reject) => {
+
+      const model = model;
+
+      fs.readdir(path.resolve(__dirname + '/../../files/chr/'))
+        .then(files => {
+          let count = 0;
+
+          for (let i = 0, len = files.length; i < len; i++) {
+            let currentFile = files[i];
+            if (!!currentFile.match(/(_chr\.txt)/gi)) {
+              let filename = path.resolve(__dirname + `/../../files/chr/${currentFile}`);
+      
+              fs.readFile(filename)
+                .then(data => {
+                  
+                  if (!data.includes(model)) {
+      
+                    data = data.toString();
+                    let oldNumber = data.match(/\b\d+\b/);
+                    let newNumber = (parseInt(oldNumber[0], 10) + 1).toString();
+                    let newData = data.replace(oldNumber, newNumber);
+                    newData = newData.trim();
+                    newData = newData.concat(os.EOL + model);
+      
+                    fs.writeFile(filename, newData)
+                      .then(() => {
+                        count++;
+                      })
+                      .catch(error => {
+                        reject(error);
+                      })
+      
+                  }
+                  
+                })
+                .catch(error => {
+                  reject(error);
+                });
+      
+            }
+          }
+
+          resolve(count);
+        })
+        .catch(error => {
+          reject(error);
+        })
+    });
+  }
 
   createSpellsTxt(path) {
     return new Promise((resolve, reject) => {
@@ -99,14 +183,14 @@ class EQLabFiles {
     return new Promise((resolve, reject) => {
       console.log('EQLab: Copying current dbstr_us.txt...');
       fs.copyFile(path.resolve(__basedir + '/../files/dbstr_us.txt'), path.resolve(directory + '/dbstr_us.txt'))
-        .then((error) => {
-          if (error) {
-            console.log('EQLab: Error while copying dbstr_us.txt...');
-            reject(error);
-          }
+        .then(() => {
           console.log('EQLab: Finished copying dbstr_us.txt');
           resolve();
-        });
+        })
+        .catch(error => {
+          console.log('EQLab: Error while copying dbstr_us.txt...');
+          reject(error);
+        })
     });
   }
 

@@ -3,7 +3,7 @@
 const db        = require('../db/db.js').db,
       Treeize   = require('treeize'),
       sanitize  = require('../lib/sanitize.js'),
-      fs        = require('fs-extra-promise'),
+      fs        = require('fs-extra'),
       escape    = require('../lib/regexpEscape.js');
 
 
