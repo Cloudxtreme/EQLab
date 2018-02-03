@@ -6,6 +6,8 @@ import api from '../../../api.js';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 // import FontAwesome from 'react-fontawesome';
+import { getFormValues } from 'redux-form';
+import { SPELL_RESIST_TYPES } from '../../../constants/constants.js';
 import {
   SPELLAPP_SEARCH_SET_SPELLLIST,
   SPELLAPP_SEARCH_SET_SPELLID
@@ -14,6 +16,7 @@ import SpellSearchForm from './SpellSearchForm.jsx';
 import SpellEditor from '../../components/SpellEditor/SpellEditor.jsx';
 
 const mapStateToProps = state => ({
+  searchFormValues: getFormValues('SpellSearchForm')(state),
   spellList: state.SpellApp.spellList,
   spellID: state.SpellApp.searchSpellID
 });
@@ -43,10 +46,16 @@ class SpellSearch extends React.Component {
   }
 
   render() {
+    const form = this.props.searchFormValues;
 
     const columns = [{
       Header: "ID",
       accessor: "id",
+      width: 80
+    }, {
+      Header: form && form.class ? "Level" : "Resist",
+      id: "variable",
+      accessor: form && form.class ? `classes${form.class}` : row => SPELL_RESIST_TYPES[row.resisttype].label,
       width: 80
     }, {
       Header: "Name",
@@ -75,17 +84,21 @@ class SpellSearch extends React.Component {
                       columns={columns}
                       defaultSorted={[
                         {
-                          id: "id",
+                          id: form && form.class ? "variable" : "id",
                           desc: false
                         }
                       ]}
                       filterable={false}
                       className="-striped -highlight"
-                      style={{ height: 860, overflowY: "auto", fontSize: 12 }}
+                      style={{ height: 794, overflowY: "auto", fontSize: 12 }}
                       showPagination={true}
                       pageSize={50}
                       getTdProps={(state, row, column, instance) => {
-                        return { onClick: e => {this.props.setSpellID(row.original.id)} }
+                        return { onClick: (e, handleOriginal) => {
+                          if (row) {
+                            this.props.setSpellID(row.original.id)
+                          }
+                        }}
                       }}
                     />
                   </Col>

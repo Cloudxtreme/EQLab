@@ -1,12 +1,12 @@
 'use strict';
 
-const npcs_router   = require("express").Router(),
+const npcs_router   = require('express').Router(),
       jsonParser    = require('body-parser').json(),
       sanitizer     = require('express-sanitize-escape').middleware(),
       validate      = require('./validation/validate.js'),
       vResult       = require('express-validator/check').validationResult,
-      npc           = require("../models/npc.js"),
-      npc_template  = require("../models/sequelize").npc_template;
+      npc           = require(__serverRoot + '/models/npc.js'),
+      npc_template  = require(__serverRoot + '/models/sequelize').npc_template;
 
 
 /*******************************************************************************/   

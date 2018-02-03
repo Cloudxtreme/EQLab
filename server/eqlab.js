@@ -1,14 +1,38 @@
 'use strict';
 
-const app         = require('./app'),
+require('dotenv').config();
+
+const path    = require('path'),
+      isValid = require('is-valid-path');
+
+// Set Directories
+global.__serverRoot = __dirname;
+global.__filesdir = path.resolve(__serverRoot + '/../files');
+if (process.env.USE_CUSTOM_BUILDS_DIRECTORY === 'TRUE') {
+  if (isValid(process.env.CUSTOM_BUILDS_DIRECTORY)) {
+    global.__buildsdir = process.env.CUSTOM_BUILDS_DIRECTORY
+  } else {
+    throw new Error('EQLab: Custom Builds Directory is Not Valid. Check .env');
+    process.exit(1);
+  }
+} else {
+  global.__buildsdir = path.resolve(__filesdir + '/builds');
+}
+global.__tempdir = path.resolve(__serverRoot + '/temp');
+
+/***********************************************************************************************/
+
+const app         = require(__serverRoot + '/app.js'),
       server      = require('http').Server(app),
       debug       = require('debug')('eqlab'),
-      io          = require('./io').initialize(server),
+      io          = require(__serverRoot + '/io').initialize(server),
       nodeCleanup = require('node-cleanup'),
-      knex        = require('./db/db.js').knex,
-      sqlEvent    = require('./db/db.js').sqlEvent,
-      eqlab_db    = require('./models/sequelize').sequelize;
+      knex        = require(__serverRoot + '/db/db.js').knex,
+      sqlEvent    = require(__serverRoot + '/db/db.js').sqlEvent,
+      eqlab_db    = require(__serverRoot + '/models/sequelize').sequelize;
 
+
+/***********************************************************************************************/
 
 const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
@@ -17,6 +41,10 @@ app.set('port', PORT);
 if (process.env.USE_REVERSE_PROXY === 'TRUE') {
   app.enable('trust proxy');
 }
+
+console.log('EQLab: Server Root Directory: ' + __serverRoot);
+console.log('EQLab: Files Directory: ' + __filesdir);
+console.log('EQLab: Builds Directory: ' + __buildsdir);
 
 // Sync EQLab Database
 eqlab_db.sync().then(() => { 

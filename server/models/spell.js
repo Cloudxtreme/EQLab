@@ -1,117 +1,267 @@
 'use strict';
 
-const db        = require('../db/db.js').db,
+const db        = require(__serverRoot + '/db/db.js').db,
       Treeize   = require('treeize'),
-      sanitize  = require('../lib/sanitize.js'),
+      sanitize  = require(__serverRoot + '/lib/sanitize.js'),
       fs        = require('fs-extra'),
-      escape    = require('../lib/regexpEscape.js');
+      escape    = require(__serverRoot + '/lib/regexpEscape.js');
 
 
 module.exports = {
   
   search: async (values) => {
-    let queryStr=`
-    SELECT * FROM spells_new
-    WHERE (id LIKE '${values.id ? values.id : ''}%' OR name LIKE '%${values.id ? values.id : ''}%')
-    `
-    values.class ? queryStr += ` AND classes${values.class} BETWEEN ${values.minlevel ? values.minlevel : '0'} AND ${values.maxlevel ? values.maxlevel : '254'}` : null
-    values.spell_category ? queryStr += ` AND spell_category='${values.spell_category}'` : null
-
-    let results = await db.raw(queryStr);
-    return results[0];
+    try {
+      let queryStr=`
+      SELECT * FROM spells_new
+      WHERE (id LIKE '${values.id ? values.id : ''}%' OR name LIKE '%${values.id ? values.id : ''}%')
+      `
+      values.class ? queryStr += ` AND classes${values.class} BETWEEN ${values.minlevel ? values.minlevel : '0'} AND ${values.maxlevel ? values.maxlevel : '254'}` : null
+      values.spell_category ? queryStr += ` AND spell_category='${values.spell_category}'` : null
+  
+      let results = (await db.raw(queryStr))[0];
+      return results;
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.search(${values}): ` + error);
+    }
   },
 
   simpleSearch: async (searchTerm = null) => {
-    if (!searchTerm) {
-      return null;
+    if (!searchTerm) return null;
+    try {
+      let queryStr=`
+      SELECT id, name FROM spells_new
+      WHERE (id LIKE '${searchTerm}%' OR name LIKE '%${searchTerm}%')
+      `
+      let results = (await db.raw(queryStr))[0];
+      return results;
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.simpleSearch(${searchTerm}): ` + error);
     }
-    let queryStr=`
-    SELECT id, name FROM spells_new
-    WHERE (id LIKE '${searchTerm}%' OR name LIKE '%${searchTerm}%')
-    `
-
-    let results = await db.raw(queryStr);
-    return results[0];
   },
 
   select: async (columnsArr = null, whereObj) => {
-    return (await db.select('spells_new', columnsArr, whereObj))[0];
+    try {
+      return (await db.select('spells_new', columnsArr, whereObj))[0];
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.select(${columnsArr}, ${whereObj}): ` + error);
+    }
   },
 
-  update: async (id, values) => {
-    if (id) {
+  selectDamageShieldType: async (columnsArr = null, whereObj) => {
+    try {
+      let dstype = (await db.select('damageshieldtypes', columnsArr, whereObj))[0];
+      if (!dstype) {
+        return null;
+      } else {
+        return dstype
+      }
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.selectDamageShieldType(${columnsArr}, ${whereObj}): ` + error);
+    }
+  },
+
+  update: async (id = null, values) => {
+    if (!id) return;
+    try {
       return await db.update('spells_new', values, { id });
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.update(${id}, ${values}): ` + error);
     }
   },
 
-  delete: async (id) => {
-    if (id) {
+  updateDamageShieldType: async (spellID = null, values) => {
+    if (!spellID) return;
+    try {
+      return await db.update('damageshieldtypes', values, { spellid: spellID });
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.updateDamageShieldType(${spellID}, ${values}): ` + error);
+    } 
+  },
+
+  delete: async (id = null) => {
+    if (!id) return;
+    try {
       return await db.delete('spells_new', { id });
+    } catch (error) {
+      throw new Error(`EQLab: Error in spell.delete(${id}): ` + error);
     }
   },
 
-  readSpellDescriptions: (spellID = null, typeID = null) => {
+  readSpellDescriptions: (typedescnum = null, effectdescnum = null, descnum = null) => {
     return new Promise((resolve, reject) =>{
       let descriptions = {
-        type: null,
-        effect: null
+        nums: {typedescnum, effectdescnum, descnum},
+        typedesc: "",
+        effectdesc: "",
+        desc: ""
       }
   
-      let typeFound = false;
-      const typeRegExpString = `\\b${typeID}\\^5\\^(.+)`;
-      const typeRegExp = new RegExp(typeRegExpString, "g");
-  
-      let effectFound = false;
-      const effectRegExpString = `\\b${spellID}\\^6\\^(.+)`;
-      const effectRegExp = new RegExp(effectRegExpString, "g");
-  
-      let fileStream = fs.createReadStream('../files/dbstr_us.txt', { encoding: 'utf8' });
+      let typedescFound = false;
+      const typedescRegExpString = `\\b${typedescnum}\\^5\\^(.+)`;
+      const typedescRegExp = new RegExp(typedescRegExpString, "g");
 
-      fileStream
+      let effectdescFound = false;
+      const effectdescRegExpString = `\\b${effectdescnum}\\^5\\^(.+)`;
+      const effectdescRegExp = new RegExp(effectdescRegExpString, "g");
+  
+      let descFound = false;
+      const descRegExpString = `\\b${descnum}\\^6\\^(.+)`;
+      const descRegExp = new RegExp(descRegExpString, "g");
+  
+      let readStream = fs.createReadStream('../files/dbstr_us.txt', { encoding: 'utf8' });
+
+      readStream
         .on('data', chunk => {
   
-          if ((typeID && !typeFound) || (spellID && !effectFound)) {
+          if ((typedescnum && !typedescFound) || (effectdescnum && !effectdescFound) || (descnum && !descFound)) {
   
-            if (typeID && !typeFound) {
-              typeFound = !!chunk.match(typeRegExp);
-              typeFound ? descriptions.type = typeRegExp.exec(chunk)[1] : null; 
+            if (typedescnum && !typedescFound) {
+              typedescFound = !!chunk.match(typedescRegExp);
+              typedescFound ? descriptions.typedesc = typedescRegExp.exec(chunk)[1] : null; 
+            }
+
+            if (effectdescnum && !effectdescFound) {
+              effectdescFound = !!chunk.match(effectdescRegExp);
+              effectdescFound ? descriptions.effectdesc = effectdescRegExp.exec(chunk)[1] : null; 
             }
             
-            if (spellID && !effectFound) {
-              effectFound = !!chunk.match(effectRegExp);
-              effectFound ? descriptions.effect = effectRegExp.exec(chunk)[1] : null; 
+            if (descnum && !descFound) {
+              descFound = !!chunk.match(descRegExp);
+              descFound ? descriptions.desc = descRegExp.exec(chunk)[1] : null; 
             }
   
           } else {
-            fileStream.destroy();
+            readStream.destroy();
           }
         })
         .on('close', error => {
           resolve(descriptions);
         })
         .on('error', error => {
-          reject(new Error('Error Reading dbstr_us.txt: ' + error));
+          reject(new Error(`EQLab: Error in spell.readSpellDescriptions(${spellID}, ${typeID}, ${type2ID}): ` + error));
         });
     });
   },
 
-  writeSpellDescriptions: () => {
+  writeSpellDescriptions: (descriptions) => {
+    return new Promise((resolve, reject) => {
+      // console.log(descriptions);
+      const typedescnum = descriptions.typedescnum || null;
+      let typedescFound = false;
+      const typedescRegExpString = `\\b${typedescnum}\\^5\\^(.+)`;
+      const typedescRegExp = new RegExp(typedescRegExpString, "g");
+
+      const effectdescnum = descriptions.effectdescnum || null;
+      let effectdescFound = false;
+      const effectdescRegExpString = `\\b${effectdescnum}\\^5\\^(.+)`;
+      const effectdescRegExp = new RegExp(effectdescRegExpString, "g");
+  
+      const descnum = descriptions.descnum || null;
+      let descFound = false;
+      const descRegExpString = `\\b${descnum}\\^6\\^(.+)`;
+      const descRegExp = new RegExp(descRegExpString, "g");
+  
+      fs.readFile('../files/dbstr_us.txt')
+        .then(data => {
+          if (!data.includes(model)) {
+
+            data = data.toString();
+            let oldNumber = data.match(/\b\d+\b/);
+            let newNumber = (parseInt(oldNumber[0], 10) + 1).toString();
+            let newData = data.replace(oldNumber, newNumber);
+            newData = newData.trim();
+            newData = newData.concat(os.EOL + model);
+
+            fs.writeFile(filename, newData)
+              .then(() => {
+                resolve();
+              })
+              .catch(error => {
+                reject(new Error(`EQLab: Error writing dbstr_us.txt spell.writeSpellDescriptions(${descriptions}): ` + error));
+              })
+          }
+        })
+        .catch(error => {
+          reject(new Error(`EQLab: Error reading dbstr_us.txt spell.writeSpellDescriptions(${descriptions}): ` + error));
+        });
+    })
+  },
+
+  writeSpellDescriptionsStream: (descriptions) => {
+    return new Promise((resolve, reject) => {
+      // console.log(descriptions);
+      const typedescnum = descriptions.typedescnum || null;
+      let typedescFound = false;
+      const typedescRegExpString = `\\b${typedescnum}\\^5\\^(.+)`;
+      const typedescRegExp = new RegExp(typedescRegExpString, "g");
+
+      const effectdescnum = descriptions.effectdescnum || null;
+      let effectdescFound = false;
+      const effectdescRegExpString = `\\b${effectdescnum}\\^5\\^(.+)`;
+      const effectdescRegExp = new RegExp(effectdescRegExpString, "g");
+  
+      const descnum = descriptions.descnum || null;
+      let descFound = false;
+      const descRegExpString = `\\b${descnum}\\^6\\^(.+)`;
+      const descRegExp = new RegExp(descRegExpString, "g");
+  
+      let readStream = fs.createReadStream('../files/dbstr_us.txt', { encoding: 'utf8' });
+
+      readStream
+        .on('data', chunk => {
+          if ((typedescnum && !typedescFound) || (effectdescnum && !effectdescFound) || (descnum && !descFound)) {
+
+            if (typedescnum && !typedescFound) {
+              typedescFound = !!chunk.match(typedescRegExp);
+            }
+
+            if (effectdescnum && !effectdescFound) {
+              effectdescFound = !!chunk.match(effectdescRegExp);
+            }
+            
+            if (descnum && !descFound) {
+              descFound = !!chunk.match(descRegExp); 
+            }
+
+          } else {
+            readStream.destroy();
+          }
+        })
+        .on('error', error => {
+          reject(new Error(`EQLab: Error reading dbstr_us.txt in spell.writeSpellDescriptions(${descriptions}): ` + error));
+        });
+
+      let writeStream = fs.createWriteStream('../files/dbstr_us.txt', { encoding: 'utf8' });
+
+
+
  
+      reject(new Error(`EQLab: Error in spell.writeSpellDescriptions(${descriptions}): ` + error));
+    })
+  },
+
+  getEffectItems: async (spellID) => {
+    if (spellID == 0) return null;
+    
+    try {
+      let queryStr = `
+      SELECT id, name, 
+      proceffect,  proclevel, proclevel2, 
+      clickeffect, clicktype, clicklevel, clicklevel2, casttime_, recastdelay, recasttype, 
+      focuseffect, focustype, focuslevel, focuslevel2
+      FROM items
+      WHERE proceffect='${spellID}' OR clickeffect='${spellID}' OR focuseffect='${spellID}'
+      `;
+
+      let effectitems = (await db.raw(queryStr))[0];
+      if (!effectitems) {
+        return null;
+      } else {
+        return effectitems;
+      }
+    } catch(error) {
+      throw new Error(`EQLab: Error in spell.getEffectItems(${spellID}): ` + error);
+    }
   }
-
-  // getScrollItems: async (spellID) => {
-  //   let queryStr = `
-  //   SELECT id, name, scrollname, scrolltype, scrolllevel, scrolllevel2, nodrop, price
-  //   FROM items
-  //   WHERE scrolleffect = '${spellID}'
-  //   `;
-
-  //   try {
-  //     let SQLdata = await db.raw(queryStr);
-  //     return SQLdata[0];
-  //   } catch(error) {
-  //     throw new Error('Error Retrieving Spell Scroll Items: ' + error);
-  //   }
-  // }
 
 }

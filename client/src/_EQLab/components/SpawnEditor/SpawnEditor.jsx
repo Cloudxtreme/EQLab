@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import { confirm } from '../form/confirm/confirm.js';
 import { SubmissionError } from 'redux-form';
-import diff from 'object-diff';
+import { diff } from 'deep-object-diff';
 import { omit, pick, size } from 'lodash';
 import api from '../../../api.js';
 import { debounce } from 'lodash';

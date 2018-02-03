@@ -4,18 +4,8 @@ var fs        = require('fs');
 var path      = require('path');
 var Sequelize = require('sequelize');
 var basename  = path.basename(__filename);
+var sequelize = require(__serverRoot + '/db/db.js').sequelize;
 var eqlab_db  = {};
-
-// EQLab Database
-const sequelize = new Sequelize({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_EQLAB_DATABASE,
-  dialect: "mysql",
-  logging: false
-});
 
 fs
   .readdirSync(__dirname)

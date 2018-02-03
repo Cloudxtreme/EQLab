@@ -20,6 +20,10 @@ exports.initialize = server => {
     }
   });
 
+  // TO DO: files.createBuild Event Triggers
+
+
+
   // App
   io.on('connection', socket => {
     console.log('socket.io: User Connected');
@@ -35,6 +39,16 @@ exports.initialize = server => {
       });
     });
 
+    // FilesApp
+    // socket.on('FilesApp Loaded', () => {
+    //   socket.join('FilesApp');
+    //   console.log('socket.io: User Loaded FilesApp');
+
+    //   socket.on('FilesApp Unloaded', () => {
+    //     socket.leave('FilesApp');
+    //     console.log('socket.io: User Unloaded FilesApp');  
+    //   });
+    // });
     
     socket.on('disconnect', data => {
       console.log('socket.io: User Disconnected');

@@ -1,39 +1,57 @@
 'use strict';
 
-const spells_router = require("express").Router(),
+const spells_router = require('express').Router(),
       jsonParser    = require('body-parser').json(),
       sanitizer     = require('express-sanitize-escape').middleware(),
-      spell         = require("../models/spell.js"),
-      item          = require("../models/item.js");
+      validate      = require('./validation/validate.js'),
+      vResult       = require('express-validator/check').validationResult,
+      spell         = require(__serverRoot + '/models/spell.js'),
+      item          = require(__serverRoot + '/models/item.js');
       
 
 /*******************************************************************/
 
 /*************************** SPELL ********************************/
 
-spells_router.delete("/:spellID", (req, res, next) => {
-  spell.delete(req.params.spellID)
-    .then(data => {
-      res.status(200).type('json').json(data);
-    })
-    .catch(error => { next(); });
+spells_router.delete("/:spellID", async (req, res, next) => {
+  try {
+    let result = await spell.delete(req.params.spellID);
+    res.status(200).type('json').json(result);
+  } catch (error) {
+    next();
+  }
 });
 
-spells_router.patch("/:spellID", jsonParser, sanitizer, (req, res, next) => {
-  spell.update(req.params.spellID, req.body)
-    .then(data => {
+spells_router.patch("/:spellID", jsonParser, sanitizer, validate.spell, async (req, res, next) => {
+  const errors = vResult(req);
+  if (errors.isEmpty()) {
+    try {
+      let dataResult, damageshieldResult, descriptionsResult;
+      if (req.body.data) {
+        dataResult = await spell.update(req.params.spellID, req.body.data);
+      }
+      if (req.body.damageshield) {
+        damageshieldResult = await spell.updateDamageShieldType(req.params.spellID, req.body.damageshield);
+      }
+      if (req.body.descriptions) {
+        descriptionsResult = await spell.writeSpellDescriptions(req.body.descriptions);
+      }
       res.status(200).type('json').json(data);
-    })
-    .catch(error => { next(); });
+    } catch (error) {
+      next();
+    }
+  } else {
+    res.status(400).type('json').json({ validationErrors: errors.formatWith(error => error.msg).mapped() });
+  }
 });
 
-// spells_router.post("/copy/:spellID", (req, res, next) => {
-//   spell.copy(req.params.npcID).then(newSpellID => {
-//     spell.select([], { id: newSpellID }).then(newSpell => {
-//       res.status(200).type('json').json(newSpell);
-//     });
-//   });
-// });
+spells_router.post("/copy/:spellID", (req, res, next) => {
+  spell.copy(req.params.npcID).then(newSpellID => {
+    spell.select([], { id: newSpellID }).then(newSpell => {
+      res.status(200).type('json').json(newSpell);
+    });
+  });
+});
 
 spells_router.post("/", jsonParser, sanitizer, (req, res, next) => {
   spell.insert(req.body)
@@ -63,46 +81,39 @@ spells_router.post("/search", jsonParser, sanitizer, (req, res, next) => {
     .catch(error => { next(); });
 });
 
-// Test Route
-spells_router.get("/test/:spellID/:typeID", (req, res, next) => {
-  spell.readSpellDescriptions(req.params.spellID, req.params.typeID)
-    .then(data => {
-      res.status(200).type('json').json(data);
-    })
-    .catch(error => { next(); });
-});
-
 // 2550 - Zevfeer's Theft of Vitae
-// TODO: Checking items table this many times is slow; write custom queries
 spells_router.get("/:spellID", async (req, res, next) => {
-  const data = await spell.select([], { id: req.params.spellID });
+  let recourseData;
+  try {
+    const data = await spell.select([], { id: req.params.spellID });
 
-  if (data) {
-    res.status(200).type('json').json({
+    if (data.RecourseLink > 0) {
+      recourseData = await spell.select([], { id: data.RecourseLink });
+    }
+
+    let spellObject = {
       "spell": {
-        "data": data,
-        "descriptions": process.env.USE_AUTO_FILE_IO === 'TRUE' ? await spell.readSpellDescriptions(req.params.spellID, data.typedescnum) : null
+        "form": {
+          "data": data,
+          "damageshield": await spell.selectDamageShieldType(['type'], { spellid: req.params.spellID }),
+          "descriptions": process.env.USE_AUTO_FILE_IO === 'TRUE' ? await spell.readSpellDescriptions(data.typedescnum, data.effectdescnum, data.descnum) : null
+        },
+        "scrolls": await item.select(["id", "name", "nodrop", "price"], { scrolleffect: req.params.spellID }),
+        "effectitems": await spell.getEffectItems(req.params.spellID)
       },
-      "recourse": data.RecourseLink > 0 ? (await spell.select([], { id: data.RecourseLink })) : null,
-      "components": {
-        "1": data.components1 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components1 }) : null,
-        "2": data.components2 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components2 }) : null,
-        "3": data.components3 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components3 }) : null,
-        "4": data.components4 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.components4 }) : null
-      },
-      "noexpendreagents": {
-        "1": data.NoexpendReagent1 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent1 }) : null,
-        "2": data.NoexpendReagent2 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent2 }) : null,
-        "3": data.NoexpendReagent3 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent3 }) : null,
-        "4": data.NoexpendReagent4 > 0 ? await item.select(["id", "name", "nodrop", "price"], { id: data.NoexpendReagent4 }) : null
-      },
-      "scrolls": await item.select(
-        ["id", "name", "scrollname", "scrolltype", "scrolllevel", "scrolllevel2", "nodrop", "price"], 
-        { scrolleffect: req.params.spellID }
-      ),
-      "procitems": await item.select(["id", "name", "procname", "proctype", "proclevel", "proclevel2"], { proceffect: req.params.spellID })
-    });
-  } else {
+      "recourse": data.RecourseLink > 0 ? {
+        "form": {
+          "data": recourseData,
+          "damageshield": await spell.selectDamageShieldType(['type'], { spellid: data.RecourseLink }),
+          "descriptions": process.env.USE_AUTO_FILE_IO === 'TRUE' ? await spell.readSpellDescriptions(recourseData.typedescnum, recourseData.effectdescnum, recourseData.descnum) : null
+        },
+        "scrolls": await item.select(["id", "name", "nodrop", "price"], { scrolleffect: data.RecourseLink }),
+        "effectitems": await spell.getEffectItems(data.RecourseLink)
+      } : null
+    }
+
+    res.status(200).type('json').json(spellObject);
+  } catch (error) {
     next();
   }
 });

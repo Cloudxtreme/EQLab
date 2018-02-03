@@ -1,36 +1,61 @@
 import React from 'react';
-import { Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
+import { Col, ButtonToolbar, Button } from 'react-bootstrap';
 import FontAwesome from 'react-fontawesome';
 
 
 class SpellEditorHeader extends React.PureComponent {
+  constructor(props) {
+    super(props)
+
+    this.onDelete = () => {
+      this.props.delete(this.props.spellID, this.props.isRecourse)
+    }
+
+    this.onReset = () => {
+      this.props.reset(this.props.isRecourse)
+    }
+
+    this.onSubmit = () => {
+      this.props.handleSubmit(this.props.spellID, this.props.isRecourse)
+    }
+  }
+
+
   render() {
-    const { formPristine, formSubmitting } = this.props
+    const { 
+      formPristine, 
+      formSubmitting, 
+      submitSucceeded,
+      submitFailed
+    } = this.props
+
     return (
-      <Row id="SpellEditorHeader">
-        <Col md={6}>
+      <div>
+        <Col md={5}>
         {
-          this.props.isTemplate
-            ? <span className="panel-title">Spell Template: {this.props.input.value}</span>
-            : <span className="panel-title">Spell: {this.props.input.value}</span>
+          formSubmitting && <span>Submitting Form...</span>
+        }
+        {
+          !formSubmitting && submitSucceeded && <span style={{ color: "green" }}>Saved Successfully!</span>
+        }
+        {
+          !formSubmitting && submitFailed && <span style={{ color: "red" }}>Error Submitting Form!</span>
         }
         </Col>
-        <Col md={12}>
-        </Col>
-        <Col md={6}>
+        <Col md={5}>
           <ButtonToolbar className="pull-right">
-            <Button bsStyle="danger" bsSize="xs" disabled={formSubmitting} onClick={this.props.deleteSpell}>
+            <Button bsStyle="danger" bsSize="xs" disabled={formSubmitting} onClick={this.onDelete}>
               <FontAwesome name='times' />&nbsp;Delete
             </Button>
-            <Button bsStyle="warning" bsSize="xs" disabled={formPristine || formSubmitting} onClick={this.props.reset}>
+            <Button bsStyle="warning" bsSize="xs" disabled={formPristine || formSubmitting} onClick={this.onReset}>
               <FontAwesome name='undo'/>&nbsp;Reset
             </Button>
-            <Button bsStyle="primary" bsSize="xs" disabled={formPristine || formSubmitting} onClick={this.props.handleSubmit}>
-              <FontAwesome name='floppy-o'/>&nbsp;Save
+            <Button bsStyle="primary" bsSize="xs" disabled={formPristine || formSubmitting} onClick={this.onSubmit}>
+              <FontAwesome name='hdd-o'/>&nbsp;Save
             </Button>
           </ButtonToolbar>
         </Col>
-      </Row>
+      </div>
     );
   }
 }

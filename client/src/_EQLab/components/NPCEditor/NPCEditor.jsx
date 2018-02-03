@@ -3,7 +3,7 @@ import { Row, Col, Panel, Tab, Nav, NavItem, } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, Field, Fields } from 'redux-form';
 import { confirm } from '../form/confirm/confirm.js';
-import diff from 'object-diff';
+import { diff } from 'deep-object-diff';
 import api from '../../../api.js';
 import { debounce } from 'lodash';
 import {

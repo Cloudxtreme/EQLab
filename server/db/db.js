@@ -11,6 +11,18 @@ const knex = require('knex')({
   }
 });
 
+// EQLab Database
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_EQLAB_DATABASE,
+  dialect: "mysql",
+  logging: false
+});
+
 // MySQL Event Watcher
 const sqlEvent = require('mysql-events')({
   host: process.env.DB_HOST,
@@ -91,6 +103,7 @@ const db = {
   
 module.exports = { 
   knex,
+  sequelize,
   db,
   sqlEvent 
 };

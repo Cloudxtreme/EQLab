@@ -1,11 +1,12 @@
-const knex               = require(__basedir + '/db/db.js').knex,
-      mysqlDump          = require(__basedir + '/db/mysqldump.js'),
+const knex               = require(__serverRoot + '/db/db.js').knex,
+      mysqlDump          = require(__serverRoot + '/db/mysqldump.js'),
       archiver           = require('archiver'),
-      os                 = require("os"),
+      os                 = require('os'),
       fs                 = require('fs-extra'),
       moment             = require('moment'),
       path               = require('path'),
-      DelimiterTransform = require(__basedir + '/lib/DelimiterTransform.js');
+      DelimiterTransform = require(__serverRoot + '/lib/DelimiterTransform.js'),
+      __chrDirectory     = path.resolve(__filesdir + '/chr');
 
 
 /******************************************************/
@@ -14,7 +15,7 @@ class EQLabFiles {
 
   addModelToZone(zoneName, model) {
     return new Promise((resolve, reject) => {
-      const filename = path.resolve(__dirname + `/../../files/chr/${zoneName}_chr.txt`);
+      const filename = path.resolve(__chrDirectory + `/${zoneName}_chr.txt`);
       fs.readFile(filename)
         .then(data => {
           if (!data.includes(model)) {
@@ -44,14 +45,14 @@ class EQLabFiles {
 
   addModelToAllZones(model) {
     return new Promise((resolve, reject) => {
-      fs.readdir(path.resolve(__dirname + '/../../files/chr/'))
+      fs.readdir(__chrDirectory)
         .then(files => {
           let count = 0;
 
           for (let i = 0, len = files.length; i < len; i++) {
             let currentFile = files[i];
             if (!!currentFile.match(/(_chr\.txt)/gi)) {
-              let filename = path.resolve(__dirname + `/../../files/chr/${currentFile}`);
+              let filename = path.resolve(__chrDirectory + `/${currentFile}`);
       
               fs.readFile(filename)
                 .then(data => {
@@ -91,13 +92,13 @@ class EQLabFiles {
     });
   }
 
-  createSpellsTxt(path) {
+  createSpellsTxt() {
     return new Promise((resolve, reject) => {
       const db = knex.select('*').from('spells_new').stream({highWaterMark: 5});
 
       const transform = new DelimiterTransform({ delimiter: '^'});
   
-      const file = fs.createWriteStream(path, {encoding: 'utf8'});
+      const file = fs.createWriteStream(path.resolve(__filesdir + '/spells_us.txt'), {encoding: 'utf8'});
       file.on('pipe', (src) => {
         console.log('EQLab: Writing to spells_us.txt...');
       });
@@ -115,7 +116,7 @@ class EQLabFiles {
     });
   }
 
-  createTempDatabaseDump(directory, timestamp, version = null) {
+  createTempDatabaseDump(tempDirectory, timestamp, version = null) {
     console.log('EQLab: Dumping database...');
     return new Promise((resolve, reject) => {
       const filetag = version ? version.toString() : timestamp;
@@ -132,7 +133,7 @@ class EQLabFiles {
         addDropTable: true,
         addLocks: true,
         disableKeys: true,//adds /*!40000 ALTER TABLE table DISABLE KEYS */; before insert
-        dest: path.resolve(directory + `/build-${filetag}.sql`)
+        dest: path.resolve(tempDirectory + `/build-${filetag}.sql`)
       }, (error) => {
         if (error) {
           console.log('EQLab: Error while dumping database...');
@@ -144,7 +145,7 @@ class EQLabFiles {
     });
   }
 
-  createTempSpellsTxt(directory) {
+  createTempSpellsTxt(tempDirectory) {
     return new Promise((resolve, reject) => {
       console.log('EQLab: Creating spells_us.txt...');
 
@@ -153,7 +154,7 @@ class EQLabFiles {
 
       db
         .pipe(transform)
-        .pipe(fs.createWriteStream(path.resolve(directory + '/spells_us.txt'), {encoding: 'utf8'})
+        .pipe(fs.createWriteStream(path.resolve(tempDirectory + '/spells_us.txt'), {encoding: 'utf8'})
           .on('pipe', (src) => {
             console.log('EQLab: Writing to spells_us.txt...');
           })
@@ -171,10 +172,10 @@ class EQLabFiles {
     });
   }
 
-  createTempDbStrTxt(directory) {
+  createTempDbStrTxt(tempDirectory) {
     return new Promise((resolve, reject) => {
       console.log('EQLab: Copying current dbstr_us.txt...');
-      fs.copyFile(path.resolve(__basedir + '/../files/dbstr_us.txt'), path.resolve(directory + '/dbstr_us.txt'))
+      fs.copyFile(path.resolve(__filesdir + '/dbstr_us.txt'), path.resolve(tempDirectory + '/dbstr_us.txt'))
         .then(() => {
           console.log('EQLab: Finished copying dbstr_us.txt');
           resolve();
@@ -186,15 +187,17 @@ class EQLabFiles {
     });
   }
 
-  compressTempFiles(directory, timestamp, version = null) {
+  compressTempFiles(tempDirectory, timestamp, version = null) {
     return new Promise((resolve, reject) => {
       console.log('EQLab: Compressing files...'); 
-      const filetag = version ? version.toString() + `-${timestamp}` : timestamp;
 
-      var output = fs.createWriteStream(__basedir + `/../files/builds/build-${filetag}.zip`);
+      const filetag = version ? version.toString() + `-${timestamp}` : timestamp;
+      const destination = path.resolve(__buildsdir + `/build-${filetag}.zip`);
+
+      var output = fs.createWriteStream(destination);
       output.on('close', () => {
         console.log('EQLab: Finished compressing files: ' + archive.pointer() + ' total bytes');
-        resolve(__basedir + `/../files/builds/build-${filetag}.zip`);
+        resolve(destination);
       });
       output.on('end', () => {
         console.log('Data has been drained');
@@ -217,36 +220,36 @@ class EQLabFiles {
       });
 
       archive.pipe(output);
-      archive.directory(directory + '/', false);
+      archive.directory(tempDirectory + '/', false);
       archive.finalize();
     });
   }
 
+  // TO DO: Add socket.io event emitters
   createBuild(version = null) {
     return new Promise((resolve, reject) => {
 
       const timestamp = moment().format("YYYY-MM-DD-HH_mm_ss");
-      const tempDirectory = `/temp/build-${timestamp}`
-      const directory = path.resolve(__basedir + tempDirectory);
+      const tempDirectory = path.resolve(__tempdir + `/build-${timestamp}`);
 
       console.log('EQLab: Creating new build...');
-      fs.mkdir(directory)
+      fs.mkdir(tempDirectory)
         .then(error =>{
           if (error) reject(error);
-          return this.createTempDatabaseDump(directory, timestamp, version)
+          return this.createTempDatabaseDump(tempDirectory, timestamp, version)
         })
         .then(() => {
-          return this.createTempSpellsTxt(directory);
+          return this.createTempSpellsTxt(tempDirectory);
         })
         .then(() => {
-          return this.createTempDbStrTxt(directory);
+          return this.createTempDbStrTxt(tempDirectory);
         })
         .then(() => {
-          return this.compressTempFiles(directory, timestamp, version);
+          return this.compressTempFiles(tempDirectory, timestamp, version);
         })
         .then(newDirectory => {
           console.log('EQLab: Removing temporary folder...');
-          fs.remove(directory)
+          fs.remove(tempDirectory)
             .then(() => {
               console.log('EQLab: Temporary folder deleted successfully'); 
               resolve(path.normalize(newDirectory));

@@ -1,15 +1,13 @@
 'use strict';
 
-require('dotenv').config();
-global.__basedir = __dirname;
-
 const express     = require('express'),
       app         = express(),
       exphbs      = require('express-handlebars'),
       logger      = require('morgan'),
-      // path        = require('path'),
-      api_router  = require('./routes');
+      api_router  = require(__serverRoot + '/routes');
 
+
+/******************************************************/
 
 // Logger
 if (process.env.NODE_ENV === 'production') {
@@ -28,13 +26,13 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
   console.log('EQLab: Using Authentication');
   
   const passportLocalSequelize = require('passport-local-sequelize'),
-        User        = require('./models/sequelize').User,
+        User        = require(__serverRoot + '/models/sequelize').User,
         passport    = require('passport'),
         JwtStrategy = require('passport-jwt').Strategy,
         ExtractJwt  = require('passport-jwt').ExtractJwt,
         jwt         = require('jsonwebtoken'),
         flash       = require('connect-flash'),
-        auth_router = require('./auth/auth_router').auth_router;
+        auth_router = require(__serverRoot + '/auth/auth_router').auth_router;
 
 
   passportLocalSequelize.attachToUser(User, {
@@ -80,9 +78,9 @@ if (process.env.NODE_ENV === 'development') {
 
 // Serve React Client in Production if Not Using Reverse Proxy from nginx/Apache
 if (process.env.NODE_ENV === 'production' && process.env.USE_REVERSE_PROXY === 'FALSE') {
-  app.use(express.static('../client/build'));
+  app.use(express.static(__serverRoot + '/../client/build'));
   app.get('/*', (req, res, next) => {
-    res.sendFile('../client/build/index.html');
+    res.sendFile(__serverRoot + '/../client/build/index.html');
   });
 }
 

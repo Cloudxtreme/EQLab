@@ -1,12 +1,12 @@
 'use strict';
 
-const zone_router = require("express").Router(),
+const zone_router = require('express').Router(),
       jsonParser  = require('body-parser').json(),
       sanitizer   = require('express-sanitize-escape').middleware(),
       validate    = require('./validation/validate.js'),
       vResult     = require('express-validator/check').validationResult,
-      zone        = require("../models/zone.js"),
-      npc         = require("../models/npc.js");
+      zone        = require(__serverRoot + '/models/zone.js'),
+      npc         = require(__serverRoot + '/models/npc.js');
 
 
 zone_router.delete("/spawn/spawngroup/:spawngroupID/spawnentry/:npcID", (req, res, next) => {

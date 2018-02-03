@@ -295,6 +295,16 @@ export const SPELL_RESIST_TYPES = [
   {value: 9, label: "Corruption"}
 ];
 
+export const SPELL_DAMAGESHIELD_TYPES = [
+  {value: 0, label: ""},
+  {value: 244, label: "DS_DECAY"},
+  {value: 245, label: "DS_CHILLED"},
+  {value: 246, label: "DS_FREEZING"},
+  {value: 247, label: "DS_TORMENT"},
+  {value: 248, label: "DS_BURN"},
+  {value: 249, label: "DS_THORNS"}
+];
+
 export const SPELL_DEITIES = [
   {value: 1, label: "Bertoxxulous"},
   {value: 2, label: "Brell Serilis"},

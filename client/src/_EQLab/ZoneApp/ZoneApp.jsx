@@ -114,7 +114,11 @@ class ZoneApp extends React.Component {
             <Panel.Body collapsible={false}>
               <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
                 <Tab.Pane eventKey="spawns">
-                  <Spawns zone={this.props.zone} />
+                {
+                  !this.props.zone
+                    ? null
+                    : <Spawns zone={this.props.zone} />
+                } 
                 </Tab.Pane>
                 <Tab.Pane eventKey="loot">
                   {/* <Loot /> */}

@@ -5,32 +5,31 @@ const files_router = require("express").Router(),
       sanitizer    = require('express-sanitize-escape').middleware(),
       fs           = require('fs-extra'),
       path         = require('path'),
-      EQLabFiles   = require(__basedir + "/models/EQLabFiles.js"),
-      file         = new EQLabFiles(),
-      fileDir      = path.resolve(__basedir + '/../files');
+      EQLabFiles   = require(__serverRoot + '/models/EQLabFiles.js'),
+      file         = new EQLabFiles();
 
 
 /*****************************************************************/
 
 files_router.get("/spells_us.txt", (req, res, next) => {
-  file.createSpellsTxt(path.resolve(fileDir + '/spells.us.txt'))
+  file.createSpellsTxt()
     .then(() => {
-      res.status(200).type('text/plain').download(path.resolve(fileDir + '/spells.us.txt'), 'spells_us.txt');
+      res.status(200).type('text/plain').download(__filesdir + '/spells.us.txt', 'spells_us.txt');
     })
     .catch(error => { next(); });
 });
 
 files_router.get("/dbstr_us.txt", (req, res, next) => {
-  fs.access(path.resolve(fileDir + '/dbstr_us.txt'), err => {
+  fs.access(__filesdir + '/dbstr_us.txt', err => {
     if (err) next();
-    res.status(200).type('text/plain').download(path.resolve(fileDir + '/dbstr_us.txt'), 'dbstr_us.txt');
+    res.status(200).type('text/plain').download(__filesdir + '/dbstr_us.txt', 'dbstr_us.txt');
   })   
 });
 
 files_router.get("/build", (req, res, next) => {
-  file.createBuild('1.0')
-    .then((newFile) => {
-      res.status(200).type('application/zip').download(newFile);
+  file.createBuild(req.body.version)
+    .then(file => {
+      res.status(200).type('application/zip').download(file);
     })
     .catch(error => { next(); });
 });
@@ -50,7 +49,5 @@ files_router.post("/addmodel", jsonParser, sanitizer, (req, res, next) => {
     })
     .catch(error => { next(); });
 });
-
-
 
 module.exports = files_router;
