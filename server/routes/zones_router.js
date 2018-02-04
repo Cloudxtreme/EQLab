@@ -200,4 +200,13 @@ zone_router.get("/list", (req, res, next) => {
     .catch(error => { next(); });
 });
 
+zone_router.get("/map/:zoneName", (req, res, next) => {
+  zone.renderZoneMap(req.params.zoneName)
+    .then(data => {
+      // console.log(data)
+      res.status(200).type('image/svg+xml').send(data);
+    })
+    .catch(error => { next(); });
+});
+
 module.exports = zone_router;

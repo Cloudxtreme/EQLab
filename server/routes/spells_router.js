@@ -65,20 +65,23 @@ spells_router.post("/", jsonParser, sanitizer, (req, res, next) => {
     .catch(error => { next(); });
 });
 
-spells_router.get("/search/:searchTerm", (req, res, next) => {
+spells_router.get("/search/:searchTerm", async (req, res, next) => {
   spell.simpleSearch(req.params.searchTerm)
     .then(data => {
       res.status(200).type('json').json(data);
     })
-    .catch(error => { next(); });
+    .catch(error => {
+       next(); 
+    });
 });
 
-spells_router.post("/search", jsonParser, sanitizer, (req, res, next) => {
-  spell.search(req.body)
-    .then(data => {
-      res.status(200).type('json').json(data);
-    })
-    .catch(error => { next(); });
+spells_router.post("/search", jsonParser, sanitizer, async (req, res, next) => {
+  try {
+    let data = await spell.search(req.body);
+    res.status(200).type('json').json(data);
+  } catch (error) {
+    next();
+  }
 });
 
 // 2550 - Zevfeer's Theft of Vitae
