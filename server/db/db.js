@@ -41,7 +41,7 @@ const db = {
         .from(tableStr)
         .where(whereObj)
         .then(SQLdata => resolve(SQLdata))
-        .catch(error => reject(error))
+        .catch(error => reject(error));
     });
   },
 
@@ -50,12 +50,8 @@ const db = {
       knex
         .insert(insertArr)
         .into(tableStr)
-        .then(SQLdata => {
-          resolve(SQLdata);
-        })
-        .catch(error => {
-          reject(error);
-        });
+        .then(SQLdata => resolve(SQLdata))
+        .catch(error => reject(error));
     });
   },
 
@@ -64,12 +60,8 @@ const db = {
       knex(tableStr)
         .update(updateObj)
         .where(whereObj)
-        .then(SQLdata => {
-          resolve(SQLdata);
-        })
-        .catch(error => {
-          reject(error);
-        });
+        .then(SQLdata => resolve(SQLdata))
+        .catch(error => reject(error));
     });
   },
 
@@ -78,25 +70,17 @@ const db = {
       knex(tableStr)
         .del()
         .where(whereObj)
-        .then(SQLdata => {
-          resolve(SQLdata)
-        })
-        .catch(error => {
-          reject(error);
-        });
+        .then(SQLdata => resolve(SQLdata))
+        .catch(error => reject(error));
     });
   },
   
-  raw: queryStr => {
-    return new Promise((resolve, reject) => {
-      knex.raw(queryStr)
-        .then(SQLdata => {
-          resolve(SQLdata);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
+  raw: async queryStr => {
+    try {
+      return await knex.raw(queryStr);
+    } catch (error) {
+      throw error;
+    }
   }
 
 }
