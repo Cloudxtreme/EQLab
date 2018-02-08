@@ -11,6 +11,7 @@ import {
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SPAWNS_ADD_SPAWN2
 } from '../../constants/actionTypes';
+import ZoneEditor from './ZoneEditor.jsx';
 import Spawns from './Spawns.jsx';
 // import Loot from './Loot.jsx';
 
@@ -77,7 +78,7 @@ class ZoneApp extends React.Component {
 
     return (
       <div id="ZoneApp">
-        <Tab.Container id="zone-panel-container" defaultActiveKey={"spawns"}>
+        <Tab.Container id="zone-panel-container" defaultActiveKey="editor">
           <Panel id="zone-panel" style={{ height: 1006 }}>
             <Panel.Heading style={{ padding: 0 }}>
               <Row id="zone-panel-header" style={{ height: 45 }}>
@@ -102,6 +103,7 @@ class ZoneApp extends React.Component {
                   !this.props.zone
                     ? null
                     : <Nav bsStyle="tabs" style={{ marginTop: 7, borderBottom: "none" }}>
+                        <NavItem eventKey="editor">Editor</NavItem>
                         <NavItem eventKey="spawns">Spawns</NavItem>
                         <NavItem eventKey="loot">Loot</NavItem>
                       </Nav> 
@@ -113,6 +115,13 @@ class ZoneApp extends React.Component {
             </Panel.Heading>
             <Panel.Body collapsible={false}>
               <Tab.Content animation={false} mountOnEnter={false} unmountOnExit={false}>
+                <Tab.Pane eventKey="editor">
+                {
+                  !this.props.zone
+                    ? null
+                    : <ZoneEditor zone={this.props.zone} />
+                } 
+                </Tab.Pane>
                 <Tab.Pane eventKey="spawns">
                 {
                   !this.props.zone

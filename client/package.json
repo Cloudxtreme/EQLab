@@ -28,6 +28,7 @@
     "react-dom": "^15.6.2",
     "react-fontawesome": "^1.6.1",
     "react-helmet": "^5.2.0",
+    "react-inlinesvg": "^0.7.5",
     "react-redux": "^5.0.6",
     "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.2.2",
@@ -35,13 +36,15 @@
     "react-select": "^1.2.0",
     "react-svg-pan-zoom": "^2.15.1",
     "react-table": "^6.7.4",
+    "react-virtualized": "^9.18.5",
     "redux": "^3.7.2",
     "redux-form": "^7.1.2",
     "redux-promise": "^0.5.3",
     "redux-saga": "^0.15.6",
     "socket.io-client": "^2.0.4",
     "socket.io-react": "^1.2.0",
-    "superagent": "^3.8.1"
+    "superagent": "^3.8.1",
+    "svg-inline-react": "^3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

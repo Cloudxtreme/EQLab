@@ -200,13 +200,17 @@ zone_router.get("/list", (req, res, next) => {
     .catch(error => { next(); });
 });
 
-zone_router.get("/map/:zoneName", (req, res, next) => {
-  zone.renderZoneMap(req.params.zoneName)
-    .then(data => {
-      // console.log(data)
-      res.status(200).type('image/svg+xml').send(data);
-    })
-    .catch(error => { next(); });
+zone_router.get("/:zoneName/map", async (req, res, next) => {
+  try {
+    let data = {
+      svg: await zone.renderZoneMap(req.params.zoneName)
+    }
+    
+    res.status(200).type('json').json(data.svg);
+    // res.status(200).type('image/svg+xml').send(data.svg);
+  } catch (error) {
+    next();
+  }
 });
 
 module.exports = zone_router;

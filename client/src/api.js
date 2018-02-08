@@ -52,6 +52,10 @@ const eqlab = {
 const zone = {
   getZoneList: () =>
     requests.get('/zones/list'),
+
+  getZoneMap: (zoneName) =>
+    requests.get(`/zones/${zoneName}/map`),
+
   getFullSpawnTree: zoneName => 
     requests.get(`/zones/spawn/tree/${zoneName}`),
   getSingleSpawn2Tree: spawn2ID => 

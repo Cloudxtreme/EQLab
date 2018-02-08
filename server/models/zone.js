@@ -366,7 +366,7 @@ module.exports = {
     }
   },
 
-  renderMapLayer: (zoneName) => {
+  renderMapLayer: (zoneName, layer) => {
     return new Promise((resolve, reject) => {
   
       let xArr = [], yArr = [];
@@ -454,23 +454,6 @@ module.exports = {
             height: Math.floor(Math.abs(y_min) + Math.abs(y_max))
           }
     
-          // Create SVG
-          const d3n = new D3Node({ styles:'.test {fill:#808080;}' });
-          // <svg xmlns="http://www.w3.org/2000/svg" zoomAndPan="magnify" viewBox="0,-150,1000,1000" width="1000" height="1000">
-          // viewBox="200,-100,500,500" width="1000" height="1000"
-          
-
-          // console.log(dimensions)
-          let svg = d3n.createSVG(1900, 1200)
-                      // .attr('viewBox', `${(dimensions.width/2)*-1},${(dimensions.height/2)*-1},${dimensions.width},${dimensions.height}`)
-                      .attr('viewBox', `-875,-600,1900,1200`)
-                      .attr('preserveAspectRatio', 'xMidYMid meet')
-                      .attr('style', 'border-style:solid;border-width:5px');
- 
-          svg
-            .append('circle')
-            .attr('r', 10)
-
           // Create Lines
           for (let i = 0, len = lines.length; i < len; i++) {
             let line = lines[i];
@@ -496,8 +479,6 @@ module.exports = {
               .attr('r', 2)
           }
 
-          // Stringify SVG
-          svg = d3n.svgString();
           resolve(svg);
         })
         .catch(error => {
@@ -506,12 +487,36 @@ module.exports = {
     });
   },
 
-  renderZoneMap: (zoneName) => {
+  renderZoneMap: async (zoneName) => {
+
     // Create SVG
     // use fs to find number of layers
     // loop thru layers and call renderMapLayer(zoneName, layer) and append layers
     // Create gridline layer
     // Fetch and render existing zone data from db (spawns, traps, objects, etc)
+
+
+    // Create SVG
+    const d3n = new D3Node({ styles:'.test {fill:#808080;}' });
+
+    let svg = d3n.createSVG(1900, 1200)
+                .attr('viewBox', `-875,-600,1900,1200`)
+                .attr('preserveAspectRatio', 'xMidYMid meet')
+                .attr('style', 'border-style:solid;border-width:5px');
+
+    svg
+      .append('circle')
+      .attr('r', 10)
+
+    // Stringify SVG
+    svg = d3n.svgString();
+
+    // Convert to JSX
+    var svgtojsx = require('svg-to-jsx');
+
+    svg = await svgtojsx(svg);
+
+    return svg;
   }
       
 }
