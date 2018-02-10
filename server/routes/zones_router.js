@@ -202,11 +202,10 @@ zone_router.get("/list", (req, res, next) => {
 
 zone_router.get("/:zoneName/map", async (req, res, next) => {
   try {
-    let data = {
-      svg: await zone.renderZoneMap(req.params.zoneName)
-    }
     
-    res.status(200).type('json').json(data.svg);
+    let data = await zone.renderZoneMap(req.params.zoneName);
+    
+    res.status(200).type('json').json(data);
     // res.status(200).type('image/svg+xml').send(data.svg);
   } catch (error) {
     next();

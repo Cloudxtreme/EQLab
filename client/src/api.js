@@ -53,7 +53,7 @@ const zone = {
   getZoneList: () =>
     requests.get('/zones/list'),
 
-  getZoneMap: (zoneName) =>
+  getZoneMap: (zoneName) => 
     requests.get(`/zones/${zoneName}/map`),
 
   getFullSpawnTree: zoneName => 

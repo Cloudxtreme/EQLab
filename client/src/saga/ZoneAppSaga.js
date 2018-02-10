@@ -44,8 +44,7 @@ function* selectZone(action) {
 /************************** EDITOR *************************/
 
 function* loadEditor(action) {
-  const zoneMap = yield call(api.zone.getZoneMap);
-  console.log(zoneMap)
+  const zoneMap = yield call(api.zone.getZoneMap, action.zoneName);
   yield put({ type: ZONEAPP_EDITOR_SET_ZONEMAP, zoneMap: zoneMap });
 }
 
