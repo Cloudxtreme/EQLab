@@ -6,7 +6,7 @@ import {
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SET_ZONE,
   ZONEAPP_EDITOR_LOAD,
-  ZONEAPP_EDITOR_SET_ZONEMAP,
+  ZONEAPP_EDITOR_SET_ZONEMAPDATA,
   ZONEAPP_SPAWNS_BUILD_SPAWNTREE,
   ZONEAPP_SPAWNS_REBUILD_SPAWNTREE,
   ZONEAPP_SPAWNS_GET_SPAWN2TREE,
@@ -44,8 +44,8 @@ function* selectZone(action) {
 /************************** EDITOR *************************/
 
 function* loadEditor(action) {
-  const zoneMap = yield call(api.zone.getZoneMap, action.zoneName);
-  yield put({ type: ZONEAPP_EDITOR_SET_ZONEMAP, zoneMap: zoneMap });
+  const zoneMapData = yield call(api.zone.getZoneMapData, action.zoneName);
+  yield put({ type: ZONEAPP_EDITOR_SET_ZONEMAPDATA, zoneMapData });
 }
 
 /************************** SPAWNS *************************/

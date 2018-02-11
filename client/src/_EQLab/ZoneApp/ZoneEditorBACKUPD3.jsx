@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import * as d3 from "d3";
 import { AutoSizer } from 'react-virtualized';
 import { ReactSVGPanZoom } from 'react-svg-pan-zoom';
-// import SVG from 'react-inlinesvg';
-// import InlineSVG from 'svg-inline-react';
 // import FontAwesome from 'react-fontawesome';
 import {
   ZONEAPP_EDITOR_LOAD,
@@ -14,7 +12,7 @@ import {
 
 
 const mapStateToProps = state => ({
-  zoneMap: state.ZoneApp.zoneMap
+  zoneMapData: state.ZoneApp.zoneMapData
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -26,6 +24,20 @@ const mapDispatchToProps = dispatch => ({
 
 
 class ZoneEditor extends React.Component {
+  constructor(props) {
+    super(props)
+    
+    this.renderZoneMap = () => {
+      const zoneMap = this.zoneMap;
+
+      d3.select(zoneMap)
+        .append('circle')
+        .attr('cx', 0)
+        .attr('cy', 0)
+
+      return svg2;
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.zone && (nextProps.zone !== this.props.zone)) {
@@ -45,27 +57,16 @@ class ZoneEditor extends React.Component {
 
   render() {
 
-    const svg = <svg id="zonemapsvg" width={1900} height={1200}><circle cx="0" cy="0" r="5"/></svg>;
+    const zoneMap = this.renderZoneMap();
 
     return (
       <div id="ZoneEditor">
-
-      {/* 
-
-      Fallback option (CHOSEN):
-      Only use server to read data from map files then send data as json and fully render on client
-      
-       */}
-
-            <ReactSVGPanZoom width={1900} height={1200}>
-              
-              {/* <svg height={1200} style={{"borderStyle":"solid","borderWidth":"5px"}} width={1900} preserveAspectRatio="xMidYMid meet" viewBox="-875,-600,1900,1200">
-              <defs/>
-              <circle r="10"/>
-              </svg> */}
-              {svg}
-            </ReactSVGPanZoom>
-  
+        <svg ref={node => this.zoneMap = zoneMap} width={1900} height={1200}>
+          <circle cx="0" cy="0" r="5"/>
+        </svg>
+        {/* <ReactSVGPanZoom width={1900} height={1200}>
+          {zoneMap}
+        </ReactSVGPanZoom> */}
       </div>
     )
   }

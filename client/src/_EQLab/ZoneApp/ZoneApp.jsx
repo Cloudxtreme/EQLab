@@ -11,7 +11,7 @@ import {
   ZONEAPP_SELECT_ZONE,
   ZONEAPP_SPAWNS_ADD_SPAWN2
 } from '../../constants/actionTypes';
-import ZoneEditor from './ZoneEditor.jsx';
+import ZoneEditor from './ZoneEditor/ZoneEditor.jsx';
 import Spawns from './Spawns.jsx';
 // import Loot from './Loot.jsx';
 

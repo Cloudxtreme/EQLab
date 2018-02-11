@@ -63,25 +63,101 @@ const zone = {
   getTraps: async (zoneName) => {
     try {
       let queryStr = `
-      SELECT forage.id, forage.level, forage.chance, forage.Itemid, items.Name
+      SELECT grid.id, grid.type, grid.type2, grid_entries.number AS 'grid_entries:number',
+      grid_entries.x AS 'grid_entries:x', grid_entries.y AS 'grid_entries:y', grid_entries.z AS 'grid_entries:z',
+      grid_entries.heading AS 'grid_entries:heading', grid_entries.pause AS 'grid_entries:pause'
       FROM zone
-      LEFT JOIN forage ON forage.zoneid = zone.zoneidnumber
-      LEFT JOIN items ON items.id = forage.Itemid
+      LEFT JOIN grid ON grid.zoneid = zone.id
+      LEFT JOIN grid_entries ON grid_entries.gridid = grid.id
       WHERE zone.short_name = '${zoneName}'
       `;
   
       let SQLdata = await db.raw(queryStr);
-      return sanitize(SQLdata[0]);
+
+      return SQLdata;
+      let traps = new Treeize();
+      // SQLdata[0] = sanitize(SQLdata[0]);
+      traps = traps.grow(SQLdata[0]).getData();
+      return traps
     } catch (error) {
       throw new Error(`EQLab: Error in zone.getTraps(${zoneName}): ` + error);
+    }
+  },
+
+  getGroundSpawns: async (zoneName) => {
+    try {
+      let queryStr = `
+      SELECT zone.id, ground_spawns.version, ground_spawns.max_x, ground_spawns.max_y, ground_spawns.max_z,
+      ground_spawns.min_x, ground_spawns.min_y, ground_spawns.heading, ground_spawns.name, ground_spawns.item,
+      ground_spawns.max_allowed, ground_spawns.comment, ground_spawns.respawn_timer
+      FROM zone
+      LEFT JOIN ground_spawns ON ground_spawns.zoneid = zone.id
+      WHERE zone.short_name = '${zoneName}'
+      `;
+  
+      let SQLdata = await db.raw(queryStr);
+
+      // let ground_spawns = new Treeize();
+      // SQLdata[0] = sanitize(SQLdata[0]);
+      // ground_spawns = ground_spawns.grow(SQLdata[0]).getData();
+      return SQLdata[0];
+    } catch (error) {
+      throw new Error(`EQLab: Error in zone.getGroundSpawns(${zoneName}): ` + error);
+    }
+  },
+
+  getObjects: async (zoneName) => {
+    try {
+      let queryStr = `
+      SELECT zone.id, object.version, object.xpos, object.ypos, object.zpos,
+      object.heading, object.itemid, object.charges, object.objectname,
+      object.type, object.icon, object.unknown08, object.unknown10, object.unknown20,
+      object.unknown24, object.unknown60, object.unknown64, object.unknown68,
+      object.unknown72, object.unknown76, object.unknown84
+      FROM zone
+      LEFT JOIN object ON object.zoneid = zone.id
+      WHERE zone.short_name = '${zoneName}'
+      `;
+  
+      let SQLdata = await db.raw(queryStr);
+
+      // let objects = new Treeize();
+      // SQLdata[0] = sanitize(SQLdata[0]);
+      // grid = grid.grow(SQLdata[0]).getData();
+      return SQLdata[0];
+    } catch (error) {
+      throw new Error(`EQLab: Error in zone.getObjects(${zoneName}): ` + error);
+    }
+  },
+
+  getGrid: async (zoneName) => {
+    try {
+      let queryStr = `
+      SELECT grid.id, grid.type, grid.type2, grid_entries.number AS 'grid_entries:number',
+      grid_entries.x AS 'grid_entries:x', grid_entries.y AS 'grid_entries:y', grid_entries.z AS 'grid_entries:z',
+      grid_entries.heading AS 'grid_entries:heading', grid_entries.pause AS 'grid_entries:pause'
+      FROM zone
+      LEFT JOIN grid ON grid.zoneid = zone.id
+      LEFT JOIN grid_entries ON grid_entries.gridid = grid.id
+      WHERE zone.short_name = '${zoneName}'
+      `;
+  
+      let SQLdata = await db.raw(queryStr);
+
+      let grid = new Treeize();
+      SQLdata[0] = sanitize(SQLdata[0]);
+      grid = grid.grow(SQLdata[0]).getData();
+      return grid
+    } catch (error) {
+      throw new Error(`EQLab: Error in zone.getGrid(${zoneName}): ` + error);
     }
   },
 
   getSpawnTree: async (zoneName) => {
     try {
       let queryStr = `
-      SELECT spawn2.id AS 'id', spawn2.zone, spawn2.version, spawn2.enabled, spawngroup.id AS 'spawngroup:id', 
-      spawngroup.name AS 'spawngroup:name', spawnentry.chance AS 'spawngroup:spawnentries:chance', 
+      SELECT spawn2.id AS 'id', spawn2.zone, spawn2.version, spawn2.x, spawn2.y, spawn2.z, spawn2.enabled, 
+      spawngroup.id AS 'spawngroup:id', spawngroup.name AS 'spawngroup:name', spawnentry.chance AS 'spawngroup:spawnentries:chance', 
       spawnentry.npcID AS 'spawngroup:spawnentries:npc_id', npc_types.name AS 'spawngroup:spawnentries:npc_name',
       npc_types.level AS 'spawngroup:spawnentries:npc_level', npc_types.maxlevel AS 'spawngroup:spawnentries:npc_maxlevel'
       FROM spawn2
@@ -367,7 +443,7 @@ const zone = {
     }
   },
 
-  renderMapLayer(zoneName, layer) {
+  formatMapLayer(zoneName, layer) {
     return new Promise((resolve, reject) => {
       let filename;
 
@@ -393,7 +469,7 @@ const zone = {
           points = data.match(/P\s.+/g);
 
           if (points) {
-            points = points.map(point => {
+            points = points.map((point, index) => {
 
               pArr = point.slice(2).split(',').map(str => str.trim())
   
@@ -410,6 +486,7 @@ const zone = {
               pLabel = pArr.pop();
   
               return {
+                key: `${layer}-P-${index}`,
                 p,
                 color: pColor,
                 fontSize: pFontSize,
@@ -422,7 +499,7 @@ const zone = {
           lines = data.match(/L\s.+/g);
           
           if (lines) {
-            lines = lines.map(line => {
+            lines = lines.map((line, index) => {
 
               lArr = line.slice(2).split(',').map(str => str.trim())
   
@@ -442,6 +519,7 @@ const zone = {
               lColor = {r: parseInt(lColorArr[0], 10), g: parseInt(lColorArr[1], 10), b: parseInt(lColorArr[2], 10)}
         
               return {
+                key: `${layer}-L-${index}`,
                 p1,
                 p2,
                 color: lColor
@@ -452,12 +530,12 @@ const zone = {
           resolve({ lines, points });
         })
         .catch(error => {
-          throw new Error(`EQLab: Error in zone.renderMapLayer(${zoneName}, ${layer}): ` + error);
+          throw new Error(`EQLab: Error in zone.getMapLayer(${zoneName}, ${layer}): ` + error);
         })
     })
   },
 
-  async renderZoneMap(zoneName) {
+  async getZoneMapData(zoneName) {
     try {
 
     let baseData = {
@@ -469,32 +547,35 @@ const zone = {
     
     let entityData = {};
 
-    let files = (await fs.readdir(__mapsdir)).filter(file => file.includes(zoneName));
-    
+    let files = (await fs.readdir(__mapsdir)).filter(filename => filename.startsWith(zoneName));
+
     if (files.length) {
       for (let i = 0, len = files.length; i < len; i++) {
-        baseData[i] = await this.renderMapLayer(zoneName, i);
+        baseData[i] = await this.formatMapLayer(zoneName, i);
       }
     }
 
     // entityData tables
     // doors
-    // grid
-    // grid_entries
+    entityData.doors = await db.select('doors', [], { zone: zoneName });
+    // grid + grid_entries
+    // entityData.grid = await this.getGrid(zoneName);
     // ground_spawns
+    entityData.ground_spawns = await this.getGroundSpawns(zoneName);
     // object
+    entityData.objects = await this.getObjects(zoneName);
     // spawn2
-    
+    entityData.spawns = await this.getSpawnTree(zoneName);
     // start_zones
     // traps
+    entityData.traps = await db.select('traps', [], { zone: zoneName });
     // zone (safe points)
     // zone_points
 
-    
     return { baseData, entityData }
 
     } catch (error) {
-      throw new Error(`EQLab: Error in zone.renderZoneMap(${zoneName}): ` + error)
+      throw new Error(`EQLab: Error in zone.getZoneMapData(${zoneName}): ` + error)
     }
   }
       

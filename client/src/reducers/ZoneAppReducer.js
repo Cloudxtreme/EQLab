@@ -3,7 +3,7 @@ import {
   ZONEAPP_UNLOAD,
   ZONEAPP_SET_ZONELIST,
   ZONEAPP_SET_ZONE,
-  ZONEAPP_EDITOR_SET_ZONEMAP,
+  ZONEAPP_EDITOR_SET_ZONEMAPDATA,
   ZONEAPP_SPAWNS_SET_MODE,
   ZONEAPP_SPAWNS_BUILD_SPAWNTREE,
   ZONEAPP_SPAWNS_CLEAR_SPAWNTREE,
@@ -17,9 +17,9 @@ import {
 function get_INITIAL_STATE() {
   return { 
     isLoaded: false,
-    zone: '',
     zoneList: [],
-    zoneMap: '',
+    zone: '',
+    zoneMapData: {},
     spawnTree: [],
     spawnsMode: '',
     spawnsID: null
@@ -45,10 +45,10 @@ export default (state = get_INITIAL_STATE(), action) => {
         ...state,
         zone: action.zone ? action.zone : ''
       }
-    case ZONEAPP_EDITOR_SET_ZONEMAP:
+    case ZONEAPP_EDITOR_SET_ZONEMAPDATA:
       return {
         ...state,
-        zoneMap: action.zoneMap ? action.zoneMap : ''
+        zoneMapData: action.zoneMapData ? action.zoneMapData : {}
       }
     case ZONEAPP_SPAWNS_BUILD_SPAWNTREE:
       return {
