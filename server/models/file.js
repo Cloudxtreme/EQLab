@@ -11,7 +11,7 @@ const knex               = require(__serverRoot + '/db/db.js').knex,
 
 /******************************************************/
 
-class EQLabFiles {
+const file = {
 
   addModelToZone(zoneName, model) {
     return new Promise((resolve, reject) => {
@@ -41,7 +41,7 @@ class EQLabFiles {
           reject(error);
         });
     });
-  }
+  },
 
   addModelToAllZones(model) {
     return new Promise((resolve, reject) => {
@@ -90,7 +90,7 @@ class EQLabFiles {
           reject(error);
         })
     });
-  }
+  },
 
   createSpellsTxt() {
     return new Promise((resolve, reject) => {
@@ -114,7 +114,7 @@ class EQLabFiles {
       
       db.pipe(transform).pipe(file);
     });
-  }
+  },
 
   createTempDatabaseDump(tempDirectory, timestamp, version = null) {
     console.log('EQLab: Dumping database...');
@@ -143,7 +143,7 @@ class EQLabFiles {
         resolve();
       });
     });
-  }
+  },
 
   createTempSpellsTxt(tempDirectory) {
     return new Promise((resolve, reject) => {
@@ -170,7 +170,7 @@ class EQLabFiles {
         )
 
     });
-  }
+  },
 
   createTempDbStrTxt(tempDirectory) {
     return new Promise((resolve, reject) => {
@@ -185,7 +185,7 @@ class EQLabFiles {
           reject(error);
         })
     });
-  }
+  },
 
   compressTempFiles(tempDirectory, timestamp, version = null) {
     return new Promise((resolve, reject) => {
@@ -223,7 +223,7 @@ class EQLabFiles {
       archive.directory(tempDirectory + '/', false);
       archive.finalize();
     });
-  }
+  },
 
   // TO DO: Add socket.io event emitters
   createBuild(version = null) {
@@ -264,4 +264,4 @@ class EQLabFiles {
 
 }
 
-module.exports = EQLabFiles;
+module.exports = file;

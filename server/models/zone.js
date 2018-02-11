@@ -367,7 +367,8 @@ const zone = {
     }
   },
 
-  renderMapLayer: async (zoneName, layer) => {
+  renderMapLayer(zoneName, layer) {
+    return new Promise((resolve, reject) => {
       let filename;
 
       if (layer === 0) {
@@ -375,7 +376,7 @@ const zone = {
       } else {
         filename = `/${zoneName}_${layer}.txt`;
       }
-  
+
       let xArr = [], yArr = [];
       let x_min, x_max;
       let y_min, y_max;
@@ -384,61 +385,123 @@ const zone = {
       let points, pArr, pCoordsArr, p, pColorArr, pColor, pFontSize, pLabel;
       let lines, lArr, lCoordsArr, p1Arr, p1, p2Arr, p2, lColorArr, lColor;
     
-      let data = await fs.readFile(path.resolve(__mapsdir + filename));
-      data = data.toString();
+      fs.readFile(path.resolve(__mapsdir + filename))
+        .then(data => {
+          data = data.toString();
 
-      // Find All Points
-      points = data.match(/P\s.+/g).map(line => {
+          // Find All Points
+          points = data.match(/P\s.+/g);
 
-        pArr = line.slice(2).split(',').map(str => str.trim())
+          if (points) {
+            points = points.map(point => {
 
-        pCoordsArr = pArr.slice(0, 3).map(coord => {
-          if (coord == 0) return 0;
-          return (coord * -1);
-        });
-        p = {x: pCoordsArr[1], y: pCoordsArr[0], z: pCoordsArr[2]};
+              pArr = point.slice(2).split(',').map(str => str.trim())
   
-        pColorArr = pArr.slice(3, 6);
-        pColor = {r: parseInt(pColorArr[0], 10), g: parseInt(pColorArr[1], 10), b: parseInt(pColorArr[2], 10)}
-  
-        pFontSize = parseInt(pArr.slice(6)[0], 10);
-        pLabel = pArr.pop();
-
-        return {
-          p,
-          color: pColor,
-          fontSize: pFontSize,
-          label: pLabel
-        }
-      })
-    
-      // Find All Lines
-      lines = data.match(/L\s.+/g).map(line => {
-
-        lArr = line.slice(2).split(',').map(str => str.trim())
-
-        p1Arr = lArr.slice(0, 3).map(coord => {
-          if (coord == 0) return 0;
-          return coord;
-        });
-        p1 = {x: p1Arr[0], y: p1Arr[1], z: p1Arr[2]};
+              pCoordsArr = pArr.slice(0, 3).map(coord => {
+                if (coord == 0) return 0;
+                return (coord * -1);
+              });
+              p = {x: parseInt(pCoordsArr[1], 10), y: parseInt(pCoordsArr[0], 10), z: parseInt(pCoordsArr[2], 10)};
         
-        p2Arr = lArr.slice(3, 6).map(coord => {
-          if (coord == 0) return 0;
-          return coord;
-        });
-        p2 = {x: p2Arr[0], y: p2Arr[1], z: p2Arr[2]};
+              pColorArr = pArr.slice(3, 6);
+              pColor = {r: parseInt(pColorArr[0], 10), g: parseInt(pColorArr[1], 10), b: parseInt(pColorArr[2], 10)}
+        
+              pFontSize = parseInt(pArr.slice(6)[0], 10);
+              pLabel = pArr.pop();
   
-        lColorArr = lArr.slice(6);
-        lColor = {r: parseInt(lColorArr[0], 10), g: parseInt(lColorArr[1], 10), b: parseInt(lColorArr[2], 10)}
+              return {
+                p,
+                color: pColor,
+                fontSize: pFontSize,
+                label: pLabel
+              }
+            });
+          }
+          
+          // Find All Lines
+          lines = data.match(/L\s.+/g);
+          
+          if (lines) {
+            lines = lines.map(line => {
+
+              lArr = line.slice(2).split(',').map(str => str.trim())
   
-        return {
-          p1,
-          p2,
-          color: lColor
-        }
-      });
+              p1Arr = lArr.slice(0, 3).map(coord => {
+                if (coord == 0) return 0;
+                return coord;
+              });
+              p1 = {x: parseInt(p1Arr[0], 10), y: parseInt(p1Arr[1], 10), z: parseInt(p1Arr[2], 10)};
+              
+              p2Arr = lArr.slice(3, 6).map(coord => {
+                if (coord == 0) return 0;
+                return coord;
+              });
+              p2 = {x: parseInt(p2Arr[0], 10), y: parseInt(p2Arr[1], 10), z: parseInt(p2Arr[2], 10)};
+        
+              lColorArr = lArr.slice(6);
+              lColor = {r: parseInt(lColorArr[0], 10), g: parseInt(lColorArr[1], 10), b: parseInt(lColorArr[2], 10)}
+        
+              return {
+                p1,
+                p2,
+                color: lColor
+              }
+            });
+          }
+  
+          resolve({ lines, points });
+        })
+        .catch(error => {
+          throw new Error(`EQLab: Error in zone.renderMapLayer(${zoneName}, ${layer}): ` + error);
+        })
+    })
+  },
+
+  async renderZoneMap(zoneName) {
+    try {
+
+    let baseData = {
+      0: null,
+      1: null,
+      2: null,
+      3: null
+    };
     
+    let entityData = {};
+
+    let files = (await fs.readdir(__mapsdir)).filter(file => file.includes(zoneName));
+    
+    if (files.length) {
+      for (let i = 0, len = files.length; i < len; i++) {
+        baseData[i] = await this.renderMapLayer(zoneName, i);
+      }
+    }
+
+    // entityData tables
+    // doors
+    // grid
+    // grid_entries
+    // ground_spawns
+    // object
+    // spawn2
+    
+    // start_zones
+    // traps
+    // zone (safe points)
+    // zone_points
+
+    
+    return { baseData, entityData }
+
+    } catch (error) {
+      throw new Error(`EQLab: Error in zone.renderZoneMap(${zoneName}): ` + error)
+    }
+  }
+      
+}
+
+module.exports = zone;
+
           // Calculate Dimensions of SVG, adding some extra for margins
           // for (let i = 0, len = points.length; i < len; i++) {
           //   xArr.push(points[i].p.x);
@@ -458,42 +521,3 @@ const zone = {
           //   width: Math.floor(Math.abs(x_min) + Math.abs(x_max)),
           //   height: Math.floor(Math.abs(y_min) + Math.abs(y_max))
           // }
-
-      return { lines, points }
-       
-  },
-
-  renderZoneMap: async (zoneName) => {
-    
-    // use fs to find number of layers
-    // loop thru layers and call renderMapLayer(zoneName, layer) and append layers
-    // Fetch and render existing zone data from db (spawns, traps, objects, etc)
-
-    let baseData = {
-      0: null,
-      1: null,
-      2: null,
-      3: null
-    };
-    
-    let entityData = {};
-
-    let files = (await fs.readdir(__mapsdir)).filter(file => file.includes(zoneName));
-    
-    if (files.length) {
-      for (let i = 0, len = files.length; i < len; i++) {
-        baseData[i] = (await zone.renderMapLayer(zoneName, i));
-        // console.log(i)
-      }
-
-      console.log(baseData)
-      return baseData;
-    }
-
-    
-    // return { baseData, entityData }
-  }
-      
-}
-
-module.exports = zone;

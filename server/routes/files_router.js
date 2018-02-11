@@ -5,8 +5,7 @@ const files_router = require("express").Router(),
       sanitizer    = require('express-sanitize-escape').middleware(),
       fs           = require('fs-extra'),
       path         = require('path'),
-      EQLabFiles   = require(__serverRoot + '/models/EQLabFiles.js'),
-      file         = new EQLabFiles();
+      file         = require(__serverRoot + '/models/file.js');
 
 
 /*****************************************************************/
