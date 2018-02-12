@@ -459,7 +459,7 @@ const zone = {
       let dimensions;
     
       let points, pArr, pCoordsArr, p, pColorArr, pColor, pFontSize, pLabel;
-      let lines, lArr, lCoordsArr, p1Arr, p1, p2Arr, p2, lColorArr, lColor;
+      let lines, linePoints = [], lArr, lCoordsArr, p1Arr, p1, p2Arr, p2, lColorArr, lColor;
     
       fs.readFile(path.resolve(__mapsdir + filename))
         .then(data => {
@@ -475,9 +475,9 @@ const zone = {
   
               pCoordsArr = pArr.slice(0, 3).map(coord => {
                 if (coord == 0) return 0;
-                return (coord * -1);
+                return coord * -1;
               });
-              p = {x: parseInt(pCoordsArr[1], 10), y: parseInt(pCoordsArr[0], 10), z: parseInt(pCoordsArr[2], 10)};
+              p = {x: parseInt(pCoordsArr[0], 10), y: parseInt(pCoordsArr[1], 10), z: parseInt(pCoordsArr[2], 10)};
         
               pColorArr = pArr.slice(3, 6);
               pColor = {r: parseInt(pColorArr[0], 10), g: parseInt(pColorArr[1], 10), b: parseInt(pColorArr[2], 10)}
@@ -505,18 +505,21 @@ const zone = {
   
               p1Arr = lArr.slice(0, 3).map(coord => {
                 if (coord == 0) return 0;
-                return coord;
+                return coord * -1;
               });
-              p1 = {x: parseInt(p1Arr[0], 10), y: parseInt(p1Arr[1], 10), z: parseInt(p1Arr[2], 10)};
+              p1 = { id: `L${index}-P1`, x: parseInt(p1Arr[0], 10), y: parseInt(p1Arr[1], 10), z: parseInt(p1Arr[2], 10)};
               
               p2Arr = lArr.slice(3, 6).map(coord => {
                 if (coord == 0) return 0;
-                return coord;
+                return coord * -1;
               });
-              p2 = {x: parseInt(p2Arr[0], 10), y: parseInt(p2Arr[1], 10), z: parseInt(p2Arr[2], 10)};
+              p2 = { id: `L${index}-P2`, x: parseInt(p2Arr[0], 10), y: parseInt(p2Arr[1], 10), z: parseInt(p2Arr[2], 10)};
         
               lColorArr = lArr.slice(6);
               lColor = {r: parseInt(lColorArr[0], 10), g: parseInt(lColorArr[1], 10), b: parseInt(lColorArr[2], 10)}
+
+              linePoints.push(p1);
+              linePoints.push(p2);
         
               return {
                 key: `${layer}-L-${index}`,
@@ -526,8 +529,12 @@ const zone = {
               }
             });
           }
-  
-          resolve({ lines, points });
+
+          if (layer === 0) {
+            resolve({ lines, points, linePoints });
+          } else {
+            resolve({ lines, points });
+          }
         })
         .catch(error => {
           throw new Error(`EQLab: Error in zone.getMapLayer(${zoneName}, ${layer}): ` + error);
@@ -552,6 +559,10 @@ const zone = {
     if (files.length) {
       for (let i = 0, len = files.length; i < len; i++) {
         baseData[i] = await this.formatMapLayer(zoneName, i);
+        // console.log(baseData[i].linePoints)
+        if ((i === 0) && baseData[i].linePoints.length) {
+          baseData[i].linePoints.sort((a, b) => a.x - b.x || a.y - b.y);
+        }
       }
     }
 
