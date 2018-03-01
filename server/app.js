@@ -30,9 +30,8 @@ if (process.env.USE_AUTHENTICATION === 'TRUE') {
         passport    = require('passport'),
         JwtStrategy = require('passport-jwt').Strategy,
         ExtractJwt  = require('passport-jwt').ExtractJwt,
-        jwt         = require('jsonwebtoken'),
         flash       = require('connect-flash'),
-        auth_router = require(__serverRoot + '/auth/auth_router').auth_router;
+        auth_router = require(__serverRoot + '/routes/auth_router.js').auth_router;
 
 
   passportLocalSequelize.attachToUser(User, {

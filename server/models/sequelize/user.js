@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER
     },
     status: {
-      type: DataTypes.ENUM('user', 'dev', 'admin'),
+      type: DataTypes.ENUM('user', 'developer', 'admin'),
       defaultValue: 'user'
     },
     username: {

@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class MapLayer extends React.Component {
+class MapLayer extends React.PureComponent {
   render() {
     return (
       <g id={`layer${this.props.layer}`}>

@@ -8,7 +8,7 @@ import {
 import { connect } from 'react-redux'
 import { reduxForm, Field } from 'redux-form'
 import Input from '../_EQLab/components/form/Input.jsx'
-import './Auth.css'
+import './Authentication.css'
 
 const mapDispatchToProps = dispatch => ({
   logIn: (username, password) =>

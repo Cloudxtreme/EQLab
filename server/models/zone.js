@@ -87,7 +87,7 @@ const zone = {
   getGroundSpawns: async (zoneName) => {
     try {
       let queryStr = `
-      SELECT zone.id, ground_spawns.version, ground_spawns.max_x, ground_spawns.max_y, ground_spawns.max_z,
+      SELECT ground_spawns.id, ground_spawns.version, ground_spawns.max_x, ground_spawns.max_y, ground_spawns.max_z,
       ground_spawns.min_x, ground_spawns.min_y, ground_spawns.heading, ground_spawns.name, ground_spawns.item,
       ground_spawns.max_allowed, ground_spawns.comment, ground_spawns.respawn_timer
       FROM zone
@@ -477,7 +477,7 @@ const zone = {
                 if (coord == 0) return 0;
                 return coord * -1;
               });
-              p = {x: parseInt(pCoordsArr[0], 10), y: parseInt(pCoordsArr[1], 10), z: parseInt(pCoordsArr[2], 10)};
+              p = {x: parseInt(pCoordsArr[0], 10), y: parseInt(pCoordsArr[1], 10), z: parseInt(pCoordsArr[2], 10) * -1 };
         
               pColorArr = pArr.slice(3, 6);
               pColor = {r: parseInt(pColorArr[0], 10), g: parseInt(pColorArr[1], 10), b: parseInt(pColorArr[2], 10)}
@@ -507,13 +507,13 @@ const zone = {
                 if (coord == 0) return 0;
                 return coord * -1;
               });
-              p1 = { id: `L${index}-P1`, x: parseInt(p1Arr[0], 10), y: parseInt(p1Arr[1], 10), z: parseInt(p1Arr[2], 10)};
+              p1 = { id: `L${index}-P1`, x: parseInt(p1Arr[0], 10), y: parseInt(p1Arr[1], 10), z: parseInt(p1Arr[2], 10) * -1 };
               
               p2Arr = lArr.slice(3, 6).map(coord => {
                 if (coord == 0) return 0;
                 return coord * -1;
               });
-              p2 = { id: `L${index}-P2`, x: parseInt(p2Arr[0], 10), y: parseInt(p2Arr[1], 10), z: parseInt(p2Arr[2], 10)};
+              p2 = { id: `L${index}-P2`, x: parseInt(p2Arr[0], 10), y: parseInt(p2Arr[1], 10), z: parseInt(p2Arr[2], 10) * -1};
         
               lColorArr = lArr.slice(6);
               lColor = {r: parseInt(lColorArr[0], 10), g: parseInt(lColorArr[1], 10), b: parseInt(lColorArr[2], 10)}
@@ -537,7 +537,7 @@ const zone = {
           }
         })
         .catch(error => {
-          throw new Error(`EQLab: Error in zone.getMapLayer(${zoneName}, ${layer}): ` + error);
+          reject(new Error(`EQLab: Error in zone.formatMapLayer(${zoneName}, ${layer}): ` + error));
         })
     })
   },
@@ -554,14 +554,15 @@ const zone = {
     
     let entityData = {};
 
-    let files = (await fs.readdir(__mapsdir)).filter(filename => filename.startsWith(zoneName));
+    let files = (await fs.readdir(__mapsdir)).filter(filename => {
+      return filename === `${zoneName}.txt` || filename.startsWith(`${zoneName}_`);
+    });
 
     if (files.length) {
-      for (let i = 0, len = files.length; i < len; i++) {
-        baseData[i] = await this.formatMapLayer(zoneName, i);
-        // console.log(baseData[i].linePoints)
-        if ((i === 0) && baseData[i].linePoints.length) {
-          baseData[i].linePoints.sort((a, b) => a.x - b.x || a.y - b.y);
+      for (let layer = 0, len = files.length; layer < len; layer++) {   
+        baseData[layer] = await this.formatMapLayer(zoneName, layer);
+        if ((layer === 0) && baseData[layer].linePoints.length) {
+          baseData[layer].linePoints.sort((a, b) => a.x - b.x || a.y - b.y);
         }
       }
     }
@@ -578,9 +579,11 @@ const zone = {
     // spawn2
     entityData.spawns = await this.getSpawnTree(zoneName);
     // start_zones
+
     // traps
     entityData.traps = await db.select('traps', [], { zone: zoneName });
     // zone (safe points)
+
     // zone_points
 
     return { baseData, entityData }
